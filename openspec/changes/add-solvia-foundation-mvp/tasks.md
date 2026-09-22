@@ -15,9 +15,9 @@
 
 ## 2. Repository Scaffold
 
-- [ ] 2.1 Create the monorepo layout (`apps/api`, `apps/agent/{graph.py,state.py,nodes,tools,prompts,llm,config}`, `apps/console`, `services/crm_mock`, `data/`, `rag/`, `evals/`, `infra/`, `docs/adr/`) with placeholder `__init__.py`/README stubs — verify the directory tree matches `design.md`
-- [ ] 2.2 Initialize the `uv` project (Python 3.12) and add `ruff`, `mypy`, `pytest` as dev dependencies — verify `uv run pytest --collect-only` runs without error
-- [ ] 2.3 Commit: `chore(repo): adiciona estrutura monorepo e ferramentas base`
+- [x] 2.1 Create the monorepo layout (`apps/api`, `apps/agent/{graph.py,state.py,nodes,tools,prompts,llm,config}`, `apps/console`, `services/crm_mock`, `data/`, `rag/`, `evals/`, `infra/`, `docs/adr/`) with placeholder `__init__.py`/README stubs — verify the directory tree matches `design.md`
+- [x] 2.2 Initialize the `uv` project (Python 3.12) and add `ruff`, `mypy`, `pytest` as dev dependencies — verify `uv run pytest --collect-only` runs without error
+- [x] 2.3 Commit: `chore(repo): adiciona estrutura monorepo e ferramentas base`
 
 ## 3. Engineering Foundation
 
