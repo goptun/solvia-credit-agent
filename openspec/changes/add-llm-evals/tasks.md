@@ -11,12 +11,12 @@
 
 ## 2. Pure metrics (`evals/core`, no LangChain/psycopg imports)
 
-- [ ] 2.1 Implement the Wilson 95% interval and the seeded percentile bootstrap — verify unit tests against hand-computed values (e.g. Wilson for 0/10, 10/10, 7/25) and that the same seed gives identical bootstrap bounds
-- [ ] 2.2 Implement retrieval metrics: recall@k and MRR with acceptable-ref lists, breakdown by style/document/difficulty, best-similarity quantiles, and the threshold table (false-refusal vs unanswerable-refusal for t = 0.30…0.90 step 0.05) — verify tests with hand-built ranked results cover multi-ref hits, misses, the catalog (no refs), and a monotonic threshold table; port the relevant cases from `tests/rag/eval/test_run.py` first
-- [ ] 2.3 Implement classification/extraction metrics: accuracy with `acceptable` sets, confusion matrix over six intents plus `continue`, slot exact match per field and "no invented value", precision/recall — verify tests with small labelled examples including a continuation and an ambiguous item
-- [ ] 2.4 Implement grounding metrics: false-refusal, refusal accuracy far/near-miss, citation validity (every cited ref exists in that turn's retrieved set), expected-ref hit, and the refusal cause decomposition in the order threshold → gold-not-retrieved → LLM-refused-with-gold — verify tests (port `tests/rag/eval/test_end_to_end.py` cases) show each question lands in exactly one cause
-- [ ] 2.5 Implement operational aggregation over call records (single-attempt latency p50/p95, attempts per operation, no-tool-call rate, JSON-fallback rate, resolved-model mix per alias) — verify tests with a synthetic call log where the expected rates are computed by hand
-- [ ] 2.6 Commit: `feat(evals): implementa as métricas puras com intervalos de confiança`
+- [x] 2.1 Implement the Wilson 95% interval and the seeded percentile bootstrap — verify unit tests against hand-computed values (e.g. Wilson for 0/10, 10/10, 7/25) and that the same seed gives identical bootstrap bounds
+- [x] 2.2 Implement retrieval metrics: recall@k and MRR with acceptable-ref lists, breakdown by style/document/difficulty, best-similarity quantiles, and the threshold table (false-refusal vs unanswerable-refusal for t = 0.30…0.90 step 0.05) — verify tests with hand-built ranked results cover multi-ref hits, misses, the catalog (no refs), and a monotonic threshold table; port the relevant cases from `tests/rag/eval/test_run.py` first
+- [x] 2.3 Implement classification/extraction metrics: accuracy with `acceptable` sets, confusion matrix over six intents plus `continue`, slot exact match per field and "no invented value", precision/recall — verify tests with small labelled examples including a continuation and an ambiguous item
+- [x] 2.4 Implement grounding metrics: false-refusal, refusal accuracy far/near-miss, citation validity (every cited ref exists in that turn's retrieved set), expected-ref hit, and the refusal cause decomposition in the order threshold → gold-not-retrieved → LLM-refused-with-gold — verify tests (port `tests/rag/eval/test_end_to_end.py` cases) show each question lands in exactly one cause
+- [x] 2.5 Implement operational aggregation over call records (single-attempt latency p50/p95, attempts per operation, no-tool-call rate, JSON-fallback rate, resolved-model mix per alias) — verify tests with a synthetic call log where the expected rates are computed by hand
+- [x] 2.6 Commit: `feat(evals): implementa as métricas puras com intervalos de confiança`
 
 ## 3. Baseline, budget and contamination logic (pure)
 
