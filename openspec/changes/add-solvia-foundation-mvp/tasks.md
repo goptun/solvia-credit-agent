@@ -44,12 +44,12 @@
 
 ## 5. Synthetic Data Generator (`synthetic-data`)
 
-- [ ] 5.1 Define Open Finance Brasil–shaped Pydantic models for account, transaction, credit card, and consent (including a consent `status` field: valid, missing, or expired) — verify unit tests validate each model's required fields
-- [ ] 5.2 Implement the fixed-seed generator producing ~200 customers across salaried/self-employed/over-indebted/thin-file profiles, with every generated date derived from a fixed reference date in config (never `datetime.now()`/wall clock) — verify a unit test asserts two runs with the same seed and reference date produce identical output (including dates) and all four profiles are present
-- [ ] 5.3 Ensure the generated customer population includes at least one customer with each consent status (`valid`, `missing`, `expired`) — verify a unit test asserts all three statuses are present
-- [ ] 5.4 Write generator output to `data/generated/` (gitignored) and commit a small, explicit set of fixture records under `data/fixtures/` for use by the automated test suite — verify tests only read `data/fixtures/` and `data/generated/` is empty/untracked after a fresh generation run
-- [ ] 5.5 Verify every generated record validates against its Pydantic schema — add a unit test asserting no validation errors across the generated dataset
-- [ ] 5.6 Commit: `feat(data): adiciona gerador de dados sintéticos Open Finance`
+- [x] 5.1 Define Open Finance Brasil–shaped Pydantic models for account, transaction, credit card, and consent (including a consent `status` field: valid, missing, or expired) — verify unit tests validate each model's required fields
+- [x] 5.2 Implement the fixed-seed generator producing ~200 customers across salaried/self-employed/over-indebted/thin-file profiles, with every generated date derived from a fixed reference date in config (never `datetime.now()`/wall clock) — verify a unit test asserts two runs with the same seed and reference date produce identical output (including dates) and all four profiles are present
+- [x] 5.3 Ensure the generated customer population includes at least one customer with each consent status (`valid`, `missing`, `expired`) — verify a unit test asserts all three statuses are present
+- [x] 5.4 Write generator output to `data/generated/` (gitignored) and commit a small, explicit set of fixture records under `data/fixtures/` for use by the automated test suite — verify tests only read `data/fixtures/` and `data/generated/` is empty/untracked after a fresh generation run
+- [x] 5.5 Verify every generated record validates against its Pydantic schema — add a unit test asserting no validation errors across the generated dataset
+- [x] 5.6 Commit: `feat(data): adiciona gerador de dados sintéticos Open Finance`
 
 ## 6. Deterministic Financial Tools (`credit-simulation`)
 
