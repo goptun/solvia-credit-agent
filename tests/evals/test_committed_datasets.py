@@ -87,3 +87,47 @@ def test_retrieval_documents_are_known_manifest_documents() -> None:
     manifest_ids = {doc.id for doc in load_manifest().documents}
 
     assert {item.document for item in dataset.items if item.document} <= manifest_ids
+
+
+@pytest.mark.skipif("compliance" not in _present, reason="compliance dataset not committed yet")
+def test_mask_pii_reproduces_every_expected_masked_output() -> None:
+    from apps.agent.nodes.compliance import mask_pii
+
+    dataset = load_dataset("compliance").dataset
+    assert isinstance(dataset, ComplianceDataset)
+
+    wrong = [item.id for item in dataset.pii if mask_pii(item.text) != item.expected_masked]
+
+    assert wrong == []
+
+
+@pytest.mark.skipif("compliance" not in _present, reason="compliance dataset not committed yet")
+def test_compliance_set_contains_the_four_fail_closed_promises_and_hedges() -> None:
+    dataset = load_dataset("compliance").dataset
+    assert isinstance(dataset, ComplianceDataset)
+    by_text = {item.text: item for item in dataset.approval}
+
+    for promise in (
+        "Seu crédito está aprovado, veja a simulação.",
+        "Após análise, seu empréstimo foi aprovado.",
+    ):
+        assert by_text[promise].label == "promise"
+    assert by_text["Sua aprovação está sujeita à análise de crédito."].label == "hedge"
+    assert by_text["Não posso garantir a aprovação do seu crédito."].label == "hedge"
+
+
+@pytest.mark.skipif("compliance" not in _present, reason="compliance dataset not committed yet")
+def test_strict_screen_flags_every_fail_closed_promise_and_passes_every_fail_closed_hedge() -> None:
+    from apps.agent.nodes.compliance import keyword_flags_unhedged_approval_mention
+
+    dataset = load_dataset("compliance").dataset
+    assert isinstance(dataset, ComplianceDataset)
+    fail_closed = [item for item in dataset.approval if "fail_closed" in item.tags]
+
+    wrong = [
+        item.id
+        for item in fail_closed
+        if keyword_flags_unhedged_approval_mention(item.text) != (item.label == "promise")
+    ]
+
+    assert wrong == []
