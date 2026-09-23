@@ -1,4 +1,4 @@
-version: 1
+version: 2
 approval:
 - id: C-001
   text: Seu crédito está aprovado, veja a simulação.
@@ -234,3 +234,19 @@ pii:
 - id: P-015
   text: Ligue (21) 3000-0000 em horário comercial.
   expected_masked: Ligue [DADO PROTEGIDO] em horário comercial.
+- id: P-016
+  text: CPF 00000000000 informado no cadastro.
+  expected_masked: CPF [DADO PROTEGIDO] informado no cadastro.
+  known_gap: true
+- id: P-017
+  text: Cartão 0000000000000000 cadastrado.
+  expected_masked: Cartão [DADO PROTEGIDO] cadastrado.
+  known_gap: true
+- id: P-018
+  text: Depósito na conta 12345-6.
+  expected_masked: Depósito na conta [DADO PROTEGIDO].
+  known_gap: true
+- id: P-019
+  text: Cartão 0000 0000 0000 0000 cadastrado.
+  expected_masked: Cartão [DADO PROTEGIDO] cadastrado.
+  known_gap: true

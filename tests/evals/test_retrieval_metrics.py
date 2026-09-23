@@ -33,7 +33,7 @@ def _result(
         style=style,
         document=document,
         difficulty=difficulty,
-        expected_refs=refs,
+        acceptable=(tuple((document, ref) for ref in refs) if refs else ((document, None),)),
         ranked=tuple(RankedChunk(doc, ref) for doc, ref in ranked),
         best_similarity=similarity,
     )
@@ -61,6 +61,21 @@ def test_any_acceptable_reference_counts_for_a_multi_ref_question() -> None:
     )
 
     assert hit_rank(result) == 1
+
+
+def test_a_reference_in_another_document_also_counts() -> None:
+    """R-020 case: the CET is defined by the CMN resolution *and* by CDC art. 54-B."""
+    result = AnswerableResult(
+        question_id="a",
+        style="colloquial",
+        document="cet-disclosure",
+        difficulty="hard",
+        acceptable=(("cet-disclosure", "art. 2º"), ("cdc-consolidada", "art. 54-B")),
+        ranked=(RankedChunk("lgpd", "art. 1º"), RankedChunk("cdc-consolidada", "art. 54-B")),
+        best_similarity=0.7,
+    )
+
+    assert hit_rank(result) == 2
 
 
 def test_catalog_question_has_no_article_refs() -> None:

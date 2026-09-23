@@ -32,8 +32,9 @@ class AnswerableResult:
     style: str
     document: str
     difficulty: str
-    expected_refs: tuple[str, ...] | None
-    """`None` for the product catalog, which has no article structure."""
+    acceptable: tuple[tuple[str, str | None], ...]
+    """`(document, article_ref)` pairs any of which is a hit; `article_ref`
+    is `None` for the product catalog (any of its chunks)."""
     ranked: tuple[RankedChunk, ...]
     """The top-k retrieved chunks, best first."""
     best_similarity: float
@@ -47,13 +48,13 @@ class UnanswerableResult:
 
 
 def hit_rank(result: AnswerableResult) -> int | None:
-    """1-based rank of the first chunk from the expected document with an
-    acceptable article reference, or `None` if there is none."""
-    acceptable = set(result.expected_refs) if result.expected_refs else None
+    """1-based rank of the first chunk matching any acceptable
+    `(document, article)` pair, or `None` if there is none."""
     for position, chunk in enumerate(result.ranked, start=1):
-        if chunk.document_id != result.document:
-            continue
-        if acceptable is None or chunk.article_ref in acceptable:
+        if any(
+            chunk.document_id == document and (ref is None or chunk.article_ref == ref)
+            for document, ref in result.acceptable
+        ):
             return position
     return None
 

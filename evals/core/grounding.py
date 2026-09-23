@@ -32,19 +32,17 @@ class GroundingItem:
     retrieved: tuple[RankedChunk, ...]
     cited: tuple[CitedRef, ...] = ()
     distance: str | None = None  # unanswerable: "far" | "near_miss"
-    document: str | None = None  # answerable: expected document
-    expected_refs: tuple[str, ...] | None = None
+    acceptable: tuple[tuple[str, str | None], ...] = ()
+    """Answerable: `(document, article_ref)` pairs any of which is the expected source."""
 
 
-def _matches(document: str | None, refs: tuple[str, ...] | None, doc: str, ref: str | None) -> bool:
-    acceptable = set(refs) if refs else None
-    return doc == document and (acceptable is None or ref in acceptable)
+def _matches(acceptable: tuple[tuple[str, str | None], ...], doc: str, ref: str | None) -> bool:
+    return any(doc == document and (r is None or ref == r) for document, r in acceptable)
 
 
 def gold_in_context(item: GroundingItem) -> bool:
     return any(
-        _matches(item.document, item.expected_refs, chunk.document_id, chunk.article_ref)
-        for chunk in item.retrieved
+        _matches(item.acceptable, chunk.document_id, chunk.article_ref) for chunk in item.retrieved
     )
 
 
@@ -59,10 +57,7 @@ def refusal_cause(item: GroundingItem) -> str | None:
 
 
 def cites_expected(item: GroundingItem) -> bool:
-    return any(
-        _matches(item.document, item.expected_refs, ref.document_id, ref.article_ref)
-        for ref in item.cited
-    )
+    return any(_matches(item.acceptable, ref.document_id, ref.article_ref) for ref in item.cited)
 
 
 @dataclass(frozen=True)

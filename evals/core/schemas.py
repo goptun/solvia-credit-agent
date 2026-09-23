@@ -48,6 +48,20 @@ def has_accents(text: str) -> bool:
     return any(unicodedata.combining(ch) for ch in unicodedata.normalize("NFD", text))
 
 
+class RefPair(BaseModel):
+    """An acceptable article in a specific document — used when the same
+    question is legitimately answered by norms in different documents."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    document: Document
+    ref: str
+
+
+ExpectedRef = str | RefPair
+"""A plain string is an article of the item's own `document`."""
+
+
 class _Item(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -62,8 +76,10 @@ class RetrievalItem(_Item):
     difficulty: Difficulty
     # answerable
     document: Document | None = None
-    expected_refs: list[str] | None = None
-    """One or more acceptable articles; absent only for the product catalog."""
+    expected_refs: list[ExpectedRef] | None = None
+    """One or more acceptable articles (a string = article of `document`; a
+    `{document, ref}` pair = an article of another document that also
+    answers); absent only for the product catalog."""
     evidence: str | None = None
     style: Literal["lexical", "colloquial"] | None = None
     accents: bool = True
@@ -90,6 +106,12 @@ class RetrievalItem(_Item):
                     raise ValueError("product-catalog items have no article refs")
             elif not self.expected_refs:
                 raise ValueError("regulatory items need at least one expected ref")
+            else:
+                pairs = self.acceptable()
+                if any(doc == "product-catalog" for doc, _ in pairs):
+                    raise ValueError("expected refs cannot point into the product catalog")
+                if not any(doc == self.document for doc, _ in pairs):
+                    raise ValueError("at least one expected ref must be in the item's own document")
             if not self.accents and has_accents(self.question):
                 raise ValueError("accents=false but the question contains accented characters")
         else:
@@ -103,6 +125,18 @@ class RetrievalItem(_Item):
                 f"({derive_difficulty(self)!r})"
             )
         return self
+
+    def acceptable(self) -> tuple[tuple[str, str | None], ...]:
+        """`(document, article_ref)` pairs any of which counts as a hit;
+        `article_ref` is `None` for the catalog (any chunk of it)."""
+        if self.document is None:
+            return ()
+        if not self.expected_refs:
+            return ((self.document, None),)
+        return tuple(
+            (self.document, ref) if isinstance(ref, str) else (ref.document, ref.ref)
+            for ref in self.expected_refs
+        )
 
 
 def derive_difficulty(item: RetrievalItem) -> Difficulty:
@@ -184,6 +218,11 @@ class ApprovalItem(_Item):
 class PiiItem(_Item):
     text: str
     expected_masked: str
+    """The *correct* masked output, whether or not the masker produces it."""
+    known_gap: bool = False
+    """The masker is known to get this case wrong today. The item stays in the
+    dataset so the baseline records the failure; fixing the masker turns it
+    into a passing case (a test then requires removing this flag)."""
 
 
 def _unique_ids(ids: list[str], what: str) -> None:

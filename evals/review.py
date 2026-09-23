@@ -34,6 +34,14 @@ def _quote(text: str) -> str:
     return " ".join(text.split())
 
 
+def _refs(item: RetrievalItem) -> str:
+    if not item.expected_refs:
+        return "(catalog)"
+    return ", ".join(
+        ref if isinstance(ref, str) else f"{ref.document}: {ref.ref}" for ref in item.expected_refs
+    )
+
+
 def _retrieval(item: RetrievalItem) -> ReviewItem:
     if item.kind == "answerable":
         no_accents = " · no accents" if not item.accents else ""
@@ -44,7 +52,7 @@ def _retrieval(item: RetrievalItem) -> ReviewItem:
             f"{no_accents}]",
             (
                 f"question: {_quote(item.question)}",
-                f"refs: {', '.join(item.expected_refs or []) or '(catalog)'}",
+                f"refs: {_refs(item)}",
                 f'evidence: "{_quote(item.evidence or "")}"',
             ),
             retrieval=item,

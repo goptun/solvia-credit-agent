@@ -9,9 +9,9 @@ real personal data anywhere**: identifiers are synthetic or reserved-format
 | File | Dataset | Used by | Size |
 |---|---|---|---|
 | `retrieval.yaml` | **retrieval**: retrieval and grounding questions | retrieval (offline) and grounding (live) suites | 73 answerable + 25 unanswerable |
-| `router.yaml` | **router**: messages labelled with an intent | router (live) suite | 64 |
-| `slots.yaml` | **slots**: loan requests labelled with expected slots | slot-extraction (live) suite | 30 |
-| `compliance.yaml` | **compliance**: draft replies (promise / hedge / neutral) and PII masking cases | keyword and strict screens, masking (offline), LLM check (live) | 41 + 15 |
+| `router.yaml` | **router**: messages labelled with an intent | router (live) suite | 69 |
+| `slots.yaml` | **slots**: loan requests labelled with expected slots | slot-extraction (live) suite | 36 |
+| `compliance.yaml` | **compliance**: draft replies (promise / hedge / neutral) and PII masking cases | keyword and strict screens, masking (offline), LLM check (live) | 41 + 19 |
 
 `review.yaml` (written only after the maintainer approves a dataset) records
 the approved content hash of each file; a baseline is refused for any dataset
@@ -43,8 +43,17 @@ Fields: `question`, `kind` (`answerable` | `unanswerable`), `difficulty`.
   (`emprestimo`, `credito`) to test accent folding. Leave it `true` otherwise,
   even if a short question happens to contain no accented letter.
 - **`expected_refs`**: every article that legitimately answers the question
-  (a hit on any counts). Use more than one only when the answer truly spans
-  articles. Absent only for the product catalog, which has no articles.
+  (a hit on any counts). A plain string is an article of the item's own
+  `document`; a `{document, ref}` pair is an article of **another document that
+  also answers** (e.g. the CET is defined by both the CMN resolution and CDC
+  art. 54-B; consent revocation appears in both LGPD art. 8º §5 and the Open
+  Finance resolution art. 15). At least one ref must be in the item's own
+  document; refs cannot point into the product catalog; every ref must exist in
+  the corpus fixture (a test checks). Absent only for the product catalog.
+  Add a cross-document ref only when the other article **directly answers the
+  core of the question**, not when it merely shares vocabulary — false friends
+  (LGPD art. 19 "confirmação de tratamento" vs Open Finance art. 20
+  "confirmação de compartilhamento") stay out.
 - **`evidence`**: a short (≤200 characters) literal quote from the expected
   article; a test verifies it against the committed corpus fixture. Quote the
   sentence that answers the question, not the article heading.
@@ -72,6 +81,10 @@ Fields: `question`, `kind` (`answerable` | `unanswerable`), `difficulty`.
   request that breaks out of the flow* and expects its own intent.
 - **`ambiguous`**: more than one label is defensible; `expected` is the best
   label and `acceptable` lists the others. Only ambiguous items have `acceptable`.
+- **A new request during an active flow** (a `clear` item with `active_flow`
+  set) is a message that is unmistakably *not* an answer to what was asked
+  ("Esquece a simulação, quais produtos vocês têm?"); it expects its own
+  intent, not `continue`. There are at least four.
 - **`continuation`**: a short reply to what the assistant just asked
   (`sim, autorizo`, `24 meses`); it needs an active flow, expects `continue`,
   and **must not be reclassified**.
@@ -86,6 +99,8 @@ after the node handles it), `tags`.
   or negative term, an unrecognized amortization type) counts as absent.
 - Amounts are strings of the plain number (`"5000"`); amortization is `PRICE`
   or `SAC`; "parcelas fixas" means `PRICE`, "parcelas decrescentes" means `SAC`.
+- Colloquial numbers are part of the set: "dez mil", "2,5 mil", "R$ 10k",
+  "um ano", "um ano e meio", "dois anos", "três anos".
 - Tags are derived: `complete` (all three slots), `partial`, `missing` (none),
   plus `invalid` when the message has an invalid value.
 
@@ -108,7 +123,19 @@ Some items are **known false positives/negatives of a screen on purpose**
 "garantia" and "aprovação"): the evaluation reports each screen's precision and
 recall separately, and these items are what make the numbers honest.
 
-**PII items** (`text`, `expected_masked`) check `mask_pii` end to end; the
-masked placeholder is `[DADO PROTEGIDO]`. Negatives (amounts, percentages) must
-come out unchanged. Only cases the current masker handles belong here; masking
-gaps found while labelling are recorded as follow-ups, not encoded as failures.
+**PII items** (`text`, `expected_masked`, `known_gap`) check `mask_pii` end to
+end; the masked placeholder is `[DADO PROTEGIDO]`. `expected_masked` is always the
+**correct** output. Negatives (amounts, percentages) must come out unchanged. The
+dataset measures the masker, not only what it already handles: a case the masker
+gets wrong today is kept with `known_gap: true`, so the baseline records it as a
+failure. A test requires every `known_gap` item to still fail — when the masker
+is fixed the test tells you to drop the flag and re-record the baseline.
+
+### Known masking gaps (priority follow-up: fix in a `fix/` PR right after `add-llm-evals`)
+
+| Input | `mask_pii` returns today | Correct |
+|---|---|---|
+| `CPF 00000000000 informado no cadastro.` | `CPF [DADO PROTEGIDO]0 informado no cadastro.` (a digit leaks: the phone pattern matches first) | `CPF [DADO PROTEGIDO] informado no cadastro.` |
+| `Cartão 0000000000000000 cadastrado.` | `Cartão [DADO PROTEGIDO][DADO PROTEGIDO] cadastrado.` (masked in two pieces) | `Cartão [DADO PROTEGIDO] cadastrado.` |
+| `Depósito na conta 12345-6.` | unchanged (a one-digit check digit is not matched) | `Depósito na conta [DADO PROTEGIDO].` |
+| `Cartão 0000 0000 0000 0000 cadastrado.` | unchanged (space-separated groups are not matched) | `Cartão [DADO PROTEGIDO] cadastrado.` |

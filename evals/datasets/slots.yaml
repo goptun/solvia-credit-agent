@@ -1,4 +1,4 @@
-version: 1
+version: 2
 items:
 - id: S-001
   message: Quero simular um empréstimo de R$5000 em 12 meses, no sistema Price.
@@ -219,3 +219,53 @@ items:
   tags:
   - partial
   - invalid
+- id: S-031
+  message: Preciso de dez mil reais em um ano, tabela Price
+  expected:
+    amount: '10000'
+    term_months: 12
+    amortization_type: PRICE
+  tags:
+  - complete
+- id: S-032
+  message: Quero 2,5 mil em 6 meses pelo SAC
+  expected:
+    amount: '2500'
+    term_months: 6
+    amortization_type: SAC
+  tags:
+  - complete
+- id: S-033
+  message: R$ 10k em 24x Price
+  expected:
+    amount: '10000'
+    term_months: 24
+    amortization_type: PRICE
+  tags:
+  - complete
+- id: S-034
+  message: um ano e meio
+  known:
+    amount: '8000'
+    amortization_type: SAC
+  expected:
+    amount: '8000'
+    term_months: 18
+    amortization_type: SAC
+  tags:
+  - complete
+- id: S-035
+  message: uns 1,5 mil
+  expected:
+    amount: '1500'
+  tags:
+  - partial
+- id: S-036
+  message: três anos
+  known:
+    amount: '20000'
+  expected:
+    amount: '20000'
+    term_months: 36
+  tags:
+  - partial

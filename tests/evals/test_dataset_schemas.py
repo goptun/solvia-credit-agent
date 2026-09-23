@@ -70,6 +70,35 @@ def test_malformed_answerable_items_are_rejected(overrides: dict[str, Any]) -> N
         RetrievalItem.model_validate(_answerable(**overrides))
 
 
+def test_cross_document_refs_are_accepted_and_listed_as_acceptable_pairs() -> None:
+    item = RetrievalItem.model_validate(
+        _answerable(
+            document="cet-disclosure",
+            expected_refs=["art. 2º", {"document": "cdc-consolidada", "ref": "art. 54-B"}],
+            difficulty="medium",
+        )
+    )
+
+    assert item.acceptable() == (
+        ("cet-disclosure", "art. 2º"),
+        ("cdc-consolidada", "art. 54-B"),
+    )
+    assert derive_difficulty(item) == "medium"  # lexical but multi-ref
+
+
+@pytest.mark.parametrize(
+    "refs",
+    [
+        [{"document": "lgpd", "ref": "art. 7º"}],  # nothing in the item's own document
+        ["art. 42", {"document": "product-catalog", "ref": "x"}],  # into the catalog
+        ["art. 42", {"document": "codigo-civil", "ref": "art. 1"}],  # unknown document
+    ],
+)
+def test_invalid_cross_document_refs_are_rejected(refs: list[Any]) -> None:
+    with pytest.raises(ValidationError):
+        RetrievalItem.model_validate(_answerable(expected_refs=refs, difficulty="medium"))
+
+
 def test_catalog_items_take_no_refs() -> None:
     RetrievalItem.model_validate(
         _answerable(document="product-catalog", expected_refs=None, evidence="parcelas fixas")
@@ -219,11 +248,14 @@ def _retrieval_dataset() -> RetrievalDataset:
         for index in range(14):
             number += 1
             colloquial = index < 6  # 6/14 per document > 40%
-            multi = index == 0 and document == "cdc-consolidada"
+            cross = index == 2 and document == "cet-disclosure"
+            multi = (index == 0 and document == "cdc-consolidada") or cross
             unaccented = index == 1 and document == "lgpd"
-            refs = (
+            refs: list[Any] | None = (
                 None if document == "product-catalog" else ["art. 1", "art. 2"][: 2 if multi else 1]
             )
+            if cross:
+                refs = ["art. 1", {"document": "cdc-consolidada", "ref": "art. 2"}]
             style = "colloquial" if colloquial else "lexical"
             difficulty = (
                 "hard"

@@ -116,8 +116,7 @@ def _answerable(
         refused_by_threshold=by_threshold,
         retrieved=retrieved,
         cited=cited,
-        document="cdc-consolidada",
-        expected_refs=("art. 54-A",),
+        acceptable=(("cdc-consolidada", "art. 54-A"),),
     )
 
 
@@ -143,6 +142,19 @@ def test_every_false_refusal_lands_in_exactly_one_cause() -> None:
     assert refusal_cause(llm) == CAUSE_LLM_REFUSED
     assert refusal_cause(answered) is None
     assert refusal_cause(_unanswerable("u", "far", refused=True)) is None
+
+
+def test_gold_in_another_acceptable_document_counts_as_being_in_context() -> None:
+    item = GroundingItem(
+        question_id="x",
+        kind="answerable",
+        refused=True,
+        refused_by_threshold=False,
+        retrieved=(RankedChunk("cdc-consolidada", "art. 54-B"),),
+        acceptable=(("cet-disclosure", "art. 2º"), ("cdc-consolidada", "art. 54-B")),
+    )
+
+    assert refusal_cause(item) == CAUSE_LLM_REFUSED
 
 
 def test_threshold_cause_wins_even_when_gold_was_in_context() -> None:

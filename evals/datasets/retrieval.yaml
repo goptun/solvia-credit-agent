@@ -1,4 +1,4 @@
-version: 1
+version: 2
 items:
 - id: R-001
   kind: answerable
@@ -197,6 +197,8 @@ items:
   document: cet-disclosure
   expected_refs:
   - art. 2º
+  - document: cdc-consolidada
+    ref: art. 54-B
   evidence: O CET é uma taxa que representa, na data de seu cálculo, de forma consolidada
   style: colloquial
   accents: false
@@ -207,20 +209,26 @@ items:
   document: cet-disclosure
   expected_refs:
   - art. 3º
+  - document: cdc-consolidada
+    ref: art. 54-B
   evidence: deve abranger o valor do crédito a ser concedido
   style: lexical
   accents: true
-  difficulty: easy
+  difficulty: medium
 - id: R-022
   kind: answerable
   question: Em que momento o banco é obrigado a informar o CET ao cliente antes da contratação?
   document: cet-disclosure
   expected_refs:
   - art. 7º
+  - document: cdc-consolidada
+    ref: art. 52
+  - document: cdc-consolidada
+    ref: art. 54-B
   evidence: previamente à contratação das operações
   style: lexical
   accents: true
-  difficulty: easy
+  difficulty: medium
 - id: R-023
   kind: answerable
   question: Como é calculado o CET de operações de cheque especial ou crédito rotativo?
@@ -333,10 +341,12 @@ items:
   document: cdc-consolidada
   expected_refs:
   - art. 43
+  - document: lgpd
+    ref: art. 18
   evidence: terá acesso às informações existentes em cadastros, fichas, registros e dados pessoais
   style: colloquial
   accents: true
-  difficulty: medium
+  difficulty: hard
 - id: R-035
   kind: answerable
   question: Por quanto tempo uma informação negativa pode ficar no cadastro do consumidor?
@@ -545,30 +555,38 @@ items:
   document: open-finance-regulamento
   expected_refs:
   - art. 10
+  - document: lgpd
+    ref: art. 7º
   evidence: deve identificar o cliente e obter o seu consentimento
   style: colloquial
   accents: true
-  difficulty: medium
+  difficulty: hard
 - id: R-056
   kind: answerable
   question: Quais requisitos o consentimento do cliente precisa cumprir no Open Finance?
   document: open-finance-regulamento
   expected_refs:
   - art. 10
+  - document: lgpd
+    ref: art. 8º
   evidence: referir-se a finalidades determinadas
   style: lexical
   accents: true
-  difficulty: easy
+  difficulty: medium
 - id: R-057
   kind: answerable
   question: Posso cancelar a autorização que dei para compartilhar meus dados quando eu quiser?
   document: open-finance-regulamento
   expected_refs:
   - art. 15
+  - document: lgpd
+    ref: art. 8º
+  - document: lgpd
+    ref: art. 18
   evidence: a possibilidade da revogação do respectivo consentimento, a qualquer tempo
   style: colloquial
   accents: true
-  difficulty: medium
+  difficulty: hard
 - id: R-058
   kind: answerable
   question: O que as instituições precisam me mostrar sobre os consentimentos que estão valendo?
@@ -655,10 +673,12 @@ items:
   document: cet-disclosure
   expected_refs:
   - art. 8º
+  - document: cdc-consolidada
+    ref: art. 54-B
   evidence: devem informar o CET nos informes publicitários
   style: lexical
   accents: true
-  difficulty: easy
+  difficulty: medium
 - id: R-067
   kind: answerable
   question: Crédito rural também precisa seguir essas regras do CET?
@@ -671,14 +691,16 @@ items:
   difficulty: medium
 - id: R-068
   kind: answerable
-  question: A partir de quando a resolução do CET passou a valer?
+  question: Antes de eu assinar, o que o banco tem que me mostrar sobre o custo total do empréstimo?
   document: cet-disclosure
   expected_refs:
-  - art. 12
-  evidence: entra em vigor em 1º de fevereiro de 2021
-  style: lexical
+  - art. 7º
+  - document: cdc-consolidada
+    ref: art. 54-B
+  evidence: O demonstrativo de que trata o caput deve informar o valor em reais de cada componente do fluxo de recebimentos e de pagamentos
+  style: colloquial
   accents: true
-  difficulty: easy
+  difficulty: hard
 - id: R-069
   kind: answerable
   question: Qual é a diferença entre a modalidade Price e a SAC no crédito da Solvia?
@@ -806,7 +828,7 @@ items:
   difficulty: hard
 - id: R-091
   kind: unanswerable
-  question: Em quanto tempo prescreve uma dívida de cartão de crédito?
+  question: Qual é a idade mínima para contratar um crédito pessoal na Solvia?
   distance: near_miss
   difficulty: hard
 - id: R-092

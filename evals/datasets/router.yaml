@@ -1,4 +1,4 @@
-version: 1
+version: 2
 items:
 - id: T-001
   message: Quais produtos de crédito vocês oferecem?
@@ -335,3 +335,28 @@ items:
   active_flow: slot_filling
   category: continuation
   expected: continue
+- id: T-065
+  message: Quero analisar meu perfil financeiro primeiro
+  active_flow: slot_filling
+  category: clear
+  expected: profile_analysis
+- id: T-066
+  message: Esquece a simulação, quais produtos vocês têm?
+  active_flow: slot_filling
+  category: clear
+  expected: product_question
+- id: T-067
+  message: 'Cancela isso, meu problema é outro: fui cobrado em duplicidade'
+  active_flow: consent_confirmation
+  category: clear
+  expected: complaint
+- id: T-068
+  message: Antes de autorizar, o que a LGPD diz sobre meus dados?
+  active_flow: consent_confirmation
+  category: clear
+  expected: regulatory_question
+- id: T-069
+  message: Me conta uma piada
+  active_flow: slot_filling
+  category: clear
+  expected: out_of_scope

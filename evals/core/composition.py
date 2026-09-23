@@ -17,11 +17,11 @@ ANSWERABLE_RANGE = (65, 85)
 UNANSWERABLE_RANGE = (20, 30)
 MIN_COLLOQUIAL_SHARE = 0.40
 MIN_NEAR_MISS = 15
-ROUTER_RANGE = (55, 65)
+ROUTER_RANGE = (55, 70)
 MIN_AMBIGUOUS = 5
-SLOTS_RANGE = (25, 35)
+SLOTS_RANGE = (25, 40)
 APPROVAL_RANGE = (35, 45)
-PII_RANGE = (12, 18)
+PII_RANGE = (12, 22)
 MIN_FAIL_CLOSED_PER_LABEL = 2
 
 
@@ -51,6 +51,8 @@ def retrieval_violations(dataset: RetrievalDataset) -> list[str]:
         violations.append("no question written without accents")
     if not any(len(i.expected_refs or []) > 1 for i in answerable):
         violations.append("no question with more than one acceptable article reference")
+    if not any(any(doc != i.document for doc, _ in i.acceptable()) for i in answerable):
+        violations.append("no question with an acceptable reference in another document")
     return violations
 
 
