@@ -1,0 +1,337 @@
+version: 1
+items:
+- id: T-001
+  message: Quais produtos de crédito vocês oferecem?
+  active_flow: none
+  category: clear
+  expected: product_question
+- id: T-002
+  message: Qual a diferença entre Price e SAC?
+  active_flow: none
+  category: clear
+  expected: product_question
+- id: T-003
+  message: O crédito pessoal da Solvia tem parcelas fixas?
+  active_flow: none
+  category: clear
+  expected: product_question
+- id: T-004
+  message: Vocês têm alguma opção com parcelas que diminuem?
+  active_flow: none
+  category: clear
+  expected: product_question
+- id: T-005
+  message: Que tipos de empréstimo a Solvia tem disponíveis?
+  active_flow: none
+  category: clear
+  expected: product_question
+- id: T-006
+  message: Como funciona o crédito SAC de vocês?
+  active_flow: none
+  category: clear
+  expected: product_question
+- id: T-007
+  message: Me explica o que é o crédito pessoal de vocês
+  active_flow: none
+  category: clear
+  expected: product_question
+- id: T-008
+  message: vcs tem emprestimo com parcela fixa?
+  active_flow: none
+  category: clear
+  expected: product_question
+- id: T-009
+  message: Quais são meus direitos segundo o código de defesa do consumidor?
+  active_flow: none
+  category: clear
+  expected: regulatory_question
+- id: T-010
+  message: O que a LGPD diz sobre meus dados pessoais?
+  active_flow: none
+  category: clear
+  expected: regulatory_question
+- id: T-011
+  message: Como funciona o compartilhamento de dados no Open Finance?
+  active_flow: none
+  category: clear
+  expected: regulatory_question
+- id: T-012
+  message: O que é o CET e como ele é calculado?
+  active_flow: none
+  category: clear
+  expected: regulatory_question
+- id: T-013
+  message: Posso desistir de um contrato de crédito assinado por telefone?
+  active_flow: none
+  category: clear
+  expected: regulatory_question
+- id: T-014
+  message: o banco pode cobrar multa se eu quitar a divida antes do prazo?
+  active_flow: none
+  category: clear
+  expected: regulatory_question
+- id: T-015
+  message: O que é superendividamento na lei?
+  active_flow: none
+  category: clear
+  expected: regulatory_question
+- id: T-016
+  message: Posso revogar o consentimento do Open Finance a qualquer momento?
+  active_flow: none
+  category: clear
+  expected: regulatory_question
+- id: T-017
+  message: Quero simular um empréstimo de 5000 reais em 12 meses
+  active_flow: none
+  category: clear
+  expected: loan_simulation
+- id: T-018
+  message: Quanto ficaria a parcela de um crédito de 10 mil em 24 meses?
+  active_flow: none
+  category: clear
+  expected: loan_simulation
+- id: T-019
+  message: Simula pra mim 3000 reais pela tabela Price
+  active_flow: none
+  category: clear
+  expected: loan_simulation
+- id: T-020
+  message: Gostaria de fazer uma simulação de crédito SAC
+  active_flow: none
+  category: clear
+  expected: loan_simulation
+- id: T-021
+  message: quero pegar um emprestimo
+  active_flow: none
+  category: clear
+  expected: loan_simulation
+- id: T-022
+  message: Me mostra as parcelas de 20000 em 36 vezes
+  active_flow: none
+  category: clear
+  expected: loan_simulation
+- id: T-023
+  message: Faz uma simulação de 8 mil reais em 18 meses no SAC
+  active_flow: none
+  category: clear
+  expected: loan_simulation
+- id: T-024
+  message: Preciso de um empréstimo de 1500, pode simular?
+  active_flow: none
+  category: clear
+  expected: loan_simulation
+- id: T-025
+  message: Você pode analisar o meu perfil financeiro?
+  active_flow: none
+  category: clear
+  expected: profile_analysis
+- id: T-026
+  message: Quero saber como está minha situação financeira
+  active_flow: none
+  category: clear
+  expected: profile_analysis
+- id: T-027
+  message: Analisa meus gastos do último mês
+  active_flow: none
+  category: clear
+  expected: profile_analysis
+- id: T-028
+  message: Qual é a minha renda média estimada?
+  active_flow: none
+  category: clear
+  expected: profile_analysis
+- id: T-029
+  message: Como está o meu nível de endividamento?
+  active_flow: none
+  category: clear
+  expected: profile_analysis
+- id: T-030
+  message: Me diz quanto da minha renda está comprometida com dívidas
+  active_flow: none
+  category: clear
+  expected: profile_analysis
+- id: T-031
+  message: faz uma analise do meu perfil de credito
+  active_flow: none
+  category: clear
+  expected: profile_analysis
+- id: T-032
+  message: Em quais categorias eu mais gasto?
+  active_flow: none
+  category: clear
+  expected: profile_analysis
+- id: T-033
+  message: Estou muito insatisfeito com o atendimento que recebi.
+  active_flow: none
+  category: clear
+  expected: complaint
+- id: T-034
+  message: Quero reclamar de uma cobrança que não reconheço
+  active_flow: none
+  category: clear
+  expected: complaint
+- id: T-035
+  message: O atendimento de vocês é péssimo
+  active_flow: none
+  category: clear
+  expected: complaint
+- id: T-036
+  message: Fui cobrado duas vezes pela mesma parcela e ninguém resolve
+  active_flow: none
+  category: clear
+  expected: complaint
+- id: T-037
+  message: Quero abrir uma reclamação formal
+  active_flow: none
+  category: clear
+  expected: complaint
+- id: T-038
+  message: Estou há dias tentando falar com alguém e ninguém me ajuda
+  active_flow: none
+  category: clear
+  expected: complaint
+- id: T-039
+  message: Isso é um absurdo, vou registrar uma queixa
+  active_flow: none
+  category: clear
+  expected: complaint
+- id: T-040
+  message: meu app nao funciona e ja reclamei varias vezes
+  active_flow: none
+  category: clear
+  expected: complaint
+- id: T-041
+  message: Qual é a previsão do tempo para amanhã?
+  active_flow: none
+  category: clear
+  expected: out_of_scope
+- id: T-042
+  message: Me conta uma piada
+  active_flow: none
+  category: clear
+  expected: out_of_scope
+- id: T-043
+  message: Quem ganhou o jogo ontem?
+  active_flow: none
+  category: clear
+  expected: out_of_scope
+- id: T-044
+  message: Como faço um bolo de cenoura?
+  active_flow: none
+  category: clear
+  expected: out_of_scope
+- id: T-045
+  message: Qual a capital da Austrália?
+  active_flow: none
+  category: clear
+  expected: out_of_scope
+- id: T-046
+  message: Me recomenda um filme
+  active_flow: none
+  category: clear
+  expected: out_of_scope
+- id: T-047
+  message: Quanto está o dólar hoje?
+  active_flow: none
+  category: clear
+  expected: out_of_scope
+- id: T-048
+  message: Na verdade quero reclamar do atendimento
+  active_flow: slot_filling
+  category: clear
+  expected: complaint
+- id: T-049
+  message: Deixa isso, qual é a previsão do tempo?
+  active_flow: consent_confirmation
+  category: clear
+  expected: out_of_scope
+- id: T-050
+  message: Antes disso, quais são meus direitos no Open Finance?
+  active_flow: slot_filling
+  category: clear
+  expected: regulatory_question
+- id: T-051
+  message: Quanto custa?
+  active_flow: none
+  category: ambiguous
+  expected: product_question
+  acceptable:
+  - loan_simulation
+- id: T-052
+  message: Quero saber sobre juros
+  active_flow: none
+  category: ambiguous
+  expected: product_question
+  acceptable:
+  - regulatory_question
+  - loan_simulation
+- id: T-053
+  message: Como declarar imposto de renda?
+  active_flow: none
+  category: ambiguous
+  expected: out_of_scope
+  acceptable:
+  - regulatory_question
+- id: T-054
+  message: Estou com dificuldade para pagar minhas parcelas
+  active_flow: none
+  category: ambiguous
+  expected: profile_analysis
+  acceptable:
+  - complaint
+- id: T-055
+  message: Preciso de dinheiro urgente
+  active_flow: none
+  category: ambiguous
+  expected: loan_simulation
+  acceptable:
+  - product_question
+- id: T-056
+  message: O banco pode me cobrar isso?
+  active_flow: none
+  category: ambiguous
+  expected: regulatory_question
+  acceptable:
+  - complaint
+- id: T-057
+  message: e agora?
+  active_flow: none
+  category: ambiguous
+  expected: out_of_scope
+  acceptable:
+  - complaint
+- id: T-058
+  message: sim, autorizo
+  active_flow: consent_confirmation
+  category: continuation
+  expected: continue
+- id: T-059
+  message: não autorizo
+  active_flow: consent_confirmation
+  category: continuation
+  expected: continue
+- id: T-060
+  message: pode acessar meus dados, sim
+  active_flow: consent_confirmation
+  category: continuation
+  expected: continue
+- id: T-061
+  message: 24 meses
+  active_flow: slot_filling
+  category: continuation
+  expected: continue
+- id: T-062
+  message: Price
+  active_flow: slot_filling
+  category: continuation
+  expected: continue
+- id: T-063
+  message: 10 mil reais
+  active_flow: slot_filling
+  category: continuation
+  expected: continue
+- id: T-064
+  message: pelo SAC mesmo
+  active_flow: slot_filling
+  category: continuation
+  expected: continue
