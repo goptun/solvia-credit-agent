@@ -31,16 +31,16 @@
 
 ## 4. Settings and LLM Gateway (`llm-gateway`)
 
-- [ ] 4.1 Implement the pydantic-settings module reading `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL_FAST`, `LLM_MODEL_SMART`, `LLM_PROVIDER`, and Google/Vertex settings — verify a unit test loads settings from environment variables with no hardcoded values
-- [ ] 4.2 Define the `LLMPort` protocol and the fake LLM adapter — verify a unit test drives a node through the fake adapter only
-- [ ] 4.3 Implement the OpenAI-compatible adapter (`ChatOpenAI` wrapper using `base_url`/`api_key` from settings) — verify a unit test asserts client construction uses only settings-derived values
-- [ ] 4.4 Implement the Google adapter (`langchain-google-genai`) supporting both Gemini Developer API and Vertex AI via `vertexai`/`project`/`location` settings — verify unit tests cover both construction modes
-- [ ] 4.5 Implement `LLMFactory.for_node(node_name)` resolving tier→alias→adapter from configuration — verify unit tests cover the fast/smart tier mapping table for every MVP node (`router`: fast, `financial_analyst`: smart, `offer_simulator`: smart, `responder`: smart, `compliance_guard`: fast)
-- [ ] 4.6 Implement timeout + exponential-backoff retry wrapper around LLM calls — verify a unit test simulates a transient failure followed by success
-- [ ] 4.7 Implement smart→fast degradation and the fixed "demo temporarily unavailable" fallback — verify unit tests for: smart succeeds; smart fails then fast succeeds; both fail and the fallback message is returned
-- [ ] 4.8 Attach the resolved underlying model to the call's trace span when present in response metadata — verify unit tests for both the present and absent cases
-- [ ] 4.9 Write `docs/adr/ADR-002-llm-gateway-aliases.md` documenting the gateway/alias/degradation strategy
-- [ ] 4.10 Commit: `feat(llm): adiciona settings e factory de LLM com tiers e degradação`
+- [x] 4.1 Implement the pydantic-settings module reading `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL_FAST`, `LLM_MODEL_SMART`, `LLM_PROVIDER`, and Google/Vertex settings — verify a unit test loads settings from environment variables with no hardcoded values
+- [x] 4.2 Define the `LLMPort` protocol and the fake LLM adapter — verify a unit test drives a node through the fake adapter only
+- [x] 4.3 Implement the OpenAI-compatible adapter (`ChatOpenAI` wrapper using `base_url`/`api_key` from settings) — verify a unit test asserts client construction uses only settings-derived values
+- [x] 4.4 Implement the Google adapter (`langchain-google-genai`) supporting both Gemini Developer API and Vertex AI via `vertexai`/`project`/`location` settings — verify unit tests cover both construction modes
+- [x] 4.5 Implement `LLMFactory.for_node(node_name)` resolving tier→alias→adapter from configuration — verify unit tests cover the fast/smart tier mapping table for every MVP node (`router`: fast, `financial_analyst`: smart, `offer_simulator`: smart, `responder`: smart, `compliance_guard`: fast)
+- [x] 4.6 Implement timeout + exponential-backoff retry wrapper around LLM calls — verify a unit test simulates a transient failure followed by success
+- [x] 4.7 Implement smart→fast degradation and the fixed "demo temporarily unavailable" fallback — verify unit tests for: smart succeeds; smart fails then fast succeeds; both fail and the fallback message is returned
+- [x] 4.8 Attach the resolved underlying model to the call's trace span when present in response metadata — verify unit tests for both the present and absent cases
+- [x] 4.9 Write `docs/adr/ADR-002-llm-gateway-aliases.md` documenting the gateway/alias/degradation strategy
+- [x] 4.10 Commit: `feat(llm): adiciona settings e factory de LLM com tiers e degradação`
 
 ## 5. Synthetic Data Generator (`synthetic-data`)
 
