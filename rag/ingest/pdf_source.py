@@ -14,11 +14,11 @@ from __future__ import annotations
 
 import io
 import re
-from dataclasses import dataclass
 
 import pdfplumber
 
-from rag.ingest.amendment_notes import AmendmentNote, extract_amendment_notes
+from rag.ingest.amendment_notes import extract_amendment_notes
+from rag.ingest.extracted_document import ExtractedDocument
 
 _MARGIN_FRACTION = 0.15
 """A line whose vertical position falls within this fraction of the
@@ -30,12 +30,6 @@ _REPEAT_THRESHOLD = 0.5
 fraction of pages to be treated as a repeated header/footer, rather
 than a coincidence (e.g. the last page's substantive text happening to
 reach the bottom margin)."""
-
-
-@dataclass(frozen=True)
-class ExtractedDocument:
-    text: str
-    amendment_notes: tuple[AmendmentNote, ...]
 
 
 def _normalize_for_frequency(text: str) -> str:

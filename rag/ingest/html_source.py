@@ -20,24 +20,18 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterator
-from dataclasses import dataclass
 
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 
 from rag.ingest.amendment_notes import AMENDMENT_NOTE_PATTERN, AmendmentNote
+from rag.ingest.extracted_document import ExtractedDocument
 
 _LINE_THROUGH_PATTERN = re.compile(r"text-decoration\s*:\s*[^;\"]*line-through", re.IGNORECASE)
 
 DEFAULT_ENCODING = "windows-1252"
 """Planalto's "compilado" pages declare no charset at all (verified
 against the real fetched CDC page) — this is the fallback, not a guess."""
-
-
-@dataclass(frozen=True)
-class ExtractedDocument:
-    text: str
-    amendment_notes: tuple[AmendmentNote, ...]
 
 
 def _is_revoked_element(tag: Tag) -> bool:
