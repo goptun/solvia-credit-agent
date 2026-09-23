@@ -80,10 +80,10 @@
 
 ## 8. Conversation API (`conversation-api`)
 
-- [ ] 8.1 Implement `POST /conversations/{id}/messages` requiring `customer_id` on the first message of a conversation, rejecting unknown customer ids and mismatched customer ids on existing conversations — verify API tests for the unknown-id, mismatched-id, new-conversation, and continued-conversation cases
-- [ ] 8.2 Implement SSE streaming restricted to `node_started`/`node_finished` progress events (no message content) plus a single terminal `final` event carrying the reply produced after `compliance_guard` — verify an API test asserts no event before the last one carries reply content and exactly one `final` event closes the stream
-- [ ] 8.3 Implement `GET /health/live` (process-only, no external calls) and `GET /health/ready` (includes the gateway `/v1/models` check) — verify API tests cover live-always-ok and ready reachable/unreachable gateway cases
-- [ ] 8.4 Commit: `feat(api): adiciona endpoint de conversa vinculado a cliente com streaming seguro e health checks`
+- [x] 8.1 Implement `POST /conversations/{id}/messages` requiring `customer_id` on the first message of a conversation, rejecting unknown customer ids and mismatched customer ids on existing conversations — verify API tests for the unknown-id, mismatched-id, new-conversation, and continued-conversation cases
+- [x] 8.2 Implement SSE streaming restricted to `node_started`/`node_finished` progress events (no message content) plus a single terminal `final` event carrying the reply produced after `compliance_guard` — verify an API test asserts no event before the last one carries reply content and exactly one `final` event closes the stream
+- [x] 8.3 Implement `GET /health/live` (process-only, no external calls) and `GET /health/ready` (includes the gateway `/v1/models` check) — verify API tests cover live-always-ok and ready reachable/unreachable gateway cases
+- [x] 8.4 Commit: `feat(api): adiciona endpoint de conversa vinculado a cliente com streaming seguro e health checks`
 
 ## 9. Observability (`observability`)
 
