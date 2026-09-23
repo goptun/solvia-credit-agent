@@ -81,9 +81,9 @@
 
 ## 11. Documentation
 
-- [ ] 11.1 Update `README.md`'s project layout and architecture diagram to include the `rag/` package and the `knowledge_agent` node/routing — verify the Mermaid diagram renders and the new routing edges match `apps/agent/graph.py`
-- [ ] 11.2 Document `python -m rag.ingest fetch`, `python -m rag.migrate`, and `python -m rag.eval.run` in the README, alongside the existing local-dev instructions — verify each documented command actually runs as written
-- [ ] 11.3 Commit: `docs(readme): documenta o pipeline de conhecimento regulatório`
+- [x] 11.1 Update `README.md`'s project layout and architecture diagram to include the `rag/` package and the `knowledge_agent` node/routing — verify the Mermaid diagram renders and the new routing edges match `apps/agent/graph.py`
+- [x] 11.2 Document `python -m rag.ingest fetch`, `python -m rag.migrate`, and `python -m rag.eval.run` in the README, alongside the existing local-dev instructions — verify each documented command actually runs as written — **verified against the local `solvia_dev` pgvector container**: `rag.migrate` reports "rag_chunks schema is up to date", `rag.ingest fetch` re-verifies all 5 documents' hashes unchanged, `rag.ingest index` skips all 5 as unchanged (idempotent), `rag.eval.run` reproduces the exact recorded baseline (recall@k 64.00%, MRR 0.523, refusal accuracy 50.00%)
+- [x] 11.3 Commit: `docs(readme): documenta o pipeline de conhecimento regulatório`
 
 ## 12. Smoke test extension
 
