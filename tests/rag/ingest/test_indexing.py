@@ -47,12 +47,48 @@ def _doc(doc_id: str, sha256: str) -> ManifestDocument:
     )
 
 
+def _catalog_doc(doc_id: str) -> ManifestDocument:
+    """A `product_catalog` document, whose manifest `sha256` is always
+    `None` by design — see `rag/ingest/fetch.py`."""
+    return ManifestDocument(
+        id=doc_id,
+        title=f"Test {doc_id}",
+        norm=None,
+        source_type="product_catalog",
+        url=None,
+        retrieved_at=date(2026, 1, 1),
+        version_date=None,
+        sha256=None,
+    )
+
+
 @pytest.fixture(autouse=True)
 def _clean_table() -> None:
     assert _DATABASE_URL is not None
     migrate(_DATABASE_URL)
     with psycopg.connect(_DATABASE_URL, autocommit=True) as conn:
         conn.execute("DELETE FROM rag_chunks WHERE document_id LIKE 'test-idx-%'")
+
+
+def test_product_catalog_document_reindexes_idempotently_without_a_manifest_hash() -> None:
+    """A `product_catalog` document has no manifest-pinned `sha256`
+    (see `rag/ingest/fetch.py`) — `index_document` must still compute
+    an effective hash from the extracted text itself, so unchanged
+    reindexing skips and a real content change still reindexes."""
+    assert _DATABASE_URL is not None
+    doc = _catalog_doc("test-idx-catalog")
+    extracted_v1 = ExtractedDocument(text="Catálogo fictício versão um.", amendment_notes=())
+
+    with psycopg.connect(_DATABASE_URL, autocommit=True) as conn:
+        reindexed_first = index_document(conn, doc, extracted_v1, _fake_embed_documents)
+        reindexed_unchanged = index_document(conn, doc, extracted_v1, _fake_embed_documents)
+
+        extracted_v2 = ExtractedDocument(text="Catálogo fictício versão dois.", amendment_notes=())
+        reindexed_changed = index_document(conn, doc, extracted_v2, _fake_embed_documents)
+
+    assert reindexed_first is True
+    assert reindexed_unchanged is False
+    assert reindexed_changed is True
 
 
 def _chunk_count(conn: psycopg.Connection[Any], document_id: str) -> int:

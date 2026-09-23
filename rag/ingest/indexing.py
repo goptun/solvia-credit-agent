@@ -65,13 +65,22 @@ def index_document(
     *,
     chunk_max_chars: int = 1500,
 ) -> bool:
-    """Reindex `doc` if its manifest hash differs from what's already
+    """Reindex `doc` if its effective hash differs from what's already
     stored for it. Returns `True` if reindexing happened, `False` if
-    skipped because the document is unchanged."""
-    if doc.sha256 is None:
-        raise ValueError(f"{doc.id!r} has no recorded hash to compare against")
+    skipped because the document is unchanged.
 
-    if existing_document_hash(conn, doc.id) == doc.sha256:
+    Uses `doc.sha256` when the manifest pins one (every `regulation`
+    document). A `product_catalog` document's manifest hash is `null`
+    by design (see `rag/ingest/fetch.py` — it's locally generated, not
+    fetched, so there's no upstream drift to detect) — its effective
+    hash is instead computed from `extracted.text` itself, so unchanged
+    reindexing still skips and a real content change still reindexes,
+    per `specs/regulatory-knowledge-base/spec.md` — "Idempotent,
+    incremental indexing", which does not exempt any source type.
+    """
+    effective_hash = doc.sha256 or hashlib.sha256(extracted.text.encode("utf-8")).hexdigest()
+
+    if existing_document_hash(conn, doc.id) == effective_hash:
         return False
 
     chunks = chunk_extracted_document(
@@ -94,7 +103,7 @@ def index_document(
             (
                 chunk_id,
                 chunk.document_id,
-                doc.sha256,
+                effective_hash,
                 chunk.source_type,
                 chunk.norm,
                 chunk.article_ref,

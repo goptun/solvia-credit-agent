@@ -1,4 +1,5 @@
-"""`python -m rag.ingest fetch` — re-fetch and verify the corpus.
+"""`python -m rag.ingest fetch|index` — fetch/verify, then chunk, embed,
+and index the corpus.
 
 This is the CLI wiring layer: the only place in `rag/ingest/` allowed to
 import from `apps/` (for the product catalog's source text), per
@@ -7,14 +8,22 @@ import from `apps/` (for the product catalog's source text), per
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
 import httpx
+import psycopg
 
 from apps.agent.config.product_descriptions import GENERAL_PRODUCT_OVERVIEW, PRODUCT_DESCRIPTIONS
-from rag.corpus.manifest import load_manifest
+from rag.corpus.manifest import ManifestDocument, load_manifest
+from rag.embeddings.fastembed_adapter import FastEmbedAdapter
+from rag.ingest.extracted_document import ExtractedDocument
 from rag.ingest.fetch import FetchResult, HashMismatchError, fetch_all
+from rag.ingest.html_source import extract_html
+from rag.ingest.indexing import index_document
+from rag.ingest.pdf_source import extract_pdf
+from rag.settings import get_rag_settings
 
 _OUTPUT_DIR = "./.data/rag_corpus"
 
@@ -64,11 +73,50 @@ def fetch_command() -> int:
     return 0
 
 
+def _extract_document(doc: ManifestDocument) -> ExtractedDocument:
+    if doc.source_type == "product_catalog":
+        path = Path(_OUTPUT_DIR) / f"{doc.id}.txt"
+        return ExtractedDocument(text=path.read_text(encoding="utf-8"), amendment_notes=())
+
+    assert doc.url is not None
+    extension = ".pdf" if doc.url.lower().endswith(".pdf") else ".htm"
+    path = Path(_OUTPUT_DIR) / f"{doc.id}{extension}"
+    content = path.read_bytes()
+    return extract_pdf(content) if extension == ".pdf" else extract_html(content)
+
+
+def index_command() -> int:
+    database_url = os.environ.get("DATABASE_URL")
+    if not database_url:
+        print("ERROR: DATABASE_URL is not set", file=sys.stderr)
+        return 1
+
+    manifest = load_manifest()
+    settings = get_rag_settings()
+    embeddings = FastEmbedAdapter(settings.rag_embedding_model)
+
+    with psycopg.connect(database_url, autocommit=True) as conn:
+        for doc in manifest.documents:
+            extracted = _extract_document(doc)
+            reindexed = index_document(
+                conn,
+                doc,
+                extracted,
+                embeddings.embed_documents,
+                chunk_max_chars=settings.rag_chunk_max_chars,
+            )
+            status = "reindexed" if reindexed else "unchanged, skipped"
+            print(f"[{doc.id}] {status}")
+    return 0
+
+
 def main() -> int:
-    if len(sys.argv) < 2 or sys.argv[1] != "fetch":
-        print("Usage: python -m rag.ingest fetch", file=sys.stderr)
+    if len(sys.argv) < 2 or sys.argv[1] not in ("fetch", "index"):
+        print("Usage: python -m rag.ingest fetch|index", file=sys.stderr)
         return 2
-    return fetch_command()
+    if sys.argv[1] == "fetch":
+        return fetch_command()
+    return index_command()
 
 
 if __name__ == "__main__":
