@@ -463,7 +463,11 @@ async def main() -> int:
     # knowledge_agent, which needs a real corpus already ingested into
     # `DATABASE_URL` (see `rag/ingest/__main__.py`'s `index` command)
     # — this script exercises the real retrieval path, not a stub.
-    embeddings = FastEmbedAdapter(rag_settings.rag_embedding_model)
+    embeddings = FastEmbedAdapter(
+        rag_settings.rag_embedding_model,
+        threads=rag_settings.rag_embedding_threads,
+        batch_size=rag_settings.rag_embedding_batch_size,
+    )
     rag_pool = ConnectionPool(api_settings.database_url, open=True)
     try:
         retrieve = functools.partial(hybrid_search_async, rag_pool, rag_settings)

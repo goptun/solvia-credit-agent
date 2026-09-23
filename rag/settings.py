@@ -23,6 +23,25 @@ class RagSettings(BaseSettings):
     `fastembed`'s model catalog."""
     rag_chunk_max_chars: int = 1500
 
+    rag_embedding_threads: int = 2
+    """ONNX Runtime intra-op thread count for `fastembed`, passed to
+    `TextEmbedding(threads=...)`. Matches the target VPS's 2 vCPUs (see
+    `docs/adr/ADR-003-embedding-model.md`) rather than defaulting to
+    `onnxruntime`'s own all-cores autodetection, which is what let a
+    local benchmark of `intfloat/multilingual-e5-large` exhaust this
+    development machine's RAM (unconstrained threads *and* the default
+    `batch_size=256` embedding the whole corpus in one call — see
+    `rag_embedding_batch_size` and ADR-003's "Benchmark methodology and
+    safety" section)."""
+    rag_embedding_batch_size: int = 16
+    """`fastembed`'s `TextEmbedding.embed(batch_size=...)` for document
+    (passage) embedding during ingestion — the real OOM incident above
+    happened with the library default of 256, which is generous for a
+    beefy CI runner but not for the target VPS's constrained RAM. Never
+    applies to `embed_query` (always a single string, batch size 1 in
+    effect); `parallel` is always left at its default `None` (no
+    multiprocess model duplication)."""
+
     rag_k_vector: int = 20
     rag_k_fts: int = 20
     rag_rrf_k: int = 60

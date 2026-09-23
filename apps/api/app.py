@@ -42,7 +42,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     tracer = build_tracer()
 
     await asyncio.to_thread(migrate, api_settings.database_url)
-    embeddings = FastEmbedAdapter(rag_settings.rag_embedding_model)
+    embeddings = FastEmbedAdapter(
+        rag_settings.rag_embedding_model,
+        threads=rag_settings.rag_embedding_threads,
+        batch_size=rag_settings.rag_embedding_batch_size,
+    )
     rag_pool = ConnectionPool(api_settings.database_url, open=True)
     retrieve = functools.partial(hybrid_search_async, rag_pool, rag_settings)
     knowledge_agent_node = make_knowledge_agent_node(

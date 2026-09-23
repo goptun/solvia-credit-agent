@@ -12,11 +12,81 @@ from __future__ import annotations
 import os
 from typing import Any
 
+import numpy as np
 import pytest
 
-from rag.embeddings.fastembed_adapter import DEFAULT_MODEL, FastEmbedAdapter, _uses_e5_prefixes
+import rag.embeddings.fastembed_adapter as fastembed_adapter_module
+from rag.embeddings.fastembed_adapter import (
+    DEFAULT_BATCH_SIZE,
+    DEFAULT_MODEL,
+    DEFAULT_THREADS,
+    FastEmbedAdapter,
+    _uses_e5_prefixes,
+)
 
 _run_real = os.environ.get("RAG_RUN_REAL_EMBEDDING_TESTS") == "1"
+
+
+class _FakeTextEmbedding:
+    """Stands in for `fastembed.TextEmbedding` so the thread/batch-size
+    wiring (`RagSettings.rag_embedding_threads`/`rag_embedding_batch_
+    size`, see their docstrings for why: a real unconstrained benchmark
+    of `intfloat/multilingual-e5-large` exhausted a development
+    machine's RAM) can be verified in CI without downloading a real
+    model."""
+
+    def __init__(self, model_name: str, threads: int | None = None) -> None:
+        self.init_kwargs = {"model_name": model_name, "threads": threads}
+
+    def embed(self, documents: Any, **kwargs: Any) -> Any:
+        self.last_embed_documents = list(documents)
+        self.last_embed_kwargs = kwargs
+        return [np.zeros(3) for _ in documents]
+
+
+def test_constructor_passes_threads_to_text_embedding(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(fastembed_adapter_module, "TextEmbedding", _FakeTextEmbedding)
+
+    adapter = FastEmbedAdapter()
+
+    assert adapter._model.init_kwargs == {  # type: ignore[attr-defined]
+        "model_name": DEFAULT_MODEL,
+        "threads": DEFAULT_THREADS,
+    }
+
+
+def test_constructor_accepts_a_custom_thread_count(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(fastembed_adapter_module, "TextEmbedding", _FakeTextEmbedding)
+
+    adapter = FastEmbedAdapter(threads=4)
+
+    assert adapter._model.init_kwargs["threads"] == 4  # type: ignore[attr-defined]
+
+
+def test_embed_documents_caps_batch_size_and_disables_multiprocessing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(fastembed_adapter_module, "TextEmbedding", _FakeTextEmbedding)
+    adapter = FastEmbedAdapter()
+
+    adapter.embed_documents(["a", "b"])
+
+    assert adapter._model.last_embed_kwargs == {  # type: ignore[attr-defined]
+        "batch_size": DEFAULT_BATCH_SIZE,
+        "parallel": None,
+    }
+
+
+def test_embed_query_uses_batch_size_one(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(fastembed_adapter_module, "TextEmbedding", _FakeTextEmbedding)
+    adapter = FastEmbedAdapter()
+
+    adapter.embed_query("empréstimo pessoal")
+
+    assert adapter._model.last_embed_kwargs == {  # type: ignore[attr-defined]
+        "batch_size": 1,
+        "parallel": None,
+    }
 
 
 @pytest.mark.parametrize(

@@ -93,7 +93,11 @@ def index_command() -> int:
 
     manifest = load_manifest()
     settings = get_rag_settings()
-    embeddings = FastEmbedAdapter(settings.rag_embedding_model)
+    embeddings = FastEmbedAdapter(
+        settings.rag_embedding_model,
+        threads=settings.rag_embedding_threads,
+        batch_size=settings.rag_embedding_batch_size,
+    )
 
     with psycopg.connect(database_url, autocommit=True) as conn:
         for doc in manifest.documents:
