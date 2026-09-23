@@ -103,5 +103,5 @@
 
 ## 11. Pull Request
 
-- [ ] 11.1 Push the branch and open a PR using the `.github/pull_request_template.md` template — verify CI (including the Postgres service container job) passes on the PR
-- [ ] 11.2 Present the PR link to me for review before merge
+- [x] 11.1 Push the branch and open a PR using the `.github/pull_request_template.md` template — verify CI (including the Postgres service container job) passes on the PR
+- [x] 11.2 Present the PR link to me for review before merge
