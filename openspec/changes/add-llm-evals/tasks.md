@@ -1,0 +1,113 @@
+## 0. Branch and plan
+
+- [ ] 0.1 From an up-to-date `main` (`git fetch origin && git checkout main && git pull`), create branch `feat/add-llm-evals` (the plan artifacts in `openspec/changes/add-llm-evals/` come along) — verify with `git branch --show-current`
+- [ ] 0.2 Run `openspec validate add-llm-evals --strict`, then commit the plan as `chore(openspec): adiciona plano da change add-llm-evals` — verify validation passes and `git status` is clean afterwards
+
+## 1. Package skeleton and settings
+
+- [ ] 1.1 Create the `evals/` package skeleton (`core/`, `adapters/`, `suites/`, `cli.py`, `__main__.py`), add `evals` to the mypy `files` list, and create `tests/evals/` — verify `uv run python -m evals --help` lists the subcommands (`run`, `baseline`, `report`, `review-sample`, `fixture`, `langfuse`) and `uv run mypy .` passes
+- [ ] 1.2 Add `EvalsSettings` (pydantic-settings, same pattern as `rag/settings.py`): `EVALS_MAX_GATEWAY_CALLS` (300), `EVALS_PACING_SECONDS` (6), `EVALS_MAX_ERROR_SHARE` (0.05), `EVALS_MAX_FALLBACK_SHARE` (0.10), `EVALS_SEED` (42) — verify a unit test loads the defaults and overrides from env vars
+- [ ] 1.3 Commit: `chore(evals): cria o esqueleto do pacote de avaliação e suas configurações`
+
+## 2. Pure metrics (`evals/core`, no LangChain/psycopg imports)
+
+- [ ] 2.1 Implement the Wilson 95% interval and the seeded percentile bootstrap — verify unit tests against hand-computed values (e.g. Wilson for 0/10, 10/10, 7/25) and that the same seed gives identical bootstrap bounds
+- [ ] 2.2 Implement retrieval metrics: recall@k and MRR with acceptable-ref lists, breakdown by style/document/difficulty, best-similarity quantiles, and the threshold table (false-refusal vs unanswerable-refusal for t = 0.30…0.90 step 0.05) — verify tests with hand-built ranked results cover multi-ref hits, misses, the catalog (no refs), and a monotonic threshold table; port the relevant cases from `tests/rag/eval/test_run.py` first
+- [ ] 2.3 Implement classification/extraction metrics: accuracy with `acceptable` sets, confusion matrix over six intents plus `continue`, slot exact match per field and "no invented value", precision/recall — verify tests with small labelled examples including a continuation and an ambiguous item
+- [ ] 2.4 Implement grounding metrics: false-refusal, refusal accuracy far/near-miss, citation validity (every cited ref exists in that turn's retrieved set), expected-ref hit, and the refusal cause decomposition in the order threshold → gold-not-retrieved → LLM-refused-with-gold — verify tests (port `tests/rag/eval/test_end_to_end.py` cases) show each question lands in exactly one cause
+- [ ] 2.5 Implement operational aggregation over call records (single-attempt latency p50/p95, attempts per operation, no-tool-call rate, JSON-fallback rate, resolved-model mix per alias) — verify tests with a synthetic call log where the expected rates are computed by hand
+- [ ] 2.6 Commit: `feat(evals): implementa as métricas puras com intervalos de confiança`
+
+## 3. Baseline, budget and contamination logic (pure)
+
+- [ ] 3.1 Implement the baseline schema and comparison with per-metric direction and tolerance, producing the `metric | baseline | new | tolerance | diff | status` table — verify tests for regression beyond tolerance (fail), within tolerance (pass), improvement beyond tolerance (pass + note), and zero tolerance failing on any change
+- [ ] 3.2 Implement call-budget accounting and the pre-run call estimate — verify tests: refuses to start when the estimate exceeds the budget; stops before an item when the remaining budget cannot cover a worst-case item (8 calls) and marks the run incomplete
+- [ ] 3.3 Implement contamination detection (error-share, unexpected model, fallback-model share, incomplete/interrupted) — verify one test per reason, that reasons are listed, and that a clean run is not flagged
+- [ ] 3.4 Commit: `feat(evals): implementa baseline, orçamento de chamadas e detecção de contaminação`
+
+## 4. Dataset schemas and review tooling
+
+- [ ] 4.1 Add Pydantic schemas and a loader for the four datasets (retrieval, router, slots, compliance) with `version` and a content hash — verify unit tests reject a missing field, an unknown label, an unknown document, and evidence longer than 200 characters
+- [ ] 4.2 Implement the derived difficulty rule and composition validators (minimums for colloquial share, near-miss count, per-document coverage, unaccented and multi-ref presence, all six intents, continuation items, PR #5 fail-closed examples) — verify tests recompute difficulty and fail when a declared tag disagrees with the rule
+- [ ] 4.3 Implement `python -m evals review-sample --dataset D --n 15 --seed S` (stratified round-robin over tags/labels) — verify the same seed prints the same items, different seeds differ, and every stratum present in the dataset appears when the sample size allows
+- [ ] 4.4 Commit: `feat(evals): adiciona schemas dos datasets, validações e amostra estratificada para revisão`
+
+## 5. Corpus chunk fixture
+
+- [ ] 5.1 Refactor `rag/ingest/indexing.py` to expose the chunk-upsert step as `index_chunks(...)`, called by `index_document` — verify the existing `tests/rag/ingest/test_indexing.py` passes unchanged (no behavior change)
+- [ ] 5.2 Implement `python -m evals fixture build` (needs the fetched corpus, local only): one JSONL line per chunk with every stored field except the embedding, plus a header with each document's manifest sha256 and fetch date — verify running it locally produces one line per chunk currently in `rag_chunks` (482) and a test caps the file at 2 MB
+- [ ] 5.3 Implement the fixture loader/indexer adapter — verify an integration test against the pgvector service indexes the committed fixture with `FakeEmbeddings` and finds the expected chunk count and per-document counts
+- [ ] 5.4 Extend `review-sample` so retrieval items also print the top-3 chunks the fixture index returns (document, article ref, similarity, first 200 characters; production hybrid search, source-type scoped for answerable items and unscoped for unanswerable ones) — verify a test against the pgvector service with `FakeEmbeddings` that every sampled retrieval item shows exactly three chunks with those four fields, that no gateway/LLM object is constructed, and that non-retrieval datasets print no evidence block
+- [ ] 5.5 Implement a unit test that fails when a document hash recorded in the fixture header differs from `rag/corpus/manifest.yaml`, and `python -m evals fixture verify` (recomputes chunks from the fetched corpus and diffs against the fixture) — verify the test fails against a fixture with an altered hash and `fixture verify` reports no diff on the committed one
+- [ ] 5.6 Commit the code: `feat(evals): adiciona construção, verificação e indexação do fixture de chunks do corpus`; then commit the generated `evals/fixtures/corpus_chunks.jsonl` separately: `chore(evals): versiona o fixture de chunks do corpus com proveniência`
+
+## 6. Datasets
+
+- [ ] 6.1 Build the retrieval dataset (~100): migrate the 31 existing questions and grow to ~75 answerable (≥40% colloquial, some unaccented, some multi-ref, every document and the catalog covered, each with a literal evidence quote) and ~25 unanswerable (≥15 near-miss) — verify the validators from 4.2 pass, every evidence quote is found in the fixture chunks of the expected document/article, and print the composition table (counts by style/document/difficulty/distance)
+- [ ] 6.2 Commit: `chore(evals): adiciona o dataset de recuperação e fundamentação com ~100 perguntas`
+- [ ] 6.3 Build the router dataset (~60: all six intents, ambiguous items with acceptable sets, active-flow continuations such as "sim, autorizo" and "24 meses") — verify validators pass and print counts per intent/category; commit: `chore(evals): adiciona o dataset do roteador de intenções`
+- [ ] 6.4 Build the slot-extraction dataset (~30 loan requests, including missing and invalid slots) — verify validators pass and print counts per tag; commit: `chore(evals): adiciona o dataset de extração de slots`
+- [ ] 6.5 Build the compliance dataset (~40 approval items labelled promise/hedge/neutral including adversarial phrasings and the four PR #5 examples, plus ~15 PII masking cases with expected masked output; synthetic/reserved identifiers only) — verify validators pass, `mask_pii` reproduces every expected masked output, and print how each screen (`keyword_flags_approval_promise`, `keyword_flags_unhedged_approval_mention`) labels the set; commit: `chore(evals): adiciona o dataset de compliance`
+- [ ] 6.6 Write `evals/datasets/README.md` (labelling rules: colloquial, ambiguous, adversarial, acceptable refs, near-miss; how difficulty is derived; how to add an item; synthetic-data rule) — verify a test asserts the README exists and mentions every dataset; commit: `docs(evals): documenta as regras de rotulagem dos datasets`
+
+## 7. GATE: dataset review (BLOCKING — no baseline before this passes)
+
+- [ ] 7.1 Run `python -m evals review-sample --n 15 --seed 42` for each of the four datasets (retrieval samples with their top-3 retrieved chunks, using the real local embedding model — informational, no gateway) and present the four stratified samples to the maintainer, then STOP and wait for approval; apply any requested changes (bumping the dataset version) and re-sample the changed strata — verify the maintainer has explicitly approved every dataset
+- [ ] 7.2 Record the approved content hash of each dataset in `evals/datasets/review.yaml` — verify a test that `baseline update` reads it and refuses a dataset whose hash differs; commit: `chore(evals): registra a aprovação dos datasets pelo mantenedor`
+
+## 8. Offline suites and CLI
+
+- [ ] 8.1 Implement the offline compliance suite (keyword screen and strict screen precision/recall, strict-screen false-positive rate on approval-mentioning hedge/neutral items, masking exact match) and `python -m evals run --suite compliance --mode offline` — verify the machine-readable output records mode, git commit, dataset versions and seed, and two consecutive runs are byte-identical
+- [ ] 8.2 Implement the offline retrieval suite: migrate, index the fixture, run each answerable/unanswerable question through the production hybrid search with the eval session's `hnsw.ef_search` at its maximum, output recall/MRR by stratum, similarity quantiles and the threshold table — verify a test against the pgvector service with `FakeEmbeddings` and a test that two consecutive runs print identical metrics
+- [ ] 8.3 Run the offline retrieval suite locally with the real embedding model — verify the numbers are plausible against ADR-003 (recall@k on the old questions ≈ 68%) and record them in the task notes as **informational only** (this machine is ARM; the enforced retrieval numbers come from CI, see 9.9); no gateway involved
+- [ ] 8.4 Implement `python -m evals report` (Markdown tables with CIs and optional diff against a baseline) and `--update-readme` (rewrites only the `<!-- evals:metrics:start/end -->` block) — verify golden-file tests for both and that content outside the markers is untouched
+- [ ] 8.5 Commit: `feat(evals): adiciona as suítes offline de recuperação e compliance, o CLI e o gerador de relatório`
+
+## 9. Baselines and the CI gate
+
+- [ ] 9.1 Implement `python -m evals baseline update --suite S --from-run R` and `--from-artifact PATH` with every refusal from the spec (contaminated, incomplete, sampled, dirty tree, run commit ≠ HEAD, unapproved or changed dataset, mode/suite mismatch, unset expected model sets for live); the **offline retrieval** suite is refused for `--from-run` and accepted only via `--from-artifact` for a CI-produced artifact (`environment.ci = true`, x86_64) whose commit is an ancestor of `HEAD` with no changed files outside `evals/baselines/` between them — verify one unit test per refusal (including a local-ARM run, a non-CI artifact, and a commit followed by a code change) and a success case that writes commit, dataset version/hash, aliases and model mix
+- [ ] 9.2 Implement `python -m evals run … --compare-baseline` (exit code 1 on regression, diff table printed; for the retrieval suite outside CI it prints the diff as informational and always exits 0; with no baseline it prints a prominent notice and exits 0) — verify tests for pass, regression, improvement-note, local-retrieval-informational and no-baseline cases
+- [ ] 9.3 Implement the pure "is the retrieval evaluation relevant to this diff" function (`rag/**`, `evals/**`, `uv.lock`, `apps/agent/nodes/compliance*.py`; always true on `main`) — verify unit tests with sample file lists including a docs-only change (not relevant)
+- [ ] 9.4 Add the `Evals (offline)` job to `.github/workflows/ci.yml`: compute relevance from the PR diff, always run the compliance suite, and when relevant restore the embedding-model `actions/cache` (key from the model name and `uv.lock`), migrate, index the fixture, run retrieval with `--compare-baseline`, and upload the run JSON as an artifact that records the PR **head** commit (not the merge commit), `environment.ci = true` and the architecture; no secrets, no gateway — verify with a workflow lint and by reading the job for absence of secrets; the CI behavior is checked in 9.8–9.10
+- [ ] 9.5 Record the offline **compliance** baseline locally from a clean tree using `baseline update` (deterministic: keyword/regex screens and masking), only after task 7.2 — verify the file contains commit, dataset version and zero tolerances for the deterministic metrics, and commit: `chore(evals): registra o baseline offline de compliance`. The retrieval baseline is NOT recorded here
+- [ ] 9.6 Demonstrate the gate on the compliance suite: introduce an intentional regression locally (not committed) and verify the compare command exits 1 with the diff table; record the printed table in the task notes and discard the change
+- [ ] 9.7 Commit: `ci(evals): adiciona o job offline de avaliação com cache do modelo e gate de regressão`; note for the maintainer that making `Evals (offline)` a required check needs a ruleset change (not made by this change)
+- [ ] 9.8 Push the branch and open a **draft** PR (`.github/pull_request_template.md`, Portuguese, description to be completed in 14.1) so CI runs the `Evals (offline)` job — verify the job runs the retrieval suite, passes with the "no retrieval baseline yet" notice, and uploads the run artifact
+- [ ] 9.9 Download the retrieval run artifact with `gh run download` (repository read only; artifact name and run id from `gh run list`), run `python -m evals baseline update --suite retrieval --from-artifact <path>` on a clean tree, and commit only `evals/baselines/retrieval.json`: `chore(evals): registra o baseline offline de recuperação a partir do artefato do CI` — verify the command accepts the artifact (CI, x86_64, commit is an ancestor of `HEAD` with only `evals/baselines/` changed since) and record the baseline values
+- [ ] 9.10 Push the baseline commit — verify the next `Evals (offline)` run compares against the new baseline and shows a zero (or within-tolerance) diff, and that the job stays green; if the CI diff is beyond tolerance, record the baseline again from the newer artifact rather than widening tolerances
+
+## 10. Live infrastructure (fake LLM only)
+
+- [ ] 10.1 Implement the instrumented gateway factory (LangChain callback handler attached to each model: node, resolved model, status/error type, latency, tool-call flag) — verify tests with a fake chat model producing a native tool call, a completion with no tool call, and an error, asserting the resolved model is captured for the native structured-output call too
+- [ ] 10.2 Expose the LLM approval-promise verdict from `compliance_guard.py` as a public function with no behavior change — verify all existing `test_compliance_guard.py` tests pass unchanged
+- [ ] 10.3 Implement the live suites (`router`, `slots`, `compliance-llm`, `grounding`) each with a per-item function returning the prediction and per-item score — verify tests using the scripted fake LLM cover a correct and an incorrect item per suite and the grounding cause decomposition
+- [ ] 10.4 Implement the live runner: sequential execution, pacing with an injectable clock/sleep, stratified seeded `--sample F --seed S` selection (same strata as `review-sample`; the report records `sampled`, the fraction and the seed), pre-run call estimate that refuses to start over budget, mid-run stop on budget, run record (calls, statuses, models, latencies), contamination verdict, and committed-report output — verify tests with simulated 429/503 sequences, an unexpected model, budget exhaustion, a fake clock asserting the pacing interval, and that the same fraction and seed always select the same items and cover every stratum they can
+- [ ] 10.5 Add `evals/live_config.yaml` (aliases and per-alias expected/primary model sets, initially unset) — verify a test that a run against unset sets is allowed to execute but its report says baselining is blocked until the sets are approved
+- [ ] 10.6 Commit: `feat(evals): adiciona instrumentação do gateway, suítes live, orçamento, pacing e contaminação`
+
+## 11. LangFuse integration
+
+- [ ] 11.1 Implement the publisher port, a fake, and the real adapter, and `langfuse sync` using deterministic item ids (`<dataset>:<item id>`) — verify a test against the fake that a second sync creates no duplicates and stores the dataset version in metadata
+- [ ] 11.2 Publish live runs with `run_experiment(max_concurrency=1, …)` including per-item scores and aggregates — verify a fake-client test asserts run name, scores, and that no payload string matches key, hostname or IP patterns
+- [ ] 11.3 Degrade gracefully without credentials — verify a test that the report is still written and the skipped publication is logged
+- [ ] 11.4 Commit: `feat(evals): integra datasets e execuções live ao LangFuse`
+
+## 12. Migration and documentation
+
+- [ ] 12.1 Remove the superseded `rag/eval/questions.py`, `rag/eval/questions.yaml`, `rag/eval/run.py`, `rag/eval/end_to_end.py`, their tests, and `scripts/eval_end_to_end.py`; update the README (evaluation section, `Metrics` block markers, commands) — verify `uv run pytest`, `ruff`, `mypy` pass and `grep -r "rag.eval" .` finds no live references (ADR text excepted)
+- [ ] 12.2 Write `docs/adr/ADR-006-evaluation-harness.md` (structure, offline vs live, gates, contamination, baselines, what was deliberately not built) — verify it links the specs and is referenced from the README
+- [ ] 12.3 Write `docs/adr/ADR-007-live-evals-in-ci-over-tailscale.md` recording the Tailscale-in-GitHub-Actions options and trade-offs for a public repo, recommending local-only — verify it states clearly that nothing is implemented and that implementing it requires the maintainer's approval
+- [ ] 12.4 Commit: `refactor(evals): remove a avaliação antiga de rag/eval e atualiza a documentação` and `docs(adr): registra o harness de avaliação e a decisão sobre evals live no CI`
+
+## 13. Live validation and baseline runs (at most two live runs in total)
+
+- [ ] 13.1 Preflight: open the tunnel with `ssh -N solvia-tunnel` only (do not read shell history), verify `/v1/models` lists `solvia-fast` and `solvia-smart`, and print the estimated call count for both runs — verify the estimates (full suites ≈ 200 typical / ≈ 270 pessimistic against `EVALS_MAX_GATEWAY_CALLS=300`; the 30% validation sample ≈ 60 typical / ≈ 80 pessimistic against `EVALS_MAX_GATEWAY_CALLS=100`; both runs ≈ 260 typical / ≈ 350 pessimistic) are within their budgets and recompute them from the actual dataset sizes and the current no-tool-call behavior; never print the host, IP or user
+- [ ] 13.2 Run 1 (validation, **30% stratified sample**): `python -m evals run --mode live --sample 0.3 --seed 42` with `EVALS_MAX_GATEWAY_CALLS=100`, the default pacing, then the real `langfuse sync` and publication — verify per-call logging is complete, the report is marked `sampled` (and `baseline update` refuses it), the committed report exists, the LangFuse dataset run and scores are visible, and record the exact number of gateway calls used, the observed model mix, the real calls-per-item consumption and the contamination verdict; close the tunnel and verify port 18080 is no longer listening
+- [ ] 13.3 GATE (BLOCKING): present the observed per-alias model mix, the proposed expected and primary model sets, run 1's call count and calls-per-item, the recomputed estimate and budget for run 2 from that real consumption, and any bugs the harness revealed (recorded as follow-ups, not fixed) and wait for approval; commit the approved sets in `evals/live_config.yaml`: `chore(evals): define os conjuntos de modelos esperados por alias`
+- [ ] 13.4 Run 2 (baseline, **full suites**): start only **after the provider's daily quota reset** (confirm the reset time with the maintainer before starting and record the start time), reopen the tunnel, run `python -m evals run --mode live` with the recomputed budget (default 300) — verify the run is complete, unsampled and uncontaminated, update the live baselines through `baseline update`, commit reports and baselines, record the call count, close the tunnel and verify it is closed; if the run is contaminated, stop and report — a third run needs the maintainer's approval
+- [ ] 13.5 Refresh the README `Metrics` block with `python -m evals report --update-readme` from the committed baselines — verify only the delimited block changed; commit: `docs(readme): atualiza a seção de métricas a partir dos baselines`
+
+## 14. Pull request
+
+- [ ] 14.1 Complete the draft PR (opened in 9.8): update its description with the baseline report tables with confidence intervals, the provenance of each baseline (compliance recorded locally; retrieval from the CI artifact of run <id>; live from the baseline run), the gateway call counts of both live runs, the contamination verdicts, the recorded follow-ups, and the note about the required-check ruleset, then mark it ready for review — verify CI passes on the PR, including the `Evals (offline)` job comparing against the committed baselines
+- [ ] 14.2 Present the PR link and STOP for the maintainer's review before merge (blocking)
