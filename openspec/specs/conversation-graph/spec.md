@@ -22,7 +22,7 @@ The system SHALL bind every conversation to exactly one synthetic customer id, S
 - **THEN** the system rejects that message and does not change the conversation's bound customer id
 
 ### Requirement: Intent classification and routing
-The system SHALL classify each incoming customer message into one of: product question, loan simulation, profile analysis, complaint, or out of scope, and SHALL route the conversation accordingly.
+The system SHALL classify each incoming customer message into one of: product question, regulatory question, loan simulation, profile analysis, complaint, or out of scope, and SHALL route the conversation accordingly.
 
 #### Scenario: Loan simulation intent routes to simulation path
 - **WHEN** a customer message is classified as a loan simulation request
@@ -38,7 +38,11 @@ The system SHALL classify each incoming customer message into one of: product qu
 
 #### Scenario: Product question intent skips the consent gate
 - **WHEN** a customer message is classified as a product question
-- **THEN** the conversation routes directly to the responder step without passing through the consent gate, financial analysis, or simulation
+- **THEN** the conversation routes directly to the knowledge agent step without passing through the consent gate, financial analysis, or simulation
+
+#### Scenario: Regulatory question intent skips the consent gate
+- **WHEN** a customer message is classified as a regulatory question
+- **THEN** the conversation routes directly to the knowledge agent step without passing through the consent gate, financial analysis, or simulation
 
 #### Scenario: Profile analysis intent does not invoke offer simulation
 - **WHEN** a customer message is classified as profile analysis
@@ -115,15 +119,11 @@ The system SHALL simulate credit offers (Price and SAC, with CET) via the determ
 - **THEN** it calls the Price/SAC simulation tools, using the interest rate, IOF, and fees from the product catalog, to obtain the numeric result rather than having the LLM produce the numbers directly
 
 ### Requirement: Per-intent reply drafting
-The system SHALL draft a reply appropriate to the classified intent before compliance checking: a data-backed reply for loan simulation and profile analysis, a product-catalog-only reply for product questions, an acknowledgment noting that human handoff is a future capability for complaints, and a polite refusal for out-of-scope requests.
+The system SHALL draft a reply appropriate to the classified intent before compliance checking: a data-backed reply for loan simulation and profile analysis, an acknowledgment noting that human handoff is a future capability for complaints, and a polite refusal for out-of-scope requests. Product questions and regulatory questions are answered by the knowledge agent instead of this drafting step.
 
 #### Scenario: Loan simulation or profile analysis reply is data-backed
 - **WHEN** the responder drafts a reply for a loan simulation or profile analysis intent
 - **THEN** the numeric values in the reply come from the simulation or analysis tool output, rendered via a template, never generated as numbers by the LLM
-
-#### Scenario: Product question reply uses only the product catalog
-- **WHEN** the responder drafts a reply for a product question intent
-- **THEN** the reply content is drawn only from the fictional product catalog, not from the LLM's general knowledge or an external source
 
 #### Scenario: Complaint reply acknowledges and defers to future handoff
 - **WHEN** the responder drafts a reply for a complaint intent
@@ -133,8 +133,12 @@ The system SHALL draft a reply appropriate to the classified intent before compl
 - **WHEN** the responder drafts a reply for an out-of-scope intent
 - **THEN** the reply politely declines to help with that request without invoking financial analysis, simulation, or the product catalog
 
+#### Scenario: Product question reply uses only the product catalog
+- **WHEN** a customer message is classified as a product question
+- **THEN** the reply is produced by the knowledge agent from the product-catalog documents in the regulatory knowledge base, not by this per-intent drafting step, and not from the LLM's general knowledge or an external source
+
 ### Requirement: Compliance guardrails
-The system SHALL enforce compliance guardrails on every outgoing reply: masking PII, blocking language that promises loan approval, and injecting mandatory disclaimers.
+The system SHALL enforce compliance guardrails on every outgoing reply: masking PII, blocking language that promises loan approval, injecting mandatory disclaimers for simulation/analysis replies, and injecting an "informational content, not legal advice" disclaimer for regulatory-question replies.
 
 #### Scenario: PII is masked in the reply
 - **WHEN** an outgoing reply would otherwise include a customer's PII (CPF, account or card number, phone, or email)
@@ -147,6 +151,10 @@ The system SHALL enforce compliance guardrails on every outgoing reply: masking 
 #### Scenario: Mandatory disclaimer is present
 - **WHEN** any reply involving a simulated offer or financial analysis is sent
 - **THEN** it includes the mandatory regulatory disclaimer, injected deterministically via template
+
+#### Scenario: Informational disclaimer is present on regulatory answers
+- **WHEN** a reply answering a regulatory question is sent
+- **THEN** it includes an "informational content, not legal advice" disclaimer, injected deterministically via template
 
 ### Requirement: Typed, checkpointed conversation state
 The system SHALL represent conversation state as a typed schema and SHALL persist it via a checkpointer keyed by conversation id, so a conversation can resume after a process restart.
