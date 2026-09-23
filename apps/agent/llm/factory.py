@@ -25,6 +25,7 @@ NODE_TIER_MAP: dict[str, Tier] = {
     "offer_simulator": "smart",
     "responder": "smart",
     "compliance_guard": "fast",
+    "knowledge_agent": "smart",
 }
 """Per-node model tier. `consent_check` makes no LLM call at all (see
 design.md — "Synthetic consent flow") and is intentionally absent here."""

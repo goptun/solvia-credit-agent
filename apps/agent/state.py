@@ -17,7 +17,12 @@ from langgraph.graph.message import add_messages
 from pydantic import BaseModel, ConfigDict, Field
 
 Intent = Literal[
-    "product_question", "loan_simulation", "profile_analysis", "complaint", "out_of_scope"
+    "product_question",
+    "regulatory_question",
+    "loan_simulation",
+    "profile_analysis",
+    "complaint",
+    "out_of_scope",
 ]
 ActiveFlow = Literal["none", "consent_confirmation", "slot_filling"]
 ConsentStatusValue = Literal["valid", "missing", "expired", "just_granted"]

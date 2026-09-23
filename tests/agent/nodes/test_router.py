@@ -20,7 +20,14 @@ def _state_with_message(text: str, **overrides: object) -> ConversationState:
 
 @pytest.mark.parametrize(
     "intent",
-    ["product_question", "loan_simulation", "profile_analysis", "complaint", "out_of_scope"],
+    [
+        "product_question",
+        "regulatory_question",
+        "loan_simulation",
+        "profile_analysis",
+        "complaint",
+        "out_of_scope",
+    ],
 )
 async def test_router_classifies_each_intent_branch(intent: str) -> None:
     fast_llm = FakeLLM(responses=[RouterDecision(intent=intent)])  # type: ignore[arg-type]
@@ -29,6 +36,16 @@ async def test_router_classifies_each_intent_branch(intent: str) -> None:
     updates = await node(_state_with_message("mensagem qualquer"))
 
     assert updates["intent"] == intent
+
+
+async def test_router_classifies_a_regulatory_sounding_message() -> None:
+    fast_llm = FakeLLM(responses=[RouterDecision(intent="regulatory_question")])
+    node = make_router_node(ScriptedLLMFactory(fast=fast_llm))
+    message = "Quais são meus direitos segundo o código de defesa do consumidor?"
+
+    updates = await node(_state_with_message(message))
+
+    assert updates["intent"] == "regulatory_question"
 
 
 async def test_active_flow_consent_confirmation_skips_reclassification() -> None:

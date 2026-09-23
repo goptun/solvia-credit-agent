@@ -52,11 +52,11 @@
 
 ## 7. Knowledge agent node
 
-- [ ] 7.1 Add `"regulatory_question"` to `Intent` in `apps/agent/state.py` — verify `mypy --strict` passes and existing `Intent`-typed code still type-checks
-- [ ] 7.2 Update `apps/agent/nodes/router.py`'s `_ROUTER_INSTRUCTIONS` to classify the new intent — verify a unit test (fake LLM) asserts a regulatory-sounding message classifies as `regulatory_question`
-- [ ] 7.3 Implement `apps/agent/nodes/knowledge_agent.py`: `source_type`-filtered retrieval per intent + cosine-similarity-based refusal check (using the retrieved top chunk's raw vector similarity, never the RRF fused score) + `ainvoke_structured` claim/citation extraction + citation-membership validation + template-rendered citation strings, per `design.md` — "Grounding and citation validation" — verify unit tests (fake LLM, `FakeEmbeddings`) cover: a grounded answer with valid citations, an invented citation being dropped, all-citations-invalid falling back to the deterministic refusal, a low-similarity refusal, and a case where the fused rank alone would have suggested confidence but the raw similarity does not (asserting the refusal decision follows similarity, not rank)
-- [ ] 7.4 Add `"knowledge_agent": "smart"` to `NODE_TIER_MAP` in `apps/agent/llm/factory.py` — verify a unit test asserts `LLMFactory.for_node("knowledge_agent")` resolves the smart tier
-- [ ] 7.5 Commit: `feat(agent): adiciona nó knowledge_agent com respostas fundamentadas e citações`
+- [x] 7.1 Add `"regulatory_question"` to `Intent` in `apps/agent/state.py` — verify `mypy --strict` passes and existing `Intent`-typed code still type-checks
+- [x] 7.2 Update `apps/agent/nodes/router.py`'s `_ROUTER_INSTRUCTIONS` to classify the new intent — verify a unit test (fake LLM) asserts a regulatory-sounding message classifies as `regulatory_question`
+- [x] 7.3 Implement `apps/agent/nodes/knowledge_agent.py`: `source_type`-filtered retrieval per intent + cosine-similarity-based refusal check (using the retrieved top chunk's raw vector similarity, never the RRF fused score) + `ainvoke_structured` claim/citation extraction + citation-membership validation + template-rendered citation strings, per `design.md` — "Grounding and citation validation" — verify unit tests (fake LLM, `FakeEmbeddings`) cover: a grounded answer with valid citations, an invented citation being dropped, all-citations-invalid falling back to the deterministic refusal, a low-similarity refusal, and a case where the fused rank alone would have suggested confidence but the raw similarity does not (asserting the refusal decision follows similarity, not rank). The node takes an injected `RetrieveFn` rather than a raw DB connection, keeping it unit-testable without Postgres; the real implementation (`rag/retrieval/live.py`, a `psycopg_pool.ConnectionPool` + `asyncio.to_thread` wrapper around `hybrid_search`) is wired in task 8.1
+- [x] 7.4 Add `"knowledge_agent": "smart"` to `NODE_TIER_MAP` in `apps/agent/llm/factory.py` — verify a unit test asserts `LLMFactory.for_node("knowledge_agent")` resolves the smart tier
+- [x] 7.5 Commit: `feat(agent): adiciona nó knowledge_agent com respostas fundamentadas e citações`
 
 ## 8. Routing and compliance integration
 

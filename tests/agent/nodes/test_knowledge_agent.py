@@ -1,0 +1,180 @@
+"""knowledge_agent: grounded answers, citation validation, and the
+similarity-based (never rank-based) refusal threshold."""
+
+from __future__ import annotations
+
+from langchain_core.messages import HumanMessage
+
+from apps.agent.llm.fake import FakeLLM
+from apps.agent.nodes.knowledge_agent import (
+    Claim,
+    KnowledgeAnswer,
+    RetrieveFn,
+    make_knowledge_agent_node,
+)
+from apps.agent.state import ConversationState, initial_state
+from rag.corpus.manifest import SourceType
+from rag.embeddings.fake import FakeEmbeddings
+from rag.retrieval.retrieved_chunk import RetrievedChunk
+from rag.settings import RagSettings
+from tests.agent.nodes.fakes import ScriptedLLMFactory
+
+_EMBEDDINGS = FakeEmbeddings()
+_SETTINGS = RagSettings(rag_min_relevance_score=0.5)
+
+
+def _chunk(chunk_id: str, similarity: float, *, matched_fts: bool = True) -> RetrievedChunk:
+    return RetrievedChunk(
+        chunk_id=chunk_id,
+        document_id="cdc-consolidada",
+        norm="Lei nº 8.078/1990",
+        source_type="regulation",
+        article_ref="art. 6º",
+        hierarchy_path="art. 6º",
+        source_url="https://www.planalto.gov.br/test.htm",
+        version_date=None,
+        amendment_note=None,
+        content="São direitos básicos do consumidor...",
+        fused_score=1.0,
+        vector_similarity=similarity,
+        matched_fts=matched_fts,
+    )
+
+
+def _retrieve_returning(chunks: list[RetrievedChunk]) -> RetrieveFn:
+    async def retrieve(
+        question: str, vector: list[float], source_type: SourceType
+    ) -> list[RetrievedChunk]:
+        return chunks
+
+    return retrieve
+
+
+def _state_with_question(text: str, intent: str = "regulatory_question") -> ConversationState:
+    state = initial_state("cust-0001")
+    state["messages"] = [HumanMessage(content=text)]
+    state["intent"] = intent  # type: ignore[typeddict-item]
+    return state
+
+
+def _reply(updates: ConversationState) -> str:
+    draft_reply = updates.get("draft_reply")
+    assert draft_reply is not None
+    return draft_reply
+
+
+async def test_grounded_answer_with_valid_citation_is_rendered() -> None:
+    chunk = _chunk("chunk-1", similarity=0.9)
+    claim = Claim(text="Você tem direito à proteção à vida.", chunk_id="chunk-1")
+    smart_llm = FakeLLM(responses=[KnowledgeAnswer(claims=[claim])])
+    node = make_knowledge_agent_node(
+        ScriptedLLMFactory(smart=smart_llm), _EMBEDDINGS, _retrieve_returning([chunk]), _SETTINGS
+    )
+
+    reply = _reply(await node(_state_with_question("Quais são meus direitos?")))
+
+    assert "proteção à vida" in reply
+    assert "Lei nº 8.078/1990" in reply
+    assert "art. 6º" in reply
+
+
+async def test_invented_citation_is_dropped_but_valid_ones_survive() -> None:
+    chunk = _chunk("chunk-1", similarity=0.9)
+    smart_llm = FakeLLM(
+        responses=[
+            KnowledgeAnswer(
+                claims=[
+                    Claim(text="Afirmação real.", chunk_id="chunk-1"),
+                    Claim(text="Afirmação inventada.", chunk_id="chunk-does-not-exist"),
+                ]
+            )
+        ]
+    )
+    node = make_knowledge_agent_node(
+        ScriptedLLMFactory(smart=smart_llm), _EMBEDDINGS, _retrieve_returning([chunk]), _SETTINGS
+    )
+
+    reply = _reply(await node(_state_with_question("Pergunta qualquer")))
+
+    assert "Afirmação real." in reply
+    assert "Afirmação inventada." not in reply
+
+
+async def test_all_citations_invalid_falls_back_to_refusal() -> None:
+    chunk = _chunk("chunk-1", similarity=0.9)
+    smart_llm = FakeLLM(
+        responses=[KnowledgeAnswer(claims=[Claim(text="Inventado.", chunk_id="chunk-ghost")])]
+    )
+    node = make_knowledge_agent_node(
+        ScriptedLLMFactory(smart=smart_llm), _EMBEDDINGS, _retrieve_returning([chunk]), _SETTINGS
+    )
+
+    reply = _reply(await node(_state_with_question("Pergunta qualquer")))
+
+    assert "não encontrei" in reply.lower()
+
+
+async def test_low_similarity_refuses_without_calling_the_llm() -> None:
+    chunk = _chunk("chunk-1", similarity=0.1)
+    smart_llm = FakeLLM()  # no responses configured — a call would raise
+    node = make_knowledge_agent_node(
+        ScriptedLLMFactory(smart=smart_llm), _EMBEDDINGS, _retrieve_returning([chunk]), _SETTINGS
+    )
+
+    reply = _reply(await node(_state_with_question("Pergunta qualquer")))
+
+    assert "não encontrei" in reply.lower()
+    assert smart_llm.calls == []
+
+
+async def test_refusal_follows_similarity_not_fused_rank() -> None:
+    """The top-fused-rank chunk has a low raw similarity; a lower-ranked
+    chunk has a high one. The refusal decision must follow the best
+    *similarity* across all results, not whichever chunk is ranked
+    first — see `design.md` — "Grounding and citation validation"."""
+    top_ranked_low_similarity = _chunk("chunk-top-rank", similarity=0.1)
+    lower_ranked_high_similarity = _chunk("chunk-high-sim", similarity=0.9)
+    # Fused-rank order: the low-similarity chunk is listed first.
+    chunks = [top_ranked_low_similarity, lower_ranked_high_similarity]
+
+    claim = Claim(text="Resposta fundamentada.", chunk_id="chunk-high-sim")
+    smart_llm = FakeLLM(responses=[KnowledgeAnswer(claims=[claim])])
+    node = make_knowledge_agent_node(
+        ScriptedLLMFactory(smart=smart_llm), _EMBEDDINGS, _retrieve_returning(chunks), _SETTINGS
+    )
+
+    reply = _reply(await node(_state_with_question("Pergunta qualquer")))
+
+    assert "Resposta fundamentada." in reply
+
+
+async def test_product_question_reply_has_no_regulatory_citation() -> None:
+    catalog_chunk = RetrievedChunk(
+        chunk_id="chunk-catalog",
+        document_id="product-catalog",
+        norm=None,
+        source_type="product_catalog",
+        article_ref=None,
+        hierarchy_path="",
+        source_url=None,
+        version_date=None,
+        amendment_note=None,
+        content="Crédito pessoal Solvia, parcelas fixas.",
+        fused_score=1.0,
+        vector_similarity=0.9,
+        matched_fts=True,
+    )
+    claim = Claim(text="Oferecemos crédito com parcelas fixas.", chunk_id="chunk-catalog")
+    smart_llm = FakeLLM(responses=[KnowledgeAnswer(claims=[claim])])
+    node = make_knowledge_agent_node(
+        ScriptedLLMFactory(smart=smart_llm),
+        _EMBEDDINGS,
+        _retrieve_returning([catalog_chunk]),
+        _SETTINGS,
+    )
+    state = _state_with_question("Quais produtos vocês têm?", intent="product_question")
+
+    reply = _reply(await node(state))
+
+    assert "parcelas fixas" in reply
+    assert "(" not in reply
