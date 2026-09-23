@@ -1,13 +1,13 @@
 ## 0. Branch
 
-- [ ] 0.1 From an up-to-date `main` (`git fetch origin && git checkout main && git pull`), create branch `feat/add-regulatory-rag` — verify with `git branch --show-current`
-- [ ] 0.2 Commit the untracked `.claude/` OpenSpec commands/skills directory on this branch, excluding `.claude/settings.local.json` — verify `git status` shows `.claude/` tracked (minus `settings.local.json`) and `git log` shows this as a commit on the branch
+- [x] 0.1 From an up-to-date `main` (`git fetch origin && git checkout main && git pull`), create branch `feat/add-regulatory-rag` — verify with `git branch --show-current`
+- [x] 0.2 Commit the untracked `.claude/` OpenSpec commands/skills directory on this branch, excluding `.claude/settings.local.json` — verify `git status` shows `.claude/` tracked (minus `settings.local.json`) and `git log` shows this as a commit on the branch
 
 ## 1. Dependencies and configuration
 
-- [ ] 1.1 Add `fastembed` and a pgvector Python client (e.g. `pgvector`) to `pyproject.toml` dependencies; run `uv sync` — verify `uv run python -c "import fastembed, pgvector"` succeeds
-- [ ] 1.2 Add a `rag/` settings module (`pydantic-settings`, same pattern as `apps/agent/llm/settings.py`) covering: embedding model name, `chunk_max_chars`, hybrid retrieval `k_vector`/`k_fts`/`rrf_k`/`top_k`, `RAG_MIN_RELEVANCE_SCORE`, `RAG_RERANKING_ENABLED`, and the official-domains allowlist for corpus provenance — verify a unit test loads defaults and overrides from env vars
-- [ ] 1.3 Commit: `chore(rag): adiciona dependências e configurações do módulo de conhecimento regulatório`
+- [x] 1.1 Add `fastembed` and a pgvector Python client (e.g. `pgvector`) to `pyproject.toml` dependencies; run `uv sync` — verify `uv run python -c "import fastembed, pgvector"` succeeds
+- [x] 1.2 Add a `rag/` settings module (`pydantic-settings`, same pattern as `apps/agent/llm/settings.py`) covering: embedding model name, `chunk_max_chars`, hybrid retrieval `k_vector`/`k_fts`/`rrf_k`/`top_k`, `RAG_MIN_RELEVANCE_SCORE`, `RAG_RERANKING_ENABLED`, and the official-domains allowlist for corpus provenance — verify a unit test loads defaults and overrides from env vars
+- [x] 1.3 Commit: `chore(rag): adiciona dependências e configurações do módulo de conhecimento regulatório`
 
 ## 2. Corpus manifest and fetch/verify CLI
 
