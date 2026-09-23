@@ -71,6 +71,13 @@ def _seed() -> None:
             "hash-d",
             "Art. 2º Menciona xilofonemasingular como termo raro e específico deste artigo.",
         ),
+        (
+            "test-hybrid-e",
+            "regulation",
+            "hash-e",
+            "Art. 3º Trata da portabilidade de operações de crédito consignado "
+            "entre instituições financeiras diferentes.",
+        ),
     ]
 
     with psycopg.connect(_DATABASE_URL, autocommit=True) as conn:
@@ -106,6 +113,31 @@ def test_full_text_match_surfaces_a_chunk_vector_search_alone_would_miss() -> No
         )
 
     matched = [r for r in results if r.document_id == "test-hybrid-d"]
+    assert matched
+    assert matched[0].matched_fts is True
+
+
+def test_long_colloquial_question_partially_overlapping_a_chunk_is_still_retrieved() -> None:
+    """`plainto_tsquery` ANDs every term together, so a long colloquial
+    question sharing only a couple of words with a chunk (here just
+    "consignado") would never match it under the old query — the
+    OR-over-lexemes rewrite (design.md — "Full-text search: OR over
+    parsed lexemes") must still surface it via full text, with
+    `k_vector=1` starving out the (semantically meaningless, with
+    `FakeEmbeddings`) vector signal so only the full-text path can
+    explain the match."""
+    assert _DATABASE_URL is not None
+    question = (
+        "Ei, você sabe se dá pra eu mudar meu empréstimo consignado "
+        "pra outro banco sem perder as condições?"
+    )
+
+    with psycopg.connect(_DATABASE_URL, autocommit=True) as conn:
+        results = hybrid_search(
+            conn, question, _EMBEDDINGS.embed_query(question), top_k=10, k_vector=1
+        )
+
+    matched = [r for r in results if r.document_id == "test-hybrid-e"]
     assert matched
     assert matched[0].matched_fts is True
 

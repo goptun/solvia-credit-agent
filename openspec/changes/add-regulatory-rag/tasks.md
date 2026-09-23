@@ -95,3 +95,12 @@
 
 - [x] 13.1 Push the branch and open a PR using the `.github/pull_request_template.md` template, including the recall@k/MRR/refusal-accuracy baseline from task 6.4 and the smoke test output from task 12.2 in the PR description — verify CI (including the pgvector service container job) passes on the PR — **PR #3**: https://github.com/goptun/solvia-credit-agent/pull/3 — all 3 CI checks pass (Lint & type-check, Tests incl. the pgvector service container + `rag.migrate` step, Secret scanning)
 - [ ] 13.2 Present the PR link to me for review before merge
+
+## 14. Pre-merge retrieval quality improvements
+
+Requested during PR #3 review, before merge — see design.md's "Hybrid retrieval and fusion" and "Grounding and citation validation" sections for the measured before/after of each item. One Conventional Commit per item; CI stays green; the embedding model and corpus are never downloaded in CI (unit/integration tests keep using `FakeEmbeddings` and small fixtures).
+
+- [x] 14.1 Replace `plainto_tsquery` (implicit AND) with an OR query over the `portuguese_unaccent`-parsed lexemes in `rag/retrieval/hybrid.py`'s full-text query, keeping `ts_rank_cd` for ordering — add an integration test where a long colloquial question only partially overlaps a chunk and must still be retrieved — verify `ruff`/`mypy`/`pytest` all pass and re-run `rag.eval.run` against the real corpus to record the before/after
+- [ ] 14.2 Benchmark `intfloat/multilingual-e5-large` against the current `paraphrase-multilingual-MiniLM-L12-v2` on the eval set; record in `docs/adr/ADR-003-embedding-model.md`: recall@k/MRR (lexical vs. colloquial), similarity distributions for answerable vs. unanswerable, measured RAM and p50/p95 query-embedding latency locally, and the projected fit on the VPS (2 vCPU ARM, ~9 GiB available). Switch the default only if it wins; if switched, re-ingest the corpus and re-calibrate `RAG_MIN_RELEVANCE_SCORE` from the new similarity distribution
+- [ ] 14.3 Make the `knowledge_agent` LLM instructions explicit that it must return an empty `claims` list when the provided chunks don't answer the question; add a manual eval mode (excluded from CI, run via the gateway tunnel) that calls `ground_answer` with the real LLM over every eval question and reports end-to-end refusal accuracy (far vs. near-miss) and false-refusal rate on answerable questions, alongside the existing retrieval-only numbers
+- [ ] 14.4 Update PR #3's description with a before/after table (baseline from task 6.4/12.2 vs. each of 14.1-14.3) and stop for review before merge

@@ -27,11 +27,26 @@ LIMIT %(k)s
 """
 
 _FTS_QUERY = """
+WITH parsed_query AS (
+    -- plainto_tsquery ANDs every term together, so a long colloquial
+    -- question sharing only a few words with a chunk never matches it
+    -- (see design.md — "Full-text search: OR over parsed lexemes").
+    -- Parsing the query text into portuguese_unaccent lexemes and
+    -- OR-joining them keeps ts_rank_cd's relevance ordering (more
+    -- matched/weighted lexemes still rank higher) while letting a
+    -- single shared term surface the chunk at all.
+    SELECT to_tsquery(
+        'portuguese_unaccent',
+        array_to_string(
+            tsvector_to_array(to_tsvector('portuguese_unaccent', %(query_text)s)), ' | '
+        )
+    ) AS tsq
+)
 SELECT chunk_id
-FROM rag_chunks
-WHERE content_tsv @@ plainto_tsquery('portuguese_unaccent', %(query_text)s)
+FROM rag_chunks, parsed_query
+WHERE content_tsv @@ parsed_query.tsq
   AND (%(source_type)s::text IS NULL OR source_type = %(source_type)s::text)
-ORDER BY ts_rank_cd(content_tsv, plainto_tsquery('portuguese_unaccent', %(query_text)s)) DESC
+ORDER BY ts_rank_cd(content_tsv, parsed_query.tsq) DESC
 LIMIT %(k)s
 """
 

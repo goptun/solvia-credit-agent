@@ -48,7 +48,17 @@ def _seed() -> None:
         amendment_notes=(),
     )
     with psycopg.connect(_DATABASE_URL, autocommit=True) as conn:
-        conn.execute("DELETE FROM rag_chunks WHERE document_id = 'test-run-eval-a'")
+        # A full wipe, not a scoped `WHERE document_id = ...` delete:
+        # the eval's MRR/rank assertions below need to be the *only*
+        # chunks `hybrid_search` sees. The OR-over-lexemes full-text
+        # query (`rag/retrieval/hybrid.py` — "Full-text search: OR over
+        # parsed lexemes") matches on shared vocabulary, not an exact
+        # phrase, so leftover chunks from sibling test files sharing
+        # common Portuguese words (e.g. "disposições", "sobre") can
+        # otherwise enter the fused ranking and shift the target's
+        # rank — a real isolation gap the old, stricter AND query
+        # happened to mask.
+        conn.execute("DELETE FROM rag_chunks")
         index_document(conn, doc, extracted, _EMBEDDINGS.embed_documents)
 
 
