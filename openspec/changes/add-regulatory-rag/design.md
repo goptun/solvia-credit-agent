@@ -32,6 +32,8 @@ See `proposal.md` — "Why" for motivation. Relevant current state:
 
 `rag/corpus/manifest.yaml` is the single source of truth for what belongs in the corpus:
 
+Verified by actually fetching each URL while preparing this update (see task 2.1's checked-off verification below — the manifest is not written from assumed URLs):
+
 ```yaml
 documents:
   - id: cdc-consolidada
@@ -40,32 +42,32 @@ documents:
     source_type: regulation
     url: "https://www.planalto.gov.br/ccivil_03/leis/l8078compilado.htm"
     retrieved_at: "2026-09-23"
-    version_date: "2021-07-01"   # date of the last consolidating amendment reflected
-    sha256: "<computed at fetch time>"
+    version_date: "2021-07-01"   # last consolidating amendment reflected: Lei nº 14.181/2021 (over-indebtedness), which inserted arts. 54-A–G
+    sha256: "7220c4f6e957381a332edb3fc8795df6bca3ef8c46db7656cbd56a9112c65219"
   - id: lgpd
     title: "Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018)"
     norm: "Lei nº 13.709/2018"
     source_type: regulation
     url: "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm"
     retrieved_at: "2026-09-23"
-    version_date: "2019-08-08"
-    sha256: "<computed at fetch time>"
+    version_date: "2026-06-30"   # most recent consolidating amendment: Lei nº 15.452/2026, which redrafted art. 55-A (ANPD's institutional linkage)
+    sha256: "032aea7bf183d79b8284d29bf2768d56e55f518a3061dd9c4eb7d854d612e71c"
   - id: open-finance-regulamento
     title: "Resolução Conjunta BCB/CMN nº 1/2020 (Open Finance), texto consolidado"
     norm: "Resolução Conjunta BCB/CMN nº 1, de 4 de maio de 2020"
     source_type: regulation
-    url: "https://normativos.bcb.gov.br/..."   # the BCB-published consolidated PDF, whichever version number it currently is
+    url: "https://normativos.bcb.gov.br/Lists/Normativos/Attachments/51028/Res_Conj_0001_v7_L.pdf"
     retrieved_at: "2026-09-23"
-    version_date: "<consolidation date printed on the fetched PDF>"
-    sha256: "<computed at fetch time>"
+    version_date: "2024-07-04"   # most recent consolidating amendment reflected: Resolução Conjunta nº 10, de 4/7/2024
+    sha256: "8fcd7179b9ebe8243854d80cc3a8bca075cd926fef35d674df11306d5274dbe7"
   - id: cet-disclosure
     title: "Resolução CMN nº 4.881/2020 (Custo Efetivo Total)"
     norm: "Resolução CMN nº 4.881, de 23 de dezembro de 2020"
     source_type: regulation
-    url: "https://www.bcb.gov.br/content/estabilidadefinanceira/especialnor/Resolucao4881.pdf"
+    url: "https://www.bcb.gov.br/content/estabilidadefinanceira/especialnor/Resolu%C3%A7%C3%A3o4881.pdf"
     retrieved_at: "2026-09-23"
-    version_date: "2020-12-23"
-    sha256: "<computed at fetch time>"
+    version_date: "2020-12-23"   # unamended since publication — its only cross-references are to the older resolutions it itself revoked (3.517/2007, 3.909/2010, 4.197/2013, 4.699/2018)
+    sha256: "2b8abe706b2fc482e0bf91a002a55ba6de44466e5541e40375c73fc3f3785aa6"
   - id: product-catalog
     title: "Catálogo de produtos Solvia (descrições fictícias)"
     norm: null
@@ -76,10 +78,12 @@ documents:
     sha256: "<computed from the generated text at ingestion time>"
 ```
 
+Two notes on the URLs above, since a naive guess at either would have been wrong: the CET-disclosure PDF's filename contains a literal, percent-encoded `ç`/`ã` (`Resolu%C3%A7%C3%A3o4881.pdf`) — an unencoded ASCII guess 404s. The Open Finance PDF's path (`.../Attachments/51028/Res_Conj_0001_v7_L.pdf`) is BCB's own currently-published *consolidated* rendering (`_v7_L`, "L" for the amended/"com alterações" text) of Resolução Conjunta nº 1/2020, not the original 2020 publication — BCB republishes this same consolidated PDF in place as it's amended, so `python -m rag.ingest fetch`'s hash check (not the URL) is what actually detects the next amendment, not a URL change.
+
 Three research findings from preparing this proposal, recorded here so the apply phase doesn't have to re-derive them:
 - **Over-indebtedness provisions live in the CDC itself.** Lei 14.181/2021 is an *amending* law — it inserts articles 54-A through 54-G into the CDC (Lei 8.078/1990) rather than standing as its own standalone regulatory text. The corpus therefore ingests the **consolidated CDC text** (which already contains those articles) as `cdc-consolidada`, not Lei 14.181/2021 as a separate document — citations for e.g. article 54-B read `"Lei nº 8.078/1990 (CDC), art. 54-B"`, sourced from the CDC document's own metadata. (Lei 14.181/2021's promulgation date remains useful context for why those articles exist, but it is not itself a retrievable/citable document.)
 - **The CET-disclosure candidate needed replacing.** The originally-listed "CMN resolution on CET disclosure" is the now-superseded Resolução CMN 3.517/2007; the current consolidated rule is **Resolução CMN nº 4.881/2020** (in force since 2021-02-01). The manifest uses 4.881/2020.
-- **Open Finance's base norm has been amended repeatedly through 2024–2026** (e.g., Resolução Conjunta nº 10/2024, and 2025/2026 updates for credit-portability). The manifest ingests BCB's own **currently-published consolidated version** of Resolução Conjunta nº 1/2020 (BCB publishes a running consolidated PDF), recording whatever consolidation date that PDF prints as `version_date` — the apply-time fetch task confirms the exact current PDF URL/version rather than hardcoding one that may already be stale by then.
+- **Open Finance's base norm has been amended repeatedly through 2024–2026** (e.g., Resolução Conjunta nº 10/2024, and 2025/2026 updates for credit-portability). The manifest ingests BCB's own **currently-published consolidated version** of Resolução Conjunta nº 1/2020 (BCB publishes a running consolidated PDF at a stable URL, republished in place as it's amended — see the manifest below), recording the consolidation date that PDF's own text prints as `version_date`; verified while preparing this update, that consolidated PDF's own cross-references currently top out at Resolução Conjunta nº 10, de 4/7/2024.
 
 `rag/ingest/fetch.py` (invoked as `python -m rag.ingest fetch`) reads the manifest, downloads each `url` (skipping `product_catalog` entries, which are generated, not fetched), computes its sha256, and fails loudly on a mismatch against a previously-recorded hash (a real regulatory change) versus a first-time fetch (expected, records the hash). Raw downloads go to `.data/rag_corpus/` (gitignored); the product catalog's generated text is written next to them for a uniform ingestion path.
 
@@ -87,10 +91,11 @@ Three research findings from preparing this proposal, recorded here so the apply
 
 Both source-format adapters run *before* chunking and produce the same thing: plain, normalized, in-force-only text plus a list of per-article `amendment_note` strings (kept as metadata, never concatenated into retrievable content). Chunking (below) only ever sees this normalized output, never raw HTML or PDF bytes.
 
-- **`rag/ingest/html_source.py`** (Planalto "compilado" pages): decodes the response using the encoding the page actually declares (its `<meta charset>` or HTTP header — Planalto's older consolidated pages declare `windows-1252`/`ISO-8859-1`, not UTF-8; decoding as UTF-8 by default would silently corrupt accented characters instead of failing loudly, so the adapter reads the declared encoding rather than assuming one). It parses the decoded HTML with `lxml`/`BeautifulSoup`, **removes `<strike>`/`<s>`/`<del>` elements (and their text) entirely before extracting body text** — this is what keeps revoked provisions out of every downstream chunk, since chunking never sees text that was never extracted. Separately, a regex over the *remaining* (in-force) text pulls out trailing parenthetical notes matching `\((Reda[çc][ãa]o dada|Inclu[íi]do|Revogado)[^)]*\)` and attaches them to the enclosing article as `amendment_note` metadata, stripped out of the body text passed to chunking — an amendment note is never itself indexed as retrievable content.
+- **`rag/ingest/html_source.py`** (Planalto "compilado" pages): decodes using the encoding the response actually declares when it declares one, falling back to `windows-1252` — verified against the real fetched pages while preparing this update: `l8078compilado.htm` (CDC) declares no charset in either its `<meta>` tags or its HTTP `Content-Type` header, and its raw bytes contain `0xF3` for "ó" (`windows-1252`/`ISO-8859-1`; that byte is not valid standalone UTF-8), so decoding as UTF-8 by default would silently corrupt every accented character rather than failing loudly. It parses the decoded HTML with `lxml`/`BeautifulSoup`, **removes `<strike>`/`<s>`/`<del>` elements (and their text) entirely before extracting body text** — this is what keeps revoked provisions out of every downstream chunk, since chunking never sees text that was never extracted.
 - **`rag/ingest/pdf_source.py`** (BCB resolutions): extracts text via **`pdfplumber`**, chosen over `pypdf` because it returns each line's bounding box, letting header/footer normalization use *position* (top/bottom margin of the page) rather than pure text-frequency matching alone — more reliable when a repeated header/footer varies slightly page to page (e.g. embeds a page number). Both libraries are actively maintained, pure-Python, permissively licensed; `pypdf`'s plain `extract_text()` would force a frequency-only heuristic (drop a line if it repeats across ≥50% of pages), which is a weaker fallback this adapter does not need. Hyphenation: a line ending in `-` immediately followed by a continuation line is rejoined without the hyphen or an inserted space (`"exceci-"` + `"onalmente"` → `"excecionalmente"`); repeated header/footer lines (identified by page position) are dropped before the remaining lines are joined into the article's running text.
+- **Amendment-note extraction is shared, not per-format**: verifying the actual fetched BCB PDF (`Resolução Conjunta nº 1/2020`, consolidated through `Resolução Conjunta nº 10/2024`) while preparing this update showed the *same* `"(Redação dada ... pela Resolução ...)"` / `"(Revogado pela Resolução ...)"` annotation style Planalto uses in HTML — BCB's own PDF consolidation already replaces a revoked item's substantive text with just the revocation note (there is no separate struck-through original text to remove in that case, unlike Planalto's HTML). So the regex over `\((Reda[çc][ãa]o dada|Inclu[íi]do|Revogado)[^)]*\)` that pulls a trailing note into `amendment_note` metadata (stripped from the body text passed to chunking) lives in one shared helper both `html_source.py` and `pdf_source.py` call on their respective extracted text, rather than being HTML-specific.
 
-Unit tests for both adapters run against real (short) snippets saved from the actual fetched corpus — not synthetic HTML/PDF — and assert, for the HTML adapter, that struck-through sample text never appears in the adapter's output while its accompanying amendment note appears only in the returned metadata, not the body text.
+Unit tests for both adapters run against real (short) snippets saved from the actual fetched corpus — not synthetic HTML/PDF — and assert, for the HTML adapter, that struck-through sample text never appears in the adapter's output while its accompanying amendment note appears only in the returned metadata, not the body text; and, for the PDF adapter, that a revoked item's note-only text is captured as `amendment_note` rather than indexed as if it were a real, in-force provision.
 
 ### Chunking strategy
 
@@ -221,5 +226,4 @@ New `rag/` top-level package (sibling to `apps/`, mirroring the project's existi
 
 ## Open Questions
 
-- Exact `chunk_max_chars`, `RAG_MIN_RELEVANCE_SCORE`, and RRF `k`/`top_k` defaults are tuning values best set once real chunks and the eval set exist (task-level, during apply) — they don't change the retrieval architecture, the spec, or the task breakdown above.
-- The precise current URL/version of the Open Finance consolidated resolution and of the CDC's official consolidated text (both drift as BCB/Planalto republish consolidated PDFs) are confirmed at manifest-fetch time in tasks.md, not hardcoded here, since pinning a URL now risks it already being one version behind by the time this is implemented.
+- Exact `chunk_max_chars`, `RAG_MIN_RELEVANCE_SCORE`, and RRF `k`/`top_k` defaults are tuning values best set once real chunks and the eval set exist (task-level, during apply) — they don't change the retrieval architecture, the spec, or the task breakdown above. (The four document URLs and their current consolidation dates, previously an open question here, are now confirmed and recorded in the manifest above.)

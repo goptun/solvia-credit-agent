@@ -11,11 +11,11 @@
 
 ## 2. Corpus manifest and fetch/verify CLI
 
-- [ ] 2.1 Confirm the current, in-force, consolidated source URL and version/consolidation date for each of these **four** regulatory documents: CDC consolidated text (Lei 8.078/1990, including the arts. 54-A–G inserted by Lei 14.181/2021), LGPD (Lei 13.709/2018), Resolução CMN nº 4.881/2020 (CET), and BCB/CMN's currently-published consolidated Resolução Conjunta nº 1/2020 (Open Finance) — verify each URL resolves (HTTP 200) from an official domain (bcb.gov.br, planalto.gov.br, gov.br, or the official Open Finance Brasil portal)
-- [ ] 2.2 Write `rag/corpus/manifest.yaml` with the four regulatory documents from 2.1 plus the `product_catalog` entry sourced from `apps/agent/config/product_descriptions.py`, per the schema in `design.md` — "Corpus pipeline and provenance" — verify the manifest parses against a Pydantic schema in a unit test
-- [ ] 2.3 Implement `rag/ingest/fetch.py` (`python -m rag.ingest fetch`): downloads each manifested URL to the gitignored `.data/rag_corpus/`, computes sha256, and fails with a clear error on a hash mismatch against a previously recorded hash — verify a unit test with a fake HTTP client covers first-fetch (records hash), unchanged re-fetch (no-op), and a mismatch (raises)
-- [ ] 2.4 Add `.data/rag_corpus/` to `.gitignore` — verify `git status` shows no new tracked files after running the fetch command locally
-- [ ] 2.5 Commit: `feat(rag): adiciona manifest do corpus e CLI de fetch/verificação`
+- [x] 2.1 Confirm the current, in-force, consolidated source URL and version/consolidation date for each of these **four** regulatory documents: CDC consolidated text (Lei 8.078/1990, including the arts. 54-A–G inserted by Lei 14.181/2021), LGPD (Lei 13.709/2018), Resolução CMN nº 4.881/2020 (CET), and BCB/CMN's currently-published consolidated Resolução Conjunta nº 1/2020 (Open Finance) — verify each URL resolves (HTTP 200) from an official domain (bcb.gov.br, planalto.gov.br, gov.br, or the official Open Finance Brasil portal)
+- [x] 2.2 Write `rag/corpus/manifest.yaml` with the four regulatory documents from 2.1 plus the `product_catalog` entry sourced from `apps/agent/config/product_descriptions.py`, per the schema in `design.md` — "Corpus pipeline and provenance" — verify the manifest parses against a Pydantic schema in a unit test
+- [x] 2.3 Implement `rag/ingest/fetch.py` (`python -m rag.ingest fetch`): downloads each manifested URL to the gitignored `.data/rag_corpus/`, computes sha256, and fails with a clear error on a hash mismatch against a previously recorded hash — verify a unit test with a fake HTTP client covers first-fetch (records hash), unchanged re-fetch (no-op), and a mismatch (raises)
+- [x] 2.4 Add `.data/rag_corpus/` to `.gitignore` — verify `git status` shows no new tracked files after running the fetch command locally
+- [x] 2.5 Commit: `feat(rag): adiciona manifest do corpus e CLI de fetch/verificação`
 
 ## 3. Source format extraction and structure-aware chunking
 

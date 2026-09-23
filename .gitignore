@@ -22,6 +22,7 @@ htmlcov/
 
 # Generated data
 data/generated/
+.data/rag_corpus/
 
 # Claude Code local settings and session-local runtime state
 .claude/settings.local.json
