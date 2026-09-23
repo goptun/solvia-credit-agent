@@ -31,8 +31,18 @@ synthetic dataset and templates, so printing a short prefix locally is
 fine — this script's *output* is never committed or written to a file,
 only the script itself.
 
-Exits non-zero if any turn is `unavailable`/`empty`, or if the
-multi-turn scenario's assertions fail.
+Also calls `ground_answer` directly (the same grounding/citation
+function the `knowledge_agent` node and the standalone
+`/knowledge/answer` endpoint both use) with a real answerable
+regulatory question and a deliberately unanswerable "near miss"
+question, printing every rendered citation and verifying it against
+that turn's real retrieved chunk set — never an invented citation, or
+a citation the retrieval step didn't actually surface.
+
+Exits non-zero if any turn is `unavailable`/`empty`, if the multi-turn
+scenario's assertions fail, if the regulatory question is refused, if
+the unanswerable question is answered instead of refused, or if any
+citation can't be matched back to that turn's retrieved chunks.
 """
 
 from __future__ import annotations
@@ -57,7 +67,14 @@ from apps.agent.llm.factory import LLMFactory
 from apps.agent.llm.port import LLMPort
 from apps.agent.llm.resilience import UNAVAILABLE_MESSAGE
 from apps.agent.llm.settings import get_settings
-from apps.agent.nodes.knowledge_agent import make_knowledge_agent_node
+from apps.agent.nodes.knowledge_agent import (
+    REFUSAL_REPLY,
+    Citation,
+    GroundedAnswer,
+    RetrieveFn,
+    ground_answer,
+    make_knowledge_agent_node,
+)
 
 # Reused only for verifying that the responder's rendered numbers match
 # the simulation tool's own output — not re-implementing the formatting
@@ -68,7 +85,8 @@ from apps.agent.state import ConversationState
 from apps.api.settings import get_api_settings
 from rag.embeddings.fastembed_adapter import FastEmbedAdapter
 from rag.retrieval.live import hybrid_search_async
-from rag.settings import get_rag_settings
+from rag.retrieval.retrieved_chunk import RetrievedChunk
+from rag.settings import RagSettings, get_rag_settings
 
 _VALID_CONSENT_CUSTOMER = "cust-0000"
 _MISSING_CONSENT_CUSTOMER = "cust-0007"
@@ -80,6 +98,24 @@ _SINGLE_TURNS = [
     ("complaint", "Estou muito insatisfeito com o atendimento que recebi."),
     ("out_of_scope", "Qual é a previsão do tempo para amanhã?"),
 ]
+
+# A genuine regulatory question the corpus should support (CDC art.
+# 54-A, over-indebtedness), and a deliberately unanswerable "near
+# miss" that sounds in-domain but isn't covered by the corpus — the
+# fictional Solvia product catalog has no international card, and
+# nothing in the corpus documents one. Both reused verbatim from
+# `rag/eval/questions.yaml` for consistency with the recorded baseline
+# (task 6.4) — a first, more colloquial phrasing ("fico
+# superendividado") scored below `RAG_MIN_RELEVANCE_SCORE` in a real
+# run against this corpus (best similarity 0.451, correctly refused —
+# expected behavior per the colloquial-recall gap the eval baseline
+# already documents, not a bug), so this script sticks to a question
+# the eval set's own real similarity sweep verified clears the
+# threshold (0.747).
+_REGULATORY_QUESTION = (
+    "O que caracteriza uma situação de superendividamento segundo o código de defesa do consumidor?"
+)
+_UNANSWERABLE_QUESTION = "A Solvia oferece cartão de crédito internacional sem anuidade?"
 
 
 @dataclass(frozen=True)
@@ -300,6 +336,121 @@ async def _run_multi_turn_loan_simulation_scenario(
     return ok
 
 
+@dataclass
+class _RetrievedLog:
+    chunks: list[RetrievedChunk] = field(default_factory=list)
+
+
+def _spy_retrieve(inner: RetrieveFn, log: _RetrievedLog) -> RetrieveFn:
+    """Wraps `retrieve` to capture the chunks the last call returned, so
+    the knowledge scenarios below can verify each rendered citation
+    against the real retrieved set — never used by the app or tests."""
+
+    async def spy(question: str, vector: list[float], source_type: Any) -> list[RetrievedChunk]:
+        results = await inner(question, vector, source_type)
+        log.chunks = list(results)
+        return results
+
+    return spy
+
+
+def _find_citation_chunk(
+    citation: Citation, retrieved: list[RetrievedChunk]
+) -> RetrievedChunk | None:
+    for chunk in retrieved:
+        if (
+            chunk.norm == citation.norm
+            and chunk.article_ref == citation.article_ref
+            and chunk.source_url == citation.source_url
+        ):
+            return chunk
+    return None
+
+
+def _print_knowledge_result(
+    label: str, question: str, result: GroundedAnswer, retrieved: list[RetrievedChunk]
+) -> bool:
+    preview = result.answer[:120].replace("\n", " ")
+    print(f"[{label}] question={question!r} refused={result.refused}")
+    if result.refused:
+        print(f"    reply[:120]: {preview!r}")
+        return result.answer == REFUSAL_REPLY
+
+    if not result.citations:
+        print("    ASSERTION FAILED: answered but produced no citations")
+        print(f"    reply[:120]: {preview!r}")
+        return False
+
+    ok = True
+    for citation in result.citations:
+        chunk = _find_citation_chunk(citation, retrieved)
+        if chunk is None:
+            print(
+                "    citation NOT FOUND in retrieved set: "
+                f"norm={citation.norm!r} article_ref={citation.article_ref!r}"
+            )
+            ok = False
+        else:
+            print(
+                f"    citation OK: chunk_id={chunk.chunk_id!r} "
+                f"norm={citation.norm!r} article_ref={citation.article_ref!r}"
+            )
+    print(f"    reply[:120]: {preview!r}")
+    return ok
+
+
+async def _run_knowledge_scenarios(
+    llm_factory: SpyLLMFactory,
+    embeddings: FastEmbedAdapter,
+    retrieve: RetrieveFn,
+    rag_settings: RagSettings,
+) -> bool:
+    """Exercises `ground_answer` directly — the same grounding/citation
+    function the `knowledge_agent` node and the standalone
+    `/knowledge/answer` endpoint both call — with a real answerable
+    regulatory question and a deliberately unanswerable one, verifying
+    every rendered citation against that turn's real retrieved set."""
+    print("\n== Knowledge scenarios (citation verification) ==")
+    log = _RetrievedLog()
+    spied_retrieve = _spy_retrieve(retrieve, log)
+    llm = llm_factory.for_node("knowledge_agent")
+    fallback_llm = llm_factory.fallback_for_node("knowledge_agent")
+
+    regulatory_result = await ground_answer(
+        _REGULATORY_QUESTION,
+        "regulation",
+        llm,
+        fallback_llm,
+        embeddings,
+        spied_retrieve,
+        rag_settings,
+    )
+    regulatory_ok = _print_knowledge_result(
+        "regulatory_question", _REGULATORY_QUESTION, regulatory_result, log.chunks
+    )
+    if regulatory_result.refused:
+        print("    ASSERTION FAILED: expected the regulatory question to be answered")
+        regulatory_ok = False
+
+    unanswerable_result = await ground_answer(
+        _UNANSWERABLE_QUESTION,
+        "product_catalog",
+        llm,
+        fallback_llm,
+        embeddings,
+        spied_retrieve,
+        rag_settings,
+    )
+    unanswerable_ok = _print_knowledge_result(
+        "unanswerable_question", _UNANSWERABLE_QUESTION, unanswerable_result, log.chunks
+    )
+    if not unanswerable_result.refused:
+        print("    ASSERTION FAILED: expected the unanswerable question to be refused")
+        unanswerable_ok = False
+
+    return regulatory_ok and unanswerable_ok
+
+
 async def main() -> int:
     settings = get_settings()
     api_settings = get_api_settings()
@@ -330,10 +481,13 @@ async def main() -> int:
 
         single_turns_ok = await _run_single_turn_scenarios(graph, call_log)
         scenario_ok = await _run_multi_turn_loan_simulation_scenario(graph, call_log)
+        knowledge_ok = await _run_knowledge_scenarios(
+            llm_factory, embeddings, retrieve, rag_settings
+        )
     finally:
         rag_pool.close()
 
-    success = single_turns_ok and scenario_ok
+    success = single_turns_ok and scenario_ok and knowledge_ok
     print(f"\n{'PASS' if success else 'FAIL'}")
     return 0 if success else 1
 
