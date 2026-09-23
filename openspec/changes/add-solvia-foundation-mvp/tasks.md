@@ -53,16 +53,16 @@
 
 ## 6. Deterministic Financial Tools (`credit-simulation`)
 
-- [ ] 6.1 Implement income estimation from transaction history — verify unit tests including a no-recurring-credits edge case
-- [ ] 6.2 Implement debt-to-income ratio calculation — verify unit tests including a zero-income edge case
-- [ ] 6.3 Implement the deterministic spending categorization tool from transaction codes/descriptions in the synthetic data, with a defined default/uncategorized category for unmatched transactions — verify unit tests cover known categories and the fallback case
-- [ ] 6.4 Define the fictional product catalog config (interest rate, IOF fixed rate + capped daily rate, fees — all configurable) as static configuration, never sourced from the LLM — verify a unit test loads and validates the catalog
-- [ ] 6.5 Implement the CET calculation as the annualized IRR of the net cash flow (amount released minus IOF and fees, versus the installment schedule), using `Decimal` with documented rounding rules — verify unit tests against documented, hand-computed reference cases
-- [ ] 6.6 Implement Price amortization simulation using catalog-sourced rate/IOF/fees and the CET/IRR calculation — verify unit tests against the documented reference cases
-- [ ] 6.7 Implement SAC amortization simulation using catalog-sourced rate/IOF/fees and the CET/IRR calculation — verify unit tests against the documented reference cases, including that installments decrease over time
-- [ ] 6.8 Add input validation (non-positive amount/term, negative rate, unrecognized amortization type) raising a domain exception instead of returning a result — verify unit tests assert the exception is raised for each case
-- [ ] 6.9 Verify domain/tools code coverage is ≥ 80% via `pytest --cov`
-- [ ] 6.10 Commit: `feat(tools): adiciona simulação de crédito determinística (CET/IRR), catálogo de produto e categorização de gastos`
+- [x] 6.1 Implement income estimation from transaction history — verify unit tests including a no-recurring-credits edge case
+- [x] 6.2 Implement debt-to-income ratio calculation — verify unit tests including a zero-income edge case
+- [x] 6.3 Implement the deterministic spending categorization tool from transaction codes/descriptions in the synthetic data, with a defined default/uncategorized category for unmatched transactions — verify unit tests cover known categories and the fallback case
+- [x] 6.4 Define the fictional product catalog config (interest rate, IOF fixed rate + capped daily rate, fees — all configurable) as static configuration, never sourced from the LLM — verify a unit test loads and validates the catalog
+- [x] 6.5 Implement the CET calculation as the annualized IRR of the net cash flow (amount released minus IOF and fees, versus the installment schedule), using `Decimal` with documented rounding rules — verify unit tests against documented, hand-computed reference cases
+- [x] 6.6 Implement Price amortization simulation using catalog-sourced rate/IOF/fees and the CET/IRR calculation — verify unit tests against the documented reference cases
+- [x] 6.7 Implement SAC amortization simulation using catalog-sourced rate/IOF/fees and the CET/IRR calculation — verify unit tests against the documented reference cases, including that installments decrease over time
+- [x] 6.8 Add input validation (non-positive amount/term, negative rate, unrecognized amortization type) raising a domain exception instead of returning a result — verify unit tests assert the exception is raised for each case
+- [x] 6.9 Verify domain/tools code coverage is ≥ 80% via `pytest --cov`
+- [x] 6.10 Commit: `feat(tools): adiciona simulação de crédito determinística (CET/IRR), catálogo de produto e categorização de gastos`
 
 ## 7. MVP Conversation Graph (`conversation-graph`)
 
