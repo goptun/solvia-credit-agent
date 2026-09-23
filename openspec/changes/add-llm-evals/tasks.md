@@ -20,10 +20,10 @@
 
 ## 3. Baseline, budget and contamination logic (pure)
 
-- [ ] 3.1 Implement the baseline schema and comparison with per-metric direction and tolerance, producing the `metric | baseline | new | tolerance | diff | status` table — verify tests for regression beyond tolerance (fail), within tolerance (pass), improvement beyond tolerance (pass + note), and zero tolerance failing on any change
-- [ ] 3.2 Implement call-budget accounting and the pre-run call estimate — verify tests: refuses to start when the estimate exceeds the budget; stops before an item when the remaining budget cannot cover a worst-case item (8 calls) and marks the run incomplete
-- [ ] 3.3 Implement contamination detection (error-share, unexpected model, fallback-model share, incomplete/interrupted) — verify one test per reason, that reasons are listed, and that a clean run is not flagged
-- [ ] 3.4 Commit: `feat(evals): implementa baseline, orçamento de chamadas e detecção de contaminação`
+- [x] 3.1 Implement the baseline schema and comparison with per-metric direction and tolerance, producing the `metric | baseline | new | tolerance | diff | status` table — verify tests for regression beyond tolerance (fail), within tolerance (pass), improvement beyond tolerance (pass + note), and zero tolerance failing on any change
+- [x] 3.2 Implement call-budget accounting and the pre-run call estimate — verify tests: refuses to start when the estimate exceeds the budget; stops before an item when the remaining budget cannot cover a worst-case item (8 calls) and marks the run incomplete
+- [x] 3.3 Implement contamination detection (error-share, unexpected model, fallback-model share, incomplete/interrupted) — verify one test per reason, that reasons are listed, and that a clean run is not flagged
+- [x] 3.4 Commit: `feat(evals): implementa baseline, orçamento de chamadas e detecção de contaminação`
 
 ## 4. Dataset schemas and review tooling
 
