@@ -99,3 +99,24 @@ async def test_format_report_mentions_every_metric() -> None:
     assert "refusal accuracy (unanswerable): 100.00%" in text
     assert "[far]" in text
     assert "LLM 1" in text
+
+
+async def test_a_failing_grounding_call_is_counted_as_an_error_not_a_refusal() -> None:
+    questions = EvalQuestionSet(
+        answerable=[_answerable("boom"), _answerable("ok")],
+        unanswerable=[UnanswerableQuestion(question="u-boom", distance="far")],
+    )
+
+    async def ground(question: str, source_type: SourceType | None) -> GroundingOutcome:
+        if question.endswith("boom"):
+            raise TimeoutError("gateway timeout")
+        return _ANSWERED
+
+    report = await run_end_to_end(questions, ground)
+
+    assert report.answerable_errors == 1
+    assert report.false_refusals == 0
+    assert report.false_refusal_rate == 0.0
+    assert report.unanswerable_errors == 1
+    assert report.correct_refusals == 0
+    assert "ERRORS" in format_report(report)
