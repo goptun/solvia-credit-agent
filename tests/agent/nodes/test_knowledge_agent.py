@@ -143,8 +143,8 @@ async def test_prompt_instructs_the_llm_to_return_empty_claims_when_chunks_do_no
 
     (prompt,) = smart_llm.calls
     text = str(prompt[0].content)
-    assert "lista VAZIA" in text
-    assert "NÃO respondem diretamente" in text
+    assert "retorne uma lista de claims vazia" in text
+    assert "Se os trechos não permitirem responder" in text
 
 
 async def test_low_similarity_refuses_without_calling_the_llm() -> None:

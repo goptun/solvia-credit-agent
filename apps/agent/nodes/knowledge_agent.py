@@ -52,24 +52,13 @@ _INSTRUCTIONS = (
     "Você responde perguntas EXCLUSIVAMENTE com base nos trechos fornecidos abaixo — "
     "nunca use conhecimento próprio. Para cada afirmação da sua resposta, produza um "
     "claim separado com o texto da afirmação e o chunk_id do trecho que a sustenta. "
-    "Só use um chunk_id que apareça exatamente nos trechos fornecidos.\n\n"
-    "REGRA DE RECUSA: os trechos foram recuperados por similaridade e podem tratar de um "
-    "assunto parecido sem responder à pergunta. Se os trechos NÃO respondem diretamente à "
-    "pergunta feita — mesmo que o tema seja próximo — você DEVE retornar `claims` como uma "
-    "lista VAZIA. Não responda parcialmente, não generalize a partir de trechos "
-    "relacionados e não complete com conhecimento próprio. Uma lista vazia é a resposta "
-    "correta quando não há sustentação explícita nos trechos."
-)
-
-LEGACY_INSTRUCTIONS = (
-    "Você responde perguntas EXCLUSIVAMENTE com base nos trechos fornecidos abaixo — "
-    "nunca use conhecimento próprio. Para cada afirmação da sua resposta, produza um "
-    "claim separado com o texto da afirmação e o chunk_id do trecho que a sustenta. "
     "Só use um chunk_id que apareça exatamente nos trechos fornecidos. Se os trechos "
     "não permitirem responder à pergunta, retorne uma lista de claims vazia."
 )
-"""The instruction before task 14.3's explicit refusal rule — kept only so
-`scripts/eval_end_to_end.py --ab` can compare the two on real questions."""
+"""Tested against a longer "REGRA DE RECUSA" variant on the questions the
+LLM refused with the gold chunk in context (ADR-005): the shorter wording
+answered the one attributable question 3/3 times where the longer one
+refused it 3/3, with unanswerable refusals intact either way."""
 
 _INTENT_TO_SOURCE_TYPE: dict[str, SourceType] = {
     "product_question": "product_catalog",
@@ -130,7 +119,6 @@ async def ground_answer(
     embeddings: EmbeddingsPort,
     retrieve: RetrieveFn,
     rag_settings: RagSettings,
-    instructions: str = _INSTRUCTIONS,
 ) -> GroundedAnswer:
     """Retrieve, ground, and cite an answer to `question` — the shared
     core both `make_knowledge_agent_node` and the standalone endpoint
@@ -149,7 +137,7 @@ async def ground_answer(
     prompt = [
         HumanMessage(
             content=(
-                f"{instructions}\n\n"
+                f"{_INSTRUCTIONS}\n\n"
                 f"Pergunta do cliente: {question}\n\n"
                 f"Trechos disponíveis:\n{_format_chunks_for_prompt(results)}"
             )

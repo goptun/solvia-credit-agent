@@ -197,20 +197,3 @@ async def test_false_refusals_are_decomposed_by_cause() -> None:
     assert "threshold 1 (gold was in context for 1)" in text
     assert "LLM refused with gold in context 1" in text
     assert "gold not retrieved 1" in text
-
-
-async def test_answerable_indices_restrict_the_run_but_not_the_unanswerable() -> None:
-    questions = EvalQuestionSet(
-        answerable=[_answerable("a0"), _answerable("a1"), _answerable("a2")],
-        unanswerable=[UnanswerableQuestion(question="u0", distance="far")],
-    )
-    seen: list[SourceType | None] = []
-    outcomes = {"a0": _ANSWERED, "a1": _ANSWERED, "a2": _ANSWERED, "u0": _THRESHOLD_REFUSAL}
-
-    report = await run_end_to_end(
-        questions, _scripted(outcomes, seen), answerable_indices=frozenset({1})
-    )
-
-    assert report.answerable_total == 1
-    assert [r.index for r in report.answerable_records] == [1]
-    assert report.unanswerable_total == 1

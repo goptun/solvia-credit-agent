@@ -143,23 +143,13 @@ async def _safe_ground(
 async def run_end_to_end(
     questions: EvalQuestionSet,
     ground: GroundFn,
-    *,
-    answerable_indices: frozenset[int] | None = None,
 ) -> EndToEndReport:
-    """`answerable_indices` restricts the answerable questions run (by
-    position in the eval set) — used to A/B a prompt on just the
-    questions attributable to it; unanswerable questions always run."""
     false_by_style: dict[str, list[bool]] = defaultdict(list)
     false_refusals = false_by_threshold = 0
     answerable_errors = answered = citation_hits = 0
     latencies: list[float] = []
     records: list[AnswerableRecord] = []
-    selected = [
-        (index, question)
-        for index, question in enumerate(questions.answerable)
-        if answerable_indices is None or index in answerable_indices
-    ]
-    for index, answerable in selected:
+    for index, answerable in enumerate(questions.answerable):
         outcome = await _safe_ground(
             ground, answerable.question, _source_type_for(answerable.expected_document_id)
         )
@@ -203,7 +193,7 @@ async def run_end_to_end(
                 correct_by_threshold += 1
 
     return EndToEndReport(
-        answerable_total=len(selected),
+        answerable_total=len(questions.answerable),
         answerable_errors=answerable_errors,
         answerable_records=tuple(records),
         answered=answered,
