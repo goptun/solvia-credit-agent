@@ -25,6 +25,7 @@ NODE_TIER_MAP: dict[str, Tier] = {
     "offer_simulator": "smart",
     "responder": "smart",
     "compliance_guard": "fast",
+    "knowledge_agent": "smart",
 }
 """Per-node model tier. `consent_check` makes no LLM call at all (see
 design.md — "Synthetic consent flow") and is intentionally absent here."""
@@ -43,7 +44,7 @@ class LLMFactory:
         self._settings = settings
         self._enable_tracing = enable_tracing
 
-    def _build(self, model: str, max_tokens: int) -> LLMPort:
+    def _build(self, model: str, max_tokens: int, timeout_seconds: float) -> LLMPort:
         # Concrete LangChain chat models expose a wider surface than
         # `LLMPort` (different parameter names on `ainvoke`/`bind_tools`);
         # this cast is the one place that narrows them down to the
@@ -52,13 +53,24 @@ class LLMFactory:
             return FakeLLM()
         if self._settings.llm_provider == "google":
             return cast(LLMPort, build_google_llm(self._settings, model, max_tokens))
-        return cast(LLMPort, build_openai_compatible_llm(self._settings, model, max_tokens))
+        return cast(
+            LLMPort,
+            build_openai_compatible_llm(self._settings, model, max_tokens, timeout_seconds),
+        )
 
     def for_alias(self, tier: Tier) -> LLMPort:
         """Build the `LLMPort` for a tier directly (`fast` or `smart`)."""
         if tier == "fast":
-            return self._build(self._settings.llm_model_fast, self._settings.llm_max_tokens_fast)
-        return self._build(self._settings.llm_model_smart, self._settings.llm_max_tokens_smart)
+            return self._build(
+                self._settings.llm_model_fast,
+                self._settings.llm_max_tokens_fast,
+                self._settings.llm_timeout_seconds_fast,
+            )
+        return self._build(
+            self._settings.llm_model_smart,
+            self._settings.llm_max_tokens_smart,
+            self._settings.llm_timeout_seconds_smart,
+        )
 
     def for_node(self, node_name: str) -> LLMPort:
         """Resolve the LLM for `node_name` per `NODE_TIER_MAP`.

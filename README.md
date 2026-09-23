@@ -9,33 +9,45 @@ context — with no real company, customer, or credit data anywhere in
 the codebase.
 
 This repository holds the **foundation + MVP** (see
-`openspec/changes/add-solvia-foundation-mvp/`): the monorepo scaffold,
-an LLM gateway abstraction, deterministic financial tools, a synthetic
-customer dataset, an MVP conversation graph, a streaming API, and basic
-observability — all runnable locally via `docker compose up`.
+`openspec/changes/archive/2026-09-23-add-solvia-foundation-mvp/`): the
+monorepo scaffold, an LLM gateway abstraction, deterministic financial
+tools, a synthetic customer dataset, an MVP conversation graph, a
+streaming API, and basic observability — plus **regulatory and product
+Q&A** (see `openspec/changes/add-regulatory-rag/`): a small, curated
+corpus of official Brazilian regulatory texts and the fictional product
+catalog, retrieved with hybrid (vector + full-text) search and answered
+only from cited, verified chunks — all runnable locally via
+`docker compose up`.
 
 ## What the assistant does
 
-1. Classifies intent: product question, loan simulation, profile
-   analysis, complaint, or out of scope.
+1. Classifies intent: product question, regulatory question, loan
+   simulation, profile analysis, complaint, or out of scope.
 2. Gates on a synthetic Open Finance consent (asks for authorization
-   when missing/expired; product questions and out-of-scope/complaint
-   messages skip this gate).
+   when missing/expired; product/regulatory questions and
+   out-of-scope/complaint messages skip this gate).
 3. Analyzes a customer's synthetic financial data (income,
    debt-to-income ratio, spending categories) — entirely via
    deterministic tools, never LLM computation.
 4. Simulates credit offers (Price and SAC amortization, with CET/total
    effective cost) using deterministic Python tools, sourcing rate/IOF/
    fees from a fictional product catalog.
-5. Enforces compliance guardrails: PII masking, blocking approval
-   promises, and injecting mandatory disclaimers — all deterministic,
-   except for an LLM-backed check for approval-promise language, itself
-   backed by a deterministic keyword/regex safety net.
+5. Answers product and regulatory questions **only** from a curated,
+   provenance-tracked corpus (Brazilian consumer/credit/data-protection
+   law plus the fictional product catalog), retrieved via hybrid
+   (vector + full-text) search, citing the specific norm and article
+   behind every claim — refusing rather than guessing when retrieval
+   doesn't support an answer. See `openspec/changes/add-regulatory-rag/`.
+6. Enforces compliance guardrails: PII masking, blocking approval
+   promises, and injecting mandatory disclaimers (including an
+   "informational, not legal advice" note on regulatory answers) — all
+   deterministic, except for an LLM-backed check for approval-promise
+   language, itself backed by a deterministic keyword/regex safety net.
 
-Human handoff, regulatory RAG, production deployment, and evaluation
-are out of scope for this change — see the proposal for the planned
-follow-up changes (`add-regulatory-rag`, `add-human-handoff`,
-`add-vps-deploy`, `add-llm-evals`, `add-prompt-versioning`).
+Human handoff, production deployment, and full LLM evaluation are out
+of scope for this change — see the proposal for the planned follow-up
+changes (`add-human-handoff`, `add-vps-deploy`, `add-llm-evals`,
+`add-prompt-versioning`).
 
 ## Architecture
 
@@ -44,9 +56,11 @@ flowchart TD
     Client -->|POST /conversations/:id/messages| API[FastAPI]
     API -->|SSE: node_started / node_finished / final| Client
     API --> Graph[LangGraph conversation graph]
+    Client2[Client] -->|POST /knowledge/answer| API
     Graph --> Router[router]
     Router -->|active_flow set| ConsentCheck
-    Router -->|out_of_scope / complaint / product_question| Responder
+    Router -->|out_of_scope / complaint| Responder
+    Router -->|product_question / regulatory_question| KnowledgeAgent[knowledge_agent]
     Router -->|loan_simulation / profile_analysis| ConsentCheck[consent_check]
     ConsentCheck -->|valid| FinancialAnalyst[financial_analyst]
     ConsentCheck -->|valid, loan_simulation| OfferSimulator[offer_simulator]
@@ -54,16 +68,19 @@ flowchart TD
     FinancialAnalyst --> Responder[responder]
     OfferSimulator --> Responder
     Responder --> ComplianceGuard[compliance_guard]
+    KnowledgeAgent --> ComplianceGuard
     ComplianceGuard --> END
 
     Graph -.checkpoints.-> Postgres[(Postgres)]
     FinancialAnalyst -.tools.-> Tools[apps/agent/tools: income, DTI, spending, CET/IRR, Price/SAC]
     OfferSimulator -.tools.-> Tools
+    KnowledgeAgent -.hybrid search.-> RagChunks[(rag_chunks: pgvector + full-text)]
     Router -.LLM fast.-> Gateway[9router gateway]
     ComplianceGuard -.LLM fast.-> Gateway
     FinancialAnalyst -.LLM smart, unused in MVP.-> Gateway
     OfferSimulator -.LLM smart.-> Gateway
     Responder -.LLM smart.-> Gateway
+    KnowledgeAgent -.LLM smart.-> Gateway
     Graph -.traces.-> LangFuse[LangFuse Cloud]
 ```
 
@@ -87,6 +104,14 @@ flowchart TD
 - **Deterministic compliance where possible** — PII masking and
   disclaimer injection are regex/template-based; only approval-promise
   detection uses an LLM, backed by a deterministic keyword check.
+- **Grounded answers, verified citations, never invented** — the
+  `knowledge_agent` node only ever answers from retrieved corpus
+  chunks; the LLM attaches a `chunk_id` to every claim, which is then
+  validated against the retrieved set (an invented citation is
+  dropped, not trusted) and rendered from the chunk's own metadata,
+  never from LLM-generated citation text. See
+  `openspec/changes/add-regulatory-rag/design.md` — "Grounding and
+  citation validation".
 
 ## Local development
 
@@ -116,22 +141,74 @@ LLM_API_KEY=<your gateway API key>
 `GET /health/ready` reports whether the gateway is reachable through
 the tunnel.
 
+### Regulatory knowledge base
+
+The regulatory/product knowledge base lives in Postgres (`rag_chunks`,
+`vector` + `unaccent` extensions) and is built in three steps:
+
+```bash
+uv run python -m rag.migrate               # idempotent: creates rag_chunks + indexes
+PYTHONPATH=. uv run python -m rag.ingest fetch    # re-fetches the corpus, verifies hashes
+PYTHONPATH=. uv run python -m rag.ingest index    # chunks, embeds, and indexes every document
+```
+
+`rag.ingest fetch` needs no gateway/LLM access (it downloads directly
+from official sources — `planalto.gov.br`, `bcb.gov.br`); its output
+goes to the gitignored `.data/rag_corpus/`, never committed. Re-run
+`rag.ingest index` any time the manifest or a fetched document changes
+— it only reindexes documents whose hash actually changed (see
+`specs/regulatory-knowledge-base/spec.md` — "Idempotent, incremental
+indexing").
+
+Retrieval quality is tracked with a committed Portuguese question set:
+
+```bash
+DATABASE_URL=... PYTHONPATH=. uv run python -m rag.eval.run
+```
+
+Reports recall@k and MRR (broken down by lexical vs. colloquial
+phrasing) and refusal accuracy (broken down by far vs. near-miss
+negatives) — see `openspec/changes/add-regulatory-rag/design.md` —
+"Retrieval quality evaluation" for the methodology and the recorded
+baseline.
+
+### End-to-end refusal evaluation (manual, real LLM)
+
+`rag.eval.run` decides refusals from the similarity threshold alone.
+`scripts/eval_end_to_end.py` runs the real grounding stage (`ground_answer`
+with the real LLM, through the SSH tunnel) over the same question set and
+prints, alongside the retrieval-only numbers, the end-to-end false-refusal
+rate on answerable questions and refusal accuracy (far vs. near-miss) on
+unanswerable ones, attributed to the threshold or to the LLM stage. Like
+the smoke test it is never run by CI:
+
+```bash
+PYTHONPATH=. uv run python scripts/eval_end_to_end.py
+```
+
 ### Manual smoke test against the real gateway
 
 `scripts/smoke_gateway.py` sends one real message per classifiable
-intent (product question, loan simulation, profile analysis, complaint,
-out of scope) through the full graph, against the real `9router`
-gateway. It is **not** part of the automated test suite and is never
-run by CI — it needs the SSH tunnel above and a real `LLM_API_KEY`:
+intent (product question, regulatory question is exercised via the
+same `knowledge_agent` path, loan simulation, profile analysis,
+complaint, out of scope) through the full graph, against the real
+`9router` gateway. It is **not** part of the automated test suite and
+is never run by CI — it needs the SSH tunnel above, a real
+`LLM_API_KEY`, and `DATABASE_URL` pointing at a Postgres with the
+corpus already migrated and indexed (see "Regulatory knowledge base"
+above):
 
 ```bash
 PYTHONPATH=. uv run python scripts/smoke_gateway.py
 ```
 
-It prints only the intent the router actually classified, the sequence
-of nodes executed, and whether a final reply was produced for each
-intent — never the reply content or the message text, to avoid leaking
-model output into terminal history.
+It prints, per turn, the intent the router actually classified, the
+sequence of nodes executed, `reply_status` (`ok`/`unavailable`/`empty`),
+the resolved underlying model when available, and the first 120
+characters of the reply — replies are drawn entirely from the
+synthetic dataset, the fictional product catalog, and public
+regulatory text, so a short local preview is fine; this script's
+*output* is never committed, only the script itself.
 
 ### Run everything with Docker Compose
 
@@ -150,7 +227,7 @@ calls.
 ```bash
 uv sync
 docker run -d --name solvia-postgres -e POSTGRES_USER=solvia -e POSTGRES_PASSWORD=solvia \
-  -e POSTGRES_DB=solvia -p 5432:5432 postgres:16-alpine
+  -e POSTGRES_DB=solvia -p 5432:5432 pgvector/pgvector:pg16
 cp .env.example .env
 uv run uvicorn apps.api.app:app --reload
 ```
@@ -188,10 +265,12 @@ pre-commit run --all-files    # ruff, mypy, gitleaks
 ```
 apps/
   api/            FastAPI service (routes, SSE streaming, health checks)
+    routes_knowledge.py  Standalone POST /knowledge/answer endpoint
   agent/
     graph.py       LangGraph wiring and routing matrix
     state.py       Typed conversation state
-    nodes/         router, consent_check, financial_analyst, offer_simulator, responder, compliance_guard
+    nodes/         router, consent_check, financial_analyst, offer_simulator,
+                    responder, compliance_guard, knowledge_agent
     tools/         Deterministic financial calculations (income, DTI, spending, CET/IRR, Price/SAC)
     llm/           Provider-agnostic LLM factory (OpenAI-compatible, Google, fake)
     synthetic_data/ Reproducible Open Finance Brasil–shaped data generator
@@ -201,6 +280,14 @@ apps/
   console/        Streamlit agent console (scaffold only in this change)
 services/
   crm_mock/       Mock CRM microservice (scaffold only in this change)
+rag/
+  corpus/         manifest.yaml + provenance model for the curated regulatory/product corpus
+  ingest/         Fetch, HTML/PDF extraction, amendment-note handling, chunking, indexing
+  embeddings/     EmbeddingsPort + fastembed adapter (multilingual, e5-prefix aware)
+  retrieval/      Hybrid (pgvector + full-text) search, RRF fusion, reranker port
+  eval/           Retrieval-quality question set + recall@k/MRR/refusal-accuracy CLI
+  settings.py     RagSettings (embedding model, top-k, fusion weights, refusal threshold)
+  migrate.py      Idempotent rag_chunks schema + index migration
 data/
   fixtures/       Small, committed synthetic dataset used by tests
   generated/      Full generated dataset (gitignored)
@@ -212,5 +299,6 @@ openspec/         Specs, design, and tasks for this and future changes
 
 - `docs/infra-assessment.md` — VPS pre-flight assessment (redacted).
 - `docs/adr/` — architecture decision records.
-- `openspec/changes/add-solvia-foundation-mvp/` — proposal, design, specs, and tasks for this change.
+- `openspec/changes/archive/2026-09-23-add-solvia-foundation-mvp/` — proposal, design, specs, and tasks for the foundation + MVP.
+- `openspec/changes/add-regulatory-rag/` — proposal, design, specs, and tasks for the regulatory/product knowledge capability.
 - `CONTRIBUTING.md` / `CLAUDE.md` — engineering conventions.

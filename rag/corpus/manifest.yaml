@@ -1,0 +1,41 @@
+documents:
+  - id: cdc-consolidada
+    title: "Código de Defesa do Consumidor (Lei nº 8.078/1990), texto consolidado"
+    norm: "Lei nº 8.078/1990"
+    source_type: regulation
+    url: "https://www.planalto.gov.br/ccivil_03/leis/l8078compilado.htm"
+    retrieved_at: "2026-09-23"
+    version_date: "2021-07-01"
+    sha256: "22f10febcf442bf256db8af0935b660f9bc99c8436032b671efc69e500c25261"
+  - id: lgpd
+    title: "Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018)"
+    norm: "Lei nº 13.709/2018"
+    source_type: regulation
+    url: "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm"
+    retrieved_at: "2026-09-23"
+    version_date: "2026-06-30"
+    sha256: "af643c3e0c33b15a8a2d982b2d9b6867bba19bcd9f037e467522af33540728f6"
+  - id: open-finance-regulamento
+    title: "Resolução Conjunta BCB/CMN nº 1/2020 (Open Finance), texto consolidado"
+    norm: "Resolução Conjunta BCB/CMN nº 1, de 4 de maio de 2020"
+    source_type: regulation
+    url: "https://normativos.bcb.gov.br/Lists/Normativos/Attachments/51028/Res_Conj_0001_v7_L.pdf"
+    retrieved_at: "2026-09-23"
+    version_date: "2024-07-04"
+    sha256: "8fcd7179b9ebe8243854d80cc3a8bca075cd926fef35d674df11306d5274dbe7"
+  - id: cet-disclosure
+    title: "Resolução CMN nº 4.881/2020 (Custo Efetivo Total)"
+    norm: "Resolução CMN nº 4.881, de 23 de dezembro de 2020"
+    source_type: regulation
+    url: "https://www.bcb.gov.br/content/estabilidadefinanceira/especialnor/Resolu%C3%A7%C3%A3o4881.pdf"
+    retrieved_at: "2026-09-23"
+    version_date: "2020-12-23"
+    sha256: "2b8abe706b2fc482e0bf91a002a55ba6de44466e5541e40375c73fc3f3785aa6"
+  - id: product-catalog
+    title: "Catálogo de produtos Solvia (descrições fictícias)"
+    norm: null
+    source_type: product_catalog
+    url: null
+    retrieved_at: "2026-09-23"
+    version_date: null
+    sha256: null

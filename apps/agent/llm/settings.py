@@ -22,7 +22,21 @@ class Settings(BaseSettings):
     llm_api_key: str = ""
     llm_model_fast: str = "solvia-fast"
     llm_model_smart: str = "solvia-smart"
-    llm_timeout_seconds: float = 30.0
+    llm_timeout_seconds_fast: float = 30.0
+    llm_timeout_seconds_smart: float = 45.0
+    """Per-attempt request timeouts by tier, from single-attempt latencies
+    measured through the gateway (`docs/adr/ADR-005-llm-latency-and-
+    timeouts.md`): a knowledge-sized structured call took 10-40 s on
+    `fast` (p50 14 s) and 20-52 s on `smart` (p50 27 s). `fast` is set
+    just above its typical worst case; `smart` equals the turn deadline
+    below, since a single attempt can never usefully outlive the turn.
+    A manual eval that must not be cut short overrides these (e.g.
+    120 s) — that override is not the production value."""
+    llm_turn_deadline_seconds: float = 45.0
+    """Total LLM budget for one conversation turn: retries, the JSON-mode
+    fallback and smart -> fast degradation must all fit inside it; on
+    expiry the turn gets the friendly unavailable reply. Independent of
+    the per-attempt tier timeouts above."""
     llm_max_retries: int = 3
     llm_max_tokens_fast: int = 256
     llm_max_tokens_smart: int = 1024

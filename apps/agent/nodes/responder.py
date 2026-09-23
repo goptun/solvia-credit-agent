@@ -15,10 +15,8 @@ from decimal import Decimal
 from langchain_core.messages import HumanMessage
 
 from apps.agent.config.catalog import AmortizationType
-from apps.agent.config.product_descriptions import GENERAL_PRODUCT_OVERVIEW, PRODUCT_DESCRIPTIONS
 from apps.agent.llm.factory import LLMFactory
 from apps.agent.llm.resilience import invoke_with_resilience
-from apps.agent.nodes.messages import last_human_text
 from apps.agent.state import ConversationState, CustomerProfileSummary, SimulationSummary
 
 ResponderNode = Callable[[ConversationState], Awaitable[ConversationState]]
@@ -106,9 +104,6 @@ def make_responder_node(llm_factory: LLMFactory) -> ResponderNode:
         if intent == "complaint":
             return ConversationState(draft_reply=_COMPLAINT_ACK_REPLY)
 
-        if intent == "product_question":
-            return await _product_question_reply(state, llm_factory)
-
         simulation_result = state.get("simulation_result")
         if intent == "loan_simulation" and simulation_result is not None:
             return await _loan_simulation_reply(simulation_result, llm_factory)
@@ -120,22 +115,6 @@ def make_responder_node(llm_factory: LLMFactory) -> ResponderNode:
         return ConversationState(draft_reply=_FALLBACK_REPLY)
 
     return responder_node
-
-
-async def _product_question_reply(
-    state: ConversationState, llm_factory: LLMFactory
-) -> ConversationState:
-    catalog_text = "\n\n".join([GENERAL_PRODUCT_OVERVIEW, *PRODUCT_DESCRIPTIONS.values()])
-    framing = await _framing_sentence(
-        llm_factory,
-        (
-            "Escreva uma frase curta e cordial de abertura para responder a esta "
-            f"pergunta sobre produtos: '{last_human_text(state)}'. Não invente "
-            "informações — apenas uma abertura genérica, o conteúdo do catálogo "
-            "será anexado a seguir."
-        ),
-    )
-    return ConversationState(draft_reply=f"{framing}\n\n{catalog_text}")
 
 
 async def _loan_simulation_reply(

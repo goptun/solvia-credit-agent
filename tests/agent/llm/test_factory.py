@@ -23,6 +23,7 @@ def factory() -> LLMFactory:
         ("offer_simulator", "smart"),
         ("responder", "smart"),
         ("compliance_guard", "fast"),
+        ("knowledge_agent", "smart"),
     ],
 )
 def test_tier_mapping_table_covers_every_mvp_node(node_name: str, expected_tier: str) -> None:
@@ -45,6 +46,7 @@ def test_smart_tier_nodes_fall_back_to_fast(factory: LLMFactory) -> None:
     assert factory.fallback_for_node("financial_analyst") is not None
     assert factory.fallback_for_node("offer_simulator") is not None
     assert factory.fallback_for_node("responder") is not None
+    assert factory.fallback_for_node("knowledge_agent") is not None
 
 
 def test_fast_tier_nodes_have_no_fallback(factory: LLMFactory) -> None:

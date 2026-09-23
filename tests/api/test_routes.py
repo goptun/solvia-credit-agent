@@ -23,6 +23,7 @@ from apps.agent.synthetic_data.models import (
     Customer,
     CustomerProfile,
 )
+from tests.agent.nodes.fakes import SlowLLM
 from tests.api.conftest import build_test_app, parse_sse
 
 _CUSTOMER = Customer(
@@ -237,3 +238,16 @@ async def test_health_ready_reflects_gateway_reachability(monkeypatch: pytest.Mo
         response = await client.get("/health/ready")
     assert response.status_code == 200
     assert response.json() == {"status": "not_ready", "gateway_reachable": False}
+
+
+async def test_turn_deadline_expiry_streams_the_unavailable_reply() -> None:
+    app = build_test_app(fast_llm=SlowLLM(1.0), customer=_CUSTOMER, llm_turn_deadline_seconds=0.1)
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post(
+            "/conversations/deadline-1/messages",
+            json={"customer_id": "cust-1", "message": "oi"},
+        )
+
+    events = parse_sse(response.text)
+    assert events[-1]["data"]["reply"] == UNAVAILABLE_MESSAGE

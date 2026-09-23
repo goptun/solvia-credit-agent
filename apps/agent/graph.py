@@ -20,6 +20,7 @@ from apps.agent.llm.factory import LLMFactory
 from apps.agent.nodes.compliance_guard import make_compliance_guard_node
 from apps.agent.nodes.consent_check import make_consent_check_node
 from apps.agent.nodes.financial_analyst import make_financial_analyst_node
+from apps.agent.nodes.knowledge_agent import KnowledgeAgentNode
 from apps.agent.nodes.offer_simulator import make_offer_simulator_node
 from apps.agent.nodes.responder import make_responder_node
 from apps.agent.nodes.router import make_router_node
@@ -28,6 +29,7 @@ from apps.agent.repositories.customers import CustomerRepository
 from apps.agent.state import ConversationState
 
 _GATED_INTENTS = {"loan_simulation", "profile_analysis"}
+_KNOWLEDGE_INTENTS = {"product_question", "regulatory_question"}
 
 
 def _traced(
@@ -56,6 +58,8 @@ def _route_after_router(state: ConversationState) -> str:
     intent = state.get("intent")
     if intent in _GATED_INTENTS:
         return "consent_check"
+    if intent in _KNOWLEDGE_INTENTS:
+        return "knowledge_agent"
     return "responder"
 
 
@@ -76,6 +80,7 @@ def _route_after_consent_check(state: ConversationState) -> str:
 def build_graph(
     llm_factory: LLMFactory,
     customer_repository: CustomerRepository,
+    knowledge_agent_node: KnowledgeAgentNode,
     checkpointer: BaseCheckpointSaver[str] | None = None,
 ) -> CompiledStateGraph[ConversationState, None, ConversationState, ConversationState]:
     """Build (and compile) the MVP conversation graph."""
@@ -104,6 +109,9 @@ def build_graph(
         "responder", _traced("responder", make_responder_node(llm_factory))
     )
     graph.add_node(  # type: ignore[call-overload]
+        "knowledge_agent", _traced("knowledge_agent", knowledge_agent_node)
+    )
+    graph.add_node(  # type: ignore[call-overload]
         "compliance_guard",
         _traced("compliance_guard", make_compliance_guard_node(llm_factory)),
     )
@@ -117,6 +125,7 @@ def build_graph(
             "consent_check": "consent_check",
             "offer_simulator": "offer_simulator",
             "responder": "responder",
+            "knowledge_agent": "knowledge_agent",
         },
     )
     graph.add_conditional_edges(
@@ -131,6 +140,7 @@ def build_graph(
     graph.add_edge("financial_analyst", "responder")
     graph.add_edge("offer_simulator", "responder")
     graph.add_edge("responder", "compliance_guard")
+    graph.add_edge("knowledge_agent", "compliance_guard")
     graph.add_edge("compliance_guard", END)
 
     return graph.compile(checkpointer=checkpointer)
@@ -142,6 +152,7 @@ NodeName = Literal[
     "financial_analyst",
     "offer_simulator",
     "responder",
+    "knowledge_agent",
     "compliance_guard",
 ]
 GRAPH_NODE_ORDER: tuple[NodeName, ...] = (
@@ -150,6 +161,7 @@ GRAPH_NODE_ORDER: tuple[NodeName, ...] = (
     "financial_analyst",
     "offer_simulator",
     "responder",
+    "knowledge_agent",
     "compliance_guard",
 )
 """Every possible node name, for the API layer to enumerate `node_started`/

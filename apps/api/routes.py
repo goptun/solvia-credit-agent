@@ -14,6 +14,7 @@ from fastapi.responses import StreamingResponse
 from langchain_core.messages import HumanMessage
 from langchain_core.runnables import RunnableConfig
 
+from apps.agent.llm.deadline import turn_deadline
 from apps.agent.llm.health import check_gateway_reachable
 from apps.agent.llm.resilience import UNAVAILABLE_MESSAGE
 from apps.agent.observability.tracing import reset_current_turn, set_current_turn
@@ -67,7 +68,10 @@ async def post_message(
         current_node: str | None = None
         structlog.contextvars.bind_contextvars(trace_id=trace_id)
         try:
-            with context.tracer.turn(trace_id, conversation_id=conversation_id) as turn:
+            with (
+                turn_deadline(context.llm_settings.llm_turn_deadline_seconds),
+                context.tracer.turn(trace_id, conversation_id=conversation_id) as turn,
+            ):
                 token = set_current_turn(turn)
                 try:
                     async for event in context.graph.astream(
