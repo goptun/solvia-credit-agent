@@ -16,7 +16,7 @@ from langchain_core.messages import HumanMessage
 from pydantic import BaseModel
 
 from apps.agent.llm.factory import LLMFactory
-from apps.agent.llm.resilience import call_structured_with_resilience
+from apps.agent.llm.structured import ainvoke_structured
 from apps.agent.state import ConversationState, SimulationSlots, SimulationSummary
 from apps.agent.tools.simulation import simulate
 
@@ -55,11 +55,7 @@ def make_offer_simulator_node(llm_factory: LLMFactory) -> OfferSimulatorNode:
         current_slots = state.get("simulation_slots") or SimulationSlots()
 
         llm = llm_factory.for_node("offer_simulator")
-        structured = llm.with_structured_output(SlotExtraction)
         fallback_llm = llm_factory.fallback_for_node("offer_simulator")
-        fallback_structured = (
-            fallback_llm.with_structured_output(SlotExtraction) if fallback_llm else None
-        )
         known = (
             f"amount={current_slots.amount}, term_months={current_slots.term_months}, "
             f"amortization_type={current_slots.amortization_type}"
@@ -68,9 +64,7 @@ def make_offer_simulator_node(llm_factory: LLMFactory) -> OfferSimulatorNode:
             *state.get("messages", []),
             HumanMessage(content=f"{_EXTRACTION_INSTRUCTIONS}\n\nDados já conhecidos: {known}"),
         ]
-        extraction: SlotExtraction = await call_structured_with_resilience(
-            structured, prompt, fallback=fallback_structured
-        )
+        extraction = await ainvoke_structured(llm, prompt, SlotExtraction, fallback=fallback_llm)
         merged = _merge_slots(current_slots, extraction)
 
         if not merged.is_complete:

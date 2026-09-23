@@ -13,7 +13,7 @@ from langchain_core.messages import HumanMessage
 from pydantic import BaseModel
 
 from apps.agent.llm.factory import LLMFactory
-from apps.agent.llm.resilience import call_structured_with_resilience
+from apps.agent.llm.structured import ainvoke_structured
 from apps.agent.nodes.messages import last_human_text
 from apps.agent.state import ConversationState, Intent
 
@@ -40,11 +40,7 @@ class RouterDecision(BaseModel):
 def make_router_node(llm_factory: LLMFactory) -> RouterNode:
     async def router_node(state: ConversationState) -> ConversationState:
         llm = llm_factory.for_node("router")
-        structured = llm.with_structured_output(RouterDecision)
         fallback_llm = llm_factory.fallback_for_node("router")
-        fallback_structured = (
-            fallback_llm.with_structured_output(RouterDecision) if fallback_llm else None
-        )
 
         active_flow = state.get("active_flow", "none")
         prompt = [
@@ -56,9 +52,7 @@ def make_router_node(llm_factory: LLMFactory) -> RouterNode:
                 )
             )
         ]
-        decision: RouterDecision = await call_structured_with_resilience(
-            structured, prompt, fallback=fallback_structured
-        )
+        decision = await ainvoke_structured(llm, prompt, RouterDecision, fallback=fallback_llm)
 
         if active_flow != "none" and not decision.is_new_request:
             # An active flow owns this message; router does not touch

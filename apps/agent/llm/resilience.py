@@ -96,29 +96,6 @@ async def call_with_retries(
     raise RuntimeError("retry loop exited without a result")  # pragma: no cover
 
 
-async def call_structured_with_resilience(
-    primary: Any,
-    messages: Sequence[BaseMessage],
-    *,
-    fallback: Any | None = None,
-    max_retries: int = 3,
-    **kwargs: Any,
-) -> Any:
-    """Like `invoke_with_resilience`, for a `.with_structured_output(...)`
-    call: degrade once to `fallback` on exhausted retries. There is no
-    safe synthetic default for an arbitrary schema, so if `fallback` also
-    fails (or there is none), the exception propagates — callers turn
-    that into the turn-level unavailable response (task group 8).
-    """
-    try:
-        return await call_with_retries(primary, messages, max_retries, **kwargs)
-    except Exception:
-        if fallback is None:
-            raise
-
-    return await call_with_retries(fallback, messages, max_retries, **kwargs)
-
-
 async def invoke_with_resilience(
     primary: LLMPort,
     messages: Sequence[BaseMessage],

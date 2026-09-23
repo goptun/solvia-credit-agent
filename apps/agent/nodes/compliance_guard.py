@@ -14,7 +14,7 @@ from langchain_core.messages import HumanMessage
 from pydantic import BaseModel
 
 from apps.agent.llm.factory import LLMFactory
-from apps.agent.llm.resilience import call_with_retries
+from apps.agent.llm.structured import ainvoke_structured
 from apps.agent.nodes.compliance import (
     BLOCKED_PROMISE_REPLY,
     inject_disclaimer,
@@ -34,7 +34,6 @@ class ApprovalPromiseCheck(BaseModel):
 
 async def _llm_flags_approval_promise(llm_factory: LLMFactory, text: str) -> bool:
     llm = llm_factory.for_node("compliance_guard")
-    structured = llm.with_structured_output(ApprovalPromiseCheck)
     prompt = [
         HumanMessage(
             content=(
@@ -45,7 +44,7 @@ async def _llm_flags_approval_promise(llm_factory: LLMFactory, text: str) -> boo
         )
     ]
     try:
-        check: ApprovalPromiseCheck = await call_with_retries(structured, prompt, max_retries=2)
+        check = await ainvoke_structured(llm, prompt, ApprovalPromiseCheck, max_retries=2)
         return check.promises_approval
     except Exception:
         # The keyword check already ran and is the safety net; an LLM
