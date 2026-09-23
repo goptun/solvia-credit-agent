@@ -19,7 +19,8 @@ from typing import Any
 from langchain_core.messages import BaseMessage, HumanMessage
 from pydantic import BaseModel, ValidationError
 
-from apps.agent.llm.errors import StructuredOutputError
+from apps.agent.llm.deadline import run_within_deadline
+from apps.agent.llm.errors import LLMDeadlineExceeded, StructuredOutputError
 from apps.agent.llm.port import LLMPort
 from apps.agent.llm.resilience import call_with_retries
 
@@ -107,8 +108,22 @@ async def ainvoke_structured[T: BaseModel](
     `fallback` (the smart->fast tier degradation) if `primary` fails
     entirely, including its own JSON-mode fallback attempt.
     """
+    return await run_within_deadline(
+        lambda: _ainvoke_structured_with_fallback(primary, messages, schema, fallback, max_retries)
+    )
+
+
+async def _ainvoke_structured_with_fallback[T: BaseModel](
+    primary: LLMPort,
+    messages: Sequence[BaseMessage],
+    schema: type[T],
+    fallback: LLMPort | None,
+    max_retries: int,
+) -> T:
     try:
         return await _native_then_json_mode(primary, messages, schema, max_retries)
+    except LLMDeadlineExceeded:
+        raise
     except Exception:
         if fallback is None:
             raise

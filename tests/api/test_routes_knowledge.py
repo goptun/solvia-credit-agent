@@ -6,8 +6,10 @@ from __future__ import annotations
 from httpx import ASGITransport, AsyncClient
 
 from apps.agent.llm.fake import FakeLLM
+from apps.agent.llm.resilience import UNAVAILABLE_MESSAGE
 from apps.agent.nodes.knowledge_agent import Claim, KnowledgeAnswer
 from rag.retrieval.retrieved_chunk import RetrievedChunk
+from tests.agent.nodes.fakes import SlowLLM
 from tests.api.conftest import build_test_app
 
 _CHUNK = RetrievedChunk(
@@ -58,3 +60,17 @@ async def test_unanswerable_question_returns_refused_true_with_no_citations() ->
     body = response.json()
     assert body["refused"] is True
     assert body["citations"] == []
+
+
+async def test_deadline_expiry_returns_503_with_the_unavailable_message() -> None:
+    app = build_test_app(
+        smart_llm=SlowLLM(1.0),
+        knowledge_retrieve=_retrieve_chunk,
+        llm_turn_deadline_seconds=0.1,
+    )
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post("/knowledge/answer", json={"question": "meus direitos?"})
+
+    assert response.status_code == 503
+    assert response.json()["detail"] == UNAVAILABLE_MESSAGE

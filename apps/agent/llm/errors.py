@@ -20,6 +20,12 @@ class RetryableLLMError(Exception):
     empty completion with `finish_reason == "length"`."""
 
 
+class LLMDeadlineExceeded(Exception):
+    """The turn's LLM budget (`LLM_TURN_DEADLINE_SECONDS`) ran out while
+    retries, the JSON-mode fallback, or tier degradation were still in
+    progress. Never retried and never degraded further."""
+
+
 class StructuredOutputError(Exception):
     """Raised when structured output could not be extracted after the
     native tool-calling attempt and the single JSON-mode repair retry."""

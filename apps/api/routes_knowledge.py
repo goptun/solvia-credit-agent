@@ -15,8 +15,11 @@ boundaries".
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 
+from apps.agent.llm.deadline import turn_deadline
+from apps.agent.llm.errors import LLMDeadlineExceeded
+from apps.agent.llm.resilience import UNAVAILABLE_MESSAGE
 from apps.agent.nodes.knowledge_agent import ground_answer
 from apps.api.context import AppContext
 from apps.api.schemas import CitationResponse, KnowledgeAnswerResponse, KnowledgeQuestionRequest
@@ -36,15 +39,19 @@ async def post_knowledge_answer(
 
     llm = context.llm_factory.for_node("knowledge_agent")
     fallback_llm = context.llm_factory.fallback_for_node("knowledge_agent")
-    result = await ground_answer(
-        body.question,
-        None,  # no intent to derive a source_type from — search the whole corpus
-        llm,
-        fallback_llm,
-        context.knowledge_embeddings,
-        context.knowledge_retrieve,
-        context.rag_settings,
-    )
+    try:
+        with turn_deadline(context.llm_settings.llm_turn_deadline_seconds):
+            result = await ground_answer(
+                body.question,
+                None,  # no intent to derive a source_type from — search the whole corpus
+                llm,
+                fallback_llm,
+                context.knowledge_embeddings,
+                context.knowledge_retrieve,
+                context.rag_settings,
+            )
+    except LLMDeadlineExceeded as exc:
+        raise HTTPException(status_code=503, detail=UNAVAILABLE_MESSAGE) from exc
 
     return KnowledgeAnswerResponse(
         answer=result.answer,

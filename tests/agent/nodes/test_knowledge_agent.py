@@ -5,7 +5,9 @@ from __future__ import annotations
 
 from langchain_core.messages import HumanMessage
 
+from apps.agent.llm.deadline import turn_deadline
 from apps.agent.llm.fake import FakeLLM
+from apps.agent.llm.resilience import UNAVAILABLE_MESSAGE
 from apps.agent.nodes.knowledge_agent import (
     Claim,
     KnowledgeAnswer,
@@ -17,7 +19,7 @@ from rag.corpus.manifest import SourceType
 from rag.embeddings.fake import FakeEmbeddings
 from rag.retrieval.retrieved_chunk import RetrievedChunk
 from rag.settings import RagSettings
-from tests.agent.nodes.fakes import ScriptedLLMFactory
+from tests.agent.nodes.fakes import ScriptedLLMFactory, SlowLLM
 
 _EMBEDDINGS = FakeEmbeddings()
 _SETTINGS = RagSettings(rag_min_relevance_score=0.5)
@@ -209,3 +211,16 @@ async def test_product_question_reply_has_no_regulatory_citation() -> None:
 
     assert "parcelas fixas" in reply
     assert "(" not in reply
+
+
+async def test_turn_deadline_expiry_returns_the_unavailable_reply() -> None:
+    chunk = _chunk("chunk-1", similarity=0.9)
+    slow_llm = SlowLLM(1.0, response=KnowledgeAnswer(claims=[]))
+    node = make_knowledge_agent_node(
+        ScriptedLLMFactory(smart=slow_llm), _EMBEDDINGS, _retrieve_returning([chunk]), _SETTINGS
+    )
+
+    with turn_deadline(0.1):
+        reply = _reply(await node(_state_with_question("Pergunta qualquer")))
+
+    assert reply == UNAVAILABLE_MESSAGE

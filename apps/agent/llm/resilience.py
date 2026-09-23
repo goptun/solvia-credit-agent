@@ -16,6 +16,7 @@ from typing import Any
 from langchain_core.messages import AIMessage, BaseMessage
 from tenacity import AsyncRetrying, retry_if_exception, stop_after_attempt, wait_exponential
 
+from apps.agent.llm.deadline import run_within_deadline
 from apps.agent.llm.errors import RetryableLLMError, is_transient
 from apps.agent.llm.port import LLMPort
 
@@ -109,16 +110,25 @@ async def invoke_with_resilience(
     (or if `primary` has no fallback and fails).
     """
     try:
+        return await run_within_deadline(
+            lambda: _invoke_with_fallback(primary, messages, fallback, max_retries, **kwargs)
+        )
+    except Exception:
+        return LLMCallResult(message=AIMessage(content=UNAVAILABLE_MESSAGE), resolved_model=None)
+
+
+async def _invoke_with_fallback(
+    primary: LLMPort,
+    messages: Sequence[BaseMessage],
+    fallback: LLMPort | None,
+    max_retries: int,
+    **kwargs: Any,
+) -> LLMCallResult:
+    try:
         message = await call_with_retries(primary, messages, max_retries, **kwargs)
         return LLMCallResult(message=message, resolved_model=_extract_resolved_model(message))
     except Exception:
         if fallback is None:
-            return LLMCallResult(
-                message=AIMessage(content=UNAVAILABLE_MESSAGE), resolved_model=None
-            )
-
-    try:
-        message = await call_with_retries(fallback, messages, max_retries, **kwargs)
-        return LLMCallResult(message=message, resolved_model=_extract_resolved_model(message))
-    except Exception:
-        return LLMCallResult(message=AIMessage(content=UNAVAILABLE_MESSAGE), resolved_model=None)
+            raise
+    message = await call_with_retries(fallback, messages, max_retries, **kwargs)
+    return LLMCallResult(message=message, resolved_model=_extract_resolved_model(message))

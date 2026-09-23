@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     latency was not isolated in that measurement — a manual eval that
     must not be cut short overrides them (e.g. 120 s), and such an
     override is not the production value."""
+    llm_turn_deadline_seconds: float = 45.0
+    """Total LLM budget for one conversation turn: retries, the JSON-mode
+    fallback and smart -> fast degradation must all fit inside it; on
+    expiry the turn gets the friendly unavailable reply. Independent of
+    the per-attempt tier timeouts above."""
     llm_max_retries: int = 3
     llm_max_tokens_fast: int = 256
     llm_max_tokens_smart: int = 1024

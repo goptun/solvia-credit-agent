@@ -7,12 +7,45 @@ configured, instead of a fresh empty one per call.
 
 from __future__ import annotations
 
+import asyncio
+from collections.abc import Sequence
+from typing import Any
+
+import httpx
+from langchain_core.messages import AIMessage, BaseMessage
+
 from apps.agent.llm.factory import LLMFactory, Tier
 from apps.agent.llm.fake import FakeLLM
 from apps.agent.llm.port import LLMPort
 from apps.agent.llm.settings import Settings
 from apps.agent.state import ConversationState
 from apps.agent.synthetic_data.models import Customer
+
+
+class SlowLLM:
+    """An `LLMPort` double whose every call sleeps `delay` seconds and
+    then either fails with a transient timeout (`fail=True`, so retries
+    and fallbacks keep firing) or returns `response`. Counts calls in
+    `.calls`, across plain and structured use."""
+
+    def __init__(self, delay: float, *, fail: bool = False, response: Any = None) -> None:
+        self.delay = delay
+        self.fail = fail
+        self.response = response if response is not None else AIMessage(content="{}")
+        self.calls = 0
+
+    async def ainvoke(self, messages: Sequence[BaseMessage], **kwargs: Any) -> Any:
+        self.calls += 1
+        await asyncio.sleep(self.delay)
+        if self.fail:
+            raise httpx.ReadTimeout("simulated slow gateway")
+        return self.response
+
+    def bind_tools(self, tools: Sequence[Any], **kwargs: Any) -> SlowLLM:
+        return self
+
+    def with_structured_output(self, schema: Any, **kwargs: Any) -> SlowLLM:
+        return self
 
 
 class ScriptedLLMFactory(LLMFactory):

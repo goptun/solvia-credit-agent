@@ -52,6 +52,7 @@ def build_test_app(
     smart_llm: LLMPort | None = None,
     customer: Customer | None = None,
     knowledge_retrieve: RetrieveFn | None = None,
+    llm_turn_deadline_seconds: float = 45.0,
 ) -> FastAPI:
     factory = ScriptedLLMFactory(fast=fast_llm or FakeLLM(), smart=smart_llm or FakeLLM())
     repo = StubCustomerRepository(customer)
@@ -62,7 +63,9 @@ def build_test_app(
     app.include_router(knowledge_router)
     app.state.context = AppContext(
         llm_factory=factory,
-        llm_settings=Settings(llm_provider="fake"),
+        llm_settings=Settings(
+            llm_provider="fake", llm_turn_deadline_seconds=llm_turn_deadline_seconds
+        ),
         customer_repository=repo,
         checkpointer=MemorySaver(),
         graph=graph,
