@@ -3,8 +3,15 @@ approval-promise detection."""
 
 from __future__ import annotations
 
+import structlog
+from langchain_core.messages import AIMessage
+
 from apps.agent.llm.fake import FakeLLM, FakeStructuredLLM
-from apps.agent.nodes.compliance_guard import ApprovalPromiseCheck, make_compliance_guard_node
+from apps.agent.nodes.compliance_guard import (
+    APPROVAL_CHECK_DEGRADED_FLAG,
+    ApprovalPromiseCheck,
+    make_compliance_guard_node,
+)
 from apps.agent.state import ConversationState, initial_state
 from tests.agent.nodes.fakes import ScriptedLLMFactory
 
@@ -122,3 +129,79 @@ async def test_no_promise_language_passes_through_unblocked() -> None:
 
     assert updates["compliance_flags"] == []
     assert "Não posso garantir" not in _reply(updates)
+
+
+def _factory_where_the_llm_check_cannot_produce_a_result() -> ScriptedLLMFactory:
+    return ScriptedLLMFactory(
+        fast=FakeLLM(responses=[None, AIMessage(content="não consigo responder em JSON")])
+    )
+
+
+async def test_no_tool_call_uses_the_json_fallback_and_the_verdict_is_honored() -> None:
+    verdict = ApprovalPromiseCheck(promises_approval=True)
+    fast_llm = FakeLLM(responses=[None, AIMessage(content=verdict.model_dump_json())])
+    node = make_compliance_guard_node(ScriptedLLMFactory(fast=fast_llm))
+    state = initial_state("cust-1")
+    state["draft_reply"] = "Você provavelmente vai conseguir esse crédito sem problemas."
+
+    updates = await node(state)
+
+    assert "approval_promise_blocked" in updates["compliance_flags"]
+    assert APPROVAL_CHECK_DEGRADED_FLAG not in updates["compliance_flags"]
+
+
+async def test_check_that_cannot_produce_a_result_fails_closed_on_an_unhedged_approval() -> None:
+    node = make_compliance_guard_node(_factory_where_the_llm_check_cannot_produce_a_result())
+    state = initial_state("cust-1")
+    state["draft_reply"] = "Boas notícias: você será aprovado rapidamente."
+
+    with structlog.testing.capture_logs() as logs:
+        updates = await node(state)
+
+    assert _reply(updates).startswith("Não posso garantir")
+    assert "approval_promise_blocked" in updates["compliance_flags"]
+    assert APPROVAL_CHECK_DEGRADED_FLAG in updates["compliance_flags"]
+    (warning,) = [entry for entry in logs if entry["log_level"] == "warning"]
+    assert warning["event"] == "approval_promise_check_unavailable"
+    assert "aprovado" not in str(warning)  # never the reply text
+
+
+async def test_check_that_cannot_produce_a_result_lets_a_hedged_reply_through_but_flags_it() -> (
+    None
+):
+    node = make_compliance_guard_node(_factory_where_the_llm_check_cannot_produce_a_result())
+    state = initial_state("cust-1")
+    state["draft_reply"] = "A aprovação depende da análise de crédito."
+
+    with structlog.testing.capture_logs() as logs:
+        updates = await node(state)
+
+    assert "Não posso garantir" not in _reply(updates)
+    assert updates["compliance_flags"] == [APPROVAL_CHECK_DEGRADED_FLAG]
+    assert any(entry["event"] == "approval_promise_check_unavailable" for entry in logs)
+
+
+async def test_check_that_cannot_produce_a_result_never_blocks_a_reply_without_approval() -> None:
+    node = make_compliance_guard_node(_factory_where_the_llm_check_cannot_produce_a_result())
+    state = initial_state("cust-1")
+    state["draft_reply"] = "Aqui está a simulação solicitada."
+
+    updates = await node(state)
+
+    assert _reply(updates) == "Aqui está a simulação solicitada."
+    assert updates["compliance_flags"] == [APPROVAL_CHECK_DEGRADED_FLAG]
+
+
+async def test_an_expired_turn_deadline_degrades_the_check_instead_of_skipping_it() -> None:
+    from apps.agent.llm.deadline import turn_deadline
+
+    factory, _ = _factory_with_llm_verdict(False)
+    node = make_compliance_guard_node(factory)
+    state = initial_state("cust-1")
+    state["draft_reply"] = "Você será aprovado rapidamente."
+
+    with turn_deadline(0.0):
+        updates = await node(state)
+
+    assert "approval_promise_blocked" in updates["compliance_flags"]
+    assert APPROVAL_CHECK_DEGRADED_FLAG in updates["compliance_flags"]
