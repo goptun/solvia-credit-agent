@@ -36,6 +36,31 @@ class GroundingOutcome:
     cited: tuple[tuple[str, str | None], ...] = ()
     """`(document_id, article_ref)` of each rendered citation, resolved
     against the turn's retrieved chunks."""
+    retrieved: tuple[tuple[str, str | None], ...] = ()
+    """`(document_id, article_ref)` of every chunk in the turn's
+    retrieved top-k, whether or not the threshold then refused."""
+
+
+@dataclass(frozen=True)
+class AnswerableRecord:
+    """Per-question outcome for an answerable question (no question
+    text — just its index in the eval set)."""
+
+    index: int
+    style: str
+    refused: bool
+    refused_by_threshold: bool
+    gold_in_context: bool
+    """The expected document (and, when specified, one of the expected
+    articles) was among the retrieved top-k."""
+
+    @property
+    def bucket(self) -> str:
+        if not self.refused:
+            return "answered"
+        if self.refused_by_threshold:
+            return "threshold"
+        return "llm_refused_gold_in_context" if self.gold_in_context else "gold_not_retrieved"
 
 
 GroundFn = Callable[[str, SourceType | None], Awaitable[GroundingOutcome]]
@@ -49,6 +74,7 @@ class EndToEndReport:
     false_refusals_by_llm: int
     false_refusal_rate_by_style: dict[str, float]
     answerable_errors: int
+    answerable_records: tuple[AnswerableRecord, ...]
     answered: int
     citation_hits: int
     llm_latencies: tuple[float, ...]
@@ -85,13 +111,19 @@ def percentile(values: tuple[float, ...], pct: float) -> float:
     return ordered[min(len(ordered) - 1, round(pct / 100 * (len(ordered) - 1)))]
 
 
-def _cites_expected(outcome: GroundingOutcome, question: AnswerableQuestion) -> bool:
+def _matches_expected(
+    pairs: tuple[tuple[str, str | None], ...], question: AnswerableQuestion
+) -> bool:
     expected_refs = set(question.expected_refs) if question.expected_refs else None
     return any(
         document_id == question.expected_document_id
         and (expected_refs is None or article_ref in expected_refs)
-        for document_id, article_ref in outcome.cited
+        for document_id, article_ref in pairs
     )
+
+
+def _cites_expected(outcome: GroundingOutcome, question: AnswerableQuestion) -> bool:
+    return _matches_expected(outcome.cited, question)
 
 
 async def _safe_ground(
@@ -108,12 +140,26 @@ async def _safe_ground(
         return None
 
 
-async def run_end_to_end(questions: EvalQuestionSet, ground: GroundFn) -> EndToEndReport:
+async def run_end_to_end(
+    questions: EvalQuestionSet,
+    ground: GroundFn,
+    *,
+    answerable_indices: frozenset[int] | None = None,
+) -> EndToEndReport:
+    """`answerable_indices` restricts the answerable questions run (by
+    position in the eval set) — used to A/B a prompt on just the
+    questions attributable to it; unanswerable questions always run."""
     false_by_style: dict[str, list[bool]] = defaultdict(list)
     false_refusals = false_by_threshold = 0
     answerable_errors = answered = citation_hits = 0
     latencies: list[float] = []
-    for answerable in questions.answerable:
+    records: list[AnswerableRecord] = []
+    selected = [
+        (index, question)
+        for index, question in enumerate(questions.answerable)
+        if answerable_indices is None or index in answerable_indices
+    ]
+    for index, answerable in selected:
         outcome = await _safe_ground(
             ground, answerable.question, _source_type_for(answerable.expected_document_id)
         )
@@ -121,6 +167,15 @@ async def run_end_to_end(questions: EvalQuestionSet, ground: GroundFn) -> EndToE
             answerable_errors += 1
             continue
         false_by_style[answerable.style].append(outcome.refused)
+        records.append(
+            AnswerableRecord(
+                index=index,
+                style=answerable.style,
+                refused=outcome.refused,
+                refused_by_threshold=outcome.refused_by_threshold,
+                gold_in_context=_matches_expected(outcome.retrieved, answerable),
+            )
+        )
         if outcome.llm_latency_seconds is not None:
             latencies.append(outcome.llm_latency_seconds)
         if not outcome.refused:
@@ -148,8 +203,9 @@ async def run_end_to_end(questions: EvalQuestionSet, ground: GroundFn) -> EndToE
                 correct_by_threshold += 1
 
     return EndToEndReport(
-        answerable_total=len(questions.answerable),
+        answerable_total=len(selected),
         answerable_errors=answerable_errors,
+        answerable_records=tuple(records),
         answered=answered,
         citation_hits=citation_hits,
         llm_latencies=tuple(latencies),
@@ -197,6 +253,20 @@ def format_report(report: EndToEndReport) -> str:
         lines.append(
             f"  LLM latency over {len(lat)} calls: p50 {percentile(lat, 50):.1f}s, "
             f"p95 {percentile(lat, 95):.1f}s, max {max(lat):.1f}s, >30s: {over_30}"
+        )
+    buckets: dict[str, int] = defaultdict(int)
+    for record in report.answerable_records:
+        if record.refused:
+            buckets[record.bucket] += 1
+    if buckets:
+        threshold_with_gold = sum(
+            1 for r in report.answerable_records if r.bucket == "threshold" and r.gold_in_context
+        )
+        lines.append(
+            "  false refusals by cause: "
+            f"threshold {buckets['threshold']} (gold was in context for {threshold_with_gold}), "
+            f"LLM refused with gold in context {buckets['llm_refused_gold_in_context']}, "
+            f"gold not retrieved {buckets['gold_not_retrieved']}"
         )
     errors = report.answerable_errors + report.unanswerable_errors
     if errors:

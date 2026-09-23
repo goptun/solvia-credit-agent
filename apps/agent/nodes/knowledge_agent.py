@@ -61,6 +61,16 @@ _INSTRUCTIONS = (
     "correta quando não há sustentação explícita nos trechos."
 )
 
+LEGACY_INSTRUCTIONS = (
+    "Você responde perguntas EXCLUSIVAMENTE com base nos trechos fornecidos abaixo — "
+    "nunca use conhecimento próprio. Para cada afirmação da sua resposta, produza um "
+    "claim separado com o texto da afirmação e o chunk_id do trecho que a sustenta. "
+    "Só use um chunk_id que apareça exatamente nos trechos fornecidos. Se os trechos "
+    "não permitirem responder à pergunta, retorne uma lista de claims vazia."
+)
+"""The instruction before task 14.3's explicit refusal rule — kept only so
+`scripts/eval_end_to_end.py --ab` can compare the two on real questions."""
+
 _INTENT_TO_SOURCE_TYPE: dict[str, SourceType] = {
     "product_question": "product_catalog",
     "regulatory_question": "regulation",
@@ -120,6 +130,7 @@ async def ground_answer(
     embeddings: EmbeddingsPort,
     retrieve: RetrieveFn,
     rag_settings: RagSettings,
+    instructions: str = _INSTRUCTIONS,
 ) -> GroundedAnswer:
     """Retrieve, ground, and cite an answer to `question` — the shared
     core both `make_knowledge_agent_node` and the standalone endpoint
@@ -138,7 +149,7 @@ async def ground_answer(
     prompt = [
         HumanMessage(
             content=(
-                f"{_INSTRUCTIONS}\n\n"
+                f"{instructions}\n\n"
                 f"Pergunta do cliente: {question}\n\n"
                 f"Trechos disponíveis:\n{_format_chunks_for_prompt(results)}"
             )

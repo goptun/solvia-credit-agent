@@ -162,3 +162,55 @@ async def test_reports_llm_latency_and_citation_hit_rate() -> None:
     assert "max 40.0s" in text
     assert ">30s: 1" in text
     assert "citation hit rate (answered answerable): 50.00%" in text
+
+
+async def test_false_refusals_are_decomposed_by_cause() -> None:
+    def q(name: str) -> AnswerableQuestion:
+        return AnswerableQuestion(
+            question=name,
+            expected_document_id="cdc-consolidada",
+            expected_refs=["art. 54-A"],
+            evidence="x",
+        )
+
+    gold = (("cdc-consolidada", "art. 54-A"),)
+    other = (("cdc-consolidada", "art. 6º"),)
+    questions = EvalQuestionSet(
+        answerable=[q("answered"), q("threshold"), q("llm-gold"), q("no-gold")], unanswerable=[]
+    )
+    outcomes = {
+        "answered": GroundingOutcome(False, False, retrieved=gold, cited=gold),
+        "threshold": GroundingOutcome(True, True, retrieved=gold),
+        "llm-gold": GroundingOutcome(True, False, llm_latency_seconds=1.0, retrieved=gold),
+        "no-gold": GroundingOutcome(True, False, llm_latency_seconds=1.0, retrieved=other),
+    }
+
+    report = await run_end_to_end(questions, _scripted(outcomes, []))
+
+    assert [r.bucket for r in report.answerable_records] == [
+        "answered",
+        "threshold",
+        "llm_refused_gold_in_context",
+        "gold_not_retrieved",
+    ]
+    text = format_report(report)
+    assert "threshold 1 (gold was in context for 1)" in text
+    assert "LLM refused with gold in context 1" in text
+    assert "gold not retrieved 1" in text
+
+
+async def test_answerable_indices_restrict_the_run_but_not_the_unanswerable() -> None:
+    questions = EvalQuestionSet(
+        answerable=[_answerable("a0"), _answerable("a1"), _answerable("a2")],
+        unanswerable=[UnanswerableQuestion(question="u0", distance="far")],
+    )
+    seen: list[SourceType | None] = []
+    outcomes = {"a0": _ANSWERED, "a1": _ANSWERED, "a2": _ANSWERED, "u0": _THRESHOLD_REFUSAL}
+
+    report = await run_end_to_end(
+        questions, _scripted(outcomes, seen), answerable_indices=frozenset({1})
+    )
+
+    assert report.answerable_total == 1
+    assert [r.index for r in report.answerable_records] == [1]
+    assert report.unanswerable_total == 1

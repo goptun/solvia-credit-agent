@@ -15,7 +15,12 @@ unanswerable ones (far vs. near-miss), attributing each refusal to the
 similarity threshold or to the LLM grounding stage.
 
 Run with: `PYTHONPATH=. uv run python scripts/eval_end_to_end.py [--tier fast|smart]`
-`--pause-seconds N` sleeps between LLM-reaching questions to stay under the
+`--save-records PATH` writes the per-question decomposition (index and
+cause of each false refusal, no question text) as JSON. `--ab PATH --reps N`
+compares the legacy and current refusal instruction on only the questions
+the decomposition attributed to the LLM (`llm_refused_gold_in_context`),
+plus all unanswerable questions. `--pause-seconds N` sleeps between
+LLM-reaching questions to stay under the
 upstream provider's per-minute quota (a burst of back-to-back calls got
 `429 quota exceeded` and made a first run's latency/error numbers
 meaningless). `--tier` temporarily remaps `knowledge_agent` to a tier for this run only
@@ -32,19 +37,31 @@ from __future__ import annotations
 import argparse
 import asyncio
 import functools
+import json
 import sys
 import time
+from pathlib import Path
 
 import psycopg
 from psycopg_pool import ConnectionPool
 
 from apps.agent.llm.factory import NODE_TIER_MAP, LLMFactory, Tier
 from apps.agent.llm.settings import get_settings
-from apps.agent.nodes.knowledge_agent import RetrieveFn, ground_answer
+from apps.agent.nodes.knowledge_agent import (
+    _INSTRUCTIONS,
+    LEGACY_INSTRUCTIONS,
+    RetrieveFn,
+    ground_answer,
+)
 from apps.api.settings import get_api_settings
 from rag.corpus.manifest import SourceType
 from rag.embeddings.fastembed_adapter import FastEmbedAdapter
-from rag.eval.end_to_end import GroundingOutcome, format_report, run_end_to_end
+from rag.eval.end_to_end import (
+    EndToEndReport,
+    GroundingOutcome,
+    format_report,
+    run_end_to_end,
+)
 from rag.eval.questions import load_questions
 from rag.eval.run import _print_report, run_eval
 from rag.retrieval.live import hybrid_search_async
@@ -52,7 +69,9 @@ from rag.retrieval.retrieved_chunk import RetrievedChunk
 from rag.settings import get_rag_settings
 
 
-async def main(tier: Tier | None, pause_seconds: float) -> int:
+async def main(args: argparse.Namespace) -> int:
+    tier: Tier | None = args.tier
+    pause_seconds: float = args.pause_seconds
     llm_settings = get_settings()
     api_settings = get_api_settings()
     rag_settings = get_rag_settings()
@@ -93,10 +112,25 @@ async def main(tier: Tier | None, pause_seconds: float) -> int:
             last_results[:] = results
             return results
 
-        async def ground(question: str, source_type: SourceType | None) -> GroundingOutcome:
+        def make_ground(instructions: str):  # type: ignore[no-untyped-def]
+            async def ground(question: str, source_type: SourceType | None) -> GroundingOutcome:
+                return await _ground_once(question, source_type, instructions)
+
+            return ground
+
+        async def _ground_once(
+            question: str, source_type: SourceType | None, instructions: str
+        ) -> GroundingOutcome:
             start = time.perf_counter()
             result = await ground_answer(
-                question, source_type, llm, fallback_llm, embeddings, spy_retrieve, rag_settings
+                question,
+                source_type,
+                llm,
+                fallback_llm,
+                embeddings,
+                spy_retrieve,
+                rag_settings,
+                instructions,
             )
             elapsed = time.perf_counter() - start
             if pause_seconds and last_results:
@@ -115,20 +149,56 @@ async def main(tier: Tier | None, pause_seconds: float) -> int:
                 refused_by_threshold=result.refused and by_threshold,
                 llm_latency_seconds=None if by_threshold else elapsed,
                 cited=cited,
+                retrieved=tuple((chunk.document_id, chunk.article_ref) for chunk in last_results),
             )
 
+        if args.ab:
+            subset = frozenset(json.loads(Path(args.ab).read_text())["llm_refused_gold_in_context"])
+            print(
+                f"\n== Prompt A/B on {len(subset)} questions the LLM refused with gold in "
+                "context =="
+            )
+            for rep in range(args.reps):
+                for name, instructions in (
+                    ("legacy", LEGACY_INSTRUCTIONS),
+                    ("current", _INSTRUCTIONS),
+                ):
+                    report = await run_end_to_end(
+                        questions, make_ground(instructions), answerable_indices=subset
+                    )
+                    print(_ab_line(name, rep + 1, report))
+            return 0
+
         print("\n== End-to-end (real LLM grounding, threshold + LLM stage) ==")
-        report = await run_end_to_end(questions, ground)
+        report = await run_end_to_end(questions, make_ground(_INSTRUCTIONS))
     finally:
         pool.close()
 
     print(format_report(report))
+    if args.save_records:
+        by_bucket: dict[str, list[int]] = {}
+        for record in report.answerable_records:
+            by_bucket.setdefault(record.bucket, []).append(record.index)
+        Path(args.save_records).write_text(json.dumps(by_bucket))
     return 0
+
+
+def _ab_line(name: str, rep: int, report: EndToEndReport) -> str:
+    refused = sum(1 for r in report.answerable_records if r.refused)
+    evaluated = report.answerable_total - report.answerable_errors
+    return (
+        f"  [{name} rep {rep}] subset false-refusals {refused}/{evaluated}; "
+        f"unanswerable refused {report.correct_refusals}/"
+        f"{report.unanswerable_total - report.unanswerable_errors} "
+        f"(errors: {report.answerable_errors}+{report.unanswerable_errors})"
+    )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--tier", choices=["fast", "smart"], default=None)
     parser.add_argument("--pause-seconds", type=float, default=0.0)
-    args = parser.parse_args()
-    sys.exit(asyncio.run(main(args.tier, args.pause_seconds)))
+    parser.add_argument("--save-records", default=None)
+    parser.add_argument("--ab", default=None)
+    parser.add_argument("--reps", type=int, default=2)
+    sys.exit(asyncio.run(main(parser.parse_args())))
