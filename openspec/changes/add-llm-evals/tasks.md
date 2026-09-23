@@ -27,10 +27,10 @@
 
 ## 4. Dataset schemas and review tooling
 
-- [ ] 4.1 Add Pydantic schemas and a loader for the four datasets (retrieval, router, slots, compliance) with `version` and a content hash — verify unit tests reject a missing field, an unknown label, an unknown document, and evidence longer than 200 characters
-- [ ] 4.2 Implement the derived difficulty rule and composition validators (minimums for colloquial share, near-miss count, per-document coverage, unaccented and multi-ref presence, all six intents, continuation items, PR #5 fail-closed examples) — verify tests recompute difficulty and fail when a declared tag disagrees with the rule
-- [ ] 4.3 Implement `python -m evals review-sample --dataset D --n 15 --seed S` (stratified round-robin over tags/labels) — verify the same seed prints the same items, different seeds differ, and every stratum present in the dataset appears when the sample size allows
-- [ ] 4.4 Commit: `feat(evals): adiciona schemas dos datasets, validações e amostra estratificada para revisão`
+- [x] 4.1 Add Pydantic schemas and a loader for the four datasets (retrieval, router, slots, compliance) with `version` and a content hash — verify unit tests reject a missing field, an unknown label, an unknown document, and evidence longer than 200 characters
+- [x] 4.2 Implement the derived difficulty rule and composition validators (minimums for colloquial share, near-miss count, per-document coverage, unaccented and multi-ref presence, all six intents, continuation items, PR #5 fail-closed examples) — verify tests recompute difficulty and fail when a declared tag disagrees with the rule
+- [x] 4.3 Implement `python -m evals review-sample --dataset D --n 15 --seed S` (stratified round-robin over tags/labels) — verify the same seed prints the same items, different seeds differ, and every stratum present in the dataset appears when the sample size allows
+- [x] 4.4 Commit: `feat(evals): adiciona schemas dos datasets, validações e amostra estratificada para revisão`
 
 ## 5. Corpus chunk fixture
 
