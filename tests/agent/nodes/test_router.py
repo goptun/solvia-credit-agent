@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import pytest
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import AIMessage, HumanMessage
 
+from apps.agent.llm.errors import StructuredOutputError
 from apps.agent.llm.fake import FakeLLM
 from apps.agent.nodes.router import RouterDecision, make_router_node
 from apps.agent.state import ConversationState, initial_state
@@ -86,3 +87,23 @@ async def test_new_request_signal_clears_the_active_flow() -> None:
     assert updates["intent"] == "product_question"
     assert updates["active_flow"] == "none"
     assert updates["pending_intent"] is None
+
+
+async def test_router_uses_the_json_fallback_when_the_model_returns_no_tool_call() -> None:
+    fast_llm = FakeLLM(
+        responses=[None, AIMessage(content=RouterDecision(intent="complaint").model_dump_json())]
+    )
+    node = make_router_node(ScriptedLLMFactory(fast=fast_llm))
+
+    updates = await node(_state_with_message("estou insatisfeito"))
+
+    assert updates["intent"] == "complaint"
+    assert len(fast_llm.calls) == 2  # the native attempt, then the JSON-mode call
+
+
+async def test_router_raises_instead_of_using_none_when_both_paths_fail() -> None:
+    fast_llm = FakeLLM(responses=[None, AIMessage(content="sem json")])
+    node = make_router_node(ScriptedLLMFactory(fast=fast_llm))
+
+    with pytest.raises(StructuredOutputError):
+        await node(_state_with_message("mensagem qualquer"))

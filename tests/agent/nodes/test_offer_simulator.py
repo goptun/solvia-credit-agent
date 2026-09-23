@@ -5,8 +5,10 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from langchain_core.messages import HumanMessage
+import pytest
+from langchain_core.messages import AIMessage, HumanMessage
 
+from apps.agent.llm.errors import StructuredOutputError
 from apps.agent.llm.fake import FakeLLM
 from apps.agent.nodes.offer_simulator import SlotExtraction, make_offer_simulator_node
 from apps.agent.state import SimulationSlots, initial_state
@@ -58,3 +60,27 @@ async def test_llm_never_produces_the_numeric_simulation_result() -> None:
     assert result.cet_annual > 0
     assert result.total_paid > result.principal
     assert not hasattr(SlotExtraction, "cet_annual")
+
+
+async def test_slot_extraction_uses_the_json_fallback_when_the_model_returns_no_tool_call() -> None:
+    extraction = SlotExtraction(amount=Decimal("5000"))
+    smart_llm = FakeLLM(responses=[None, AIMessage(content=extraction.model_dump_json())])
+    node = make_offer_simulator_node(ScriptedLLMFactory(smart=smart_llm))
+    state = initial_state("cust-1")
+    state["messages"] = [HumanMessage(content="quero simular 5000 reais")]
+
+    updates = await node(state)
+
+    assert updates["simulation_slots"].amount == Decimal("5000")
+    assert updates["active_flow"] == "slot_filling"
+
+
+async def test_slot_extraction_raises_instead_of_using_none_when_both_paths_fail() -> None:
+    smart_llm = FakeLLM(responses=[None, AIMessage(content="sem json")])
+    fast_llm = FakeLLM(responses=[None, AIMessage(content="sem json")])
+    node = make_offer_simulator_node(ScriptedLLMFactory(fast=fast_llm, smart=smart_llm))
+    state = initial_state("cust-1")
+    state["messages"] = [HumanMessage(content="quero simular")]
+
+    with pytest.raises(StructuredOutputError):
+        await node(state)

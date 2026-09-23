@@ -167,3 +167,66 @@ async def test_no_fallback_and_primary_fails_entirely_raises() -> None:
 
     with pytest.raises(StructuredOutputError):
         await ainvoke_structured(primary, MESSAGES, _Schema, fallback=None, max_retries=1)
+
+
+class _NoToolCallStructured:
+    """The model answered without calling the tool: LangChain's tool
+    parser returns `None` instead of raising."""
+
+    async def ainvoke(self, messages: Sequence[BaseMessage], **kwargs: Any) -> Any:
+        return None
+
+
+class _NoToolCallLLM(_PlainTextThenStructuredFailsLLM):
+    def with_structured_output(self, schema: Any, **kwargs: Any) -> _NoToolCallStructured:  # type: ignore[override]
+        return _NoToolCallStructured()
+
+
+async def test_no_tool_call_result_falls_through_to_json_mode_instead_of_returning_none() -> None:
+    llm = _NoToolCallLLM([AIMessage(content='```json\n{"value": "ok"}\n```')])
+
+    result = await ainvoke_structured(llm, MESSAGES, _Schema)
+
+    assert result == _Schema(value="ok")
+    assert llm.plain_calls == 1
+
+
+async def test_no_tool_call_then_unusable_json_raises_and_never_returns_none() -> None:
+    llm = _NoToolCallLLM([AIMessage(content="não sei responder")])
+
+    with pytest.raises(StructuredOutputError):
+        await ainvoke_structured(llm, MESSAGES, _Schema)
+
+    assert llm.plain_calls == 2  # the JSON attempt plus exactly one repair
+
+
+async def test_a_result_of_the_wrong_type_is_also_a_native_failure() -> None:
+    class _WrongTypeStructured:
+        async def ainvoke(self, messages: Sequence[BaseMessage], **kwargs: Any) -> Any:
+            return {"value": "not a schema instance"}
+
+    class _WrongTypeLLM(_PlainTextThenStructuredFailsLLM):
+        def with_structured_output(self, schema: Any, **kwargs: Any) -> Any:
+            return _WrongTypeStructured()
+
+    llm = _WrongTypeLLM([AIMessage(content='{"value": "from json"}')])
+
+    result = await ainvoke_structured(llm, MESSAGES, _Schema)
+
+    assert result == _Schema(value="from json")
+
+
+async def test_the_json_mode_call_carries_the_schema() -> None:
+    seen: list[str] = []
+
+    class _RecordingLLM(_NoToolCallLLM):
+        async def ainvoke(self, messages: Sequence[BaseMessage], **kwargs: Any) -> AIMessage:
+            seen.append(str(messages[-1].content))
+            return await super().ainvoke(messages, **kwargs)
+
+    llm = _RecordingLLM([AIMessage(content='{"value": "ok"}')])
+
+    await ainvoke_structured(llm, MESSAGES, _Schema)
+
+    assert "JSON Schema" in seen[0]
+    assert '"value"' in seen[0]

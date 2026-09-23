@@ -26,6 +26,11 @@ from apps.agent.llm.resilience import call_with_retries
 
 _FENCE_PATTERN = re.compile(r"^```[a-zA-Z]*\n?|\n?```$")
 
+_JSON_INSTRUCTION = (
+    "Responda apenas com um objeto JSON válido que siga este JSON Schema, sem texto "
+    "adicional e sem marcação Markdown:\n{schema}"
+)
+
 _REPAIR_INSTRUCTION = (
     "Sua última resposta não é um JSON válido para o formato esperado. "
     "Erro de parsing/validação: {error}. Responda novamente com apenas "
@@ -60,13 +65,24 @@ async def _json_mode_with_repair[T: BaseModel](
     schema: type[T],
     max_retries: int,
 ) -> T:
-    response = await call_with_retries(llm, messages, max_retries)
+    # The JSON-mode call must tell the model the expected shape: it is
+    # reached precisely when the model did not follow the tool schema, so
+    # a caller's prompt that never mentions the field names is not enough.
+    json_messages = [
+        *messages,
+        HumanMessage(
+            content=_JSON_INSTRUCTION.format(
+                schema=json.dumps(schema.model_json_schema(), ensure_ascii=False)
+            )
+        ),
+    ]
+    response = await call_with_retries(llm, json_messages, max_retries)
     parsed = _try_parse(response, schema)
     if parsed is not None:
         return parsed
 
     repair_prompt = [
-        *messages,
+        *json_messages,
         HumanMessage(content=_REPAIR_INSTRUCTION.format(error="conteúdo não é um JSON válido")),
     ]
     repaired = await call_with_retries(llm, repair_prompt, max_retries=1)
@@ -87,13 +103,18 @@ async def _native_then_json_mode[T: BaseModel](
 ) -> T:
     try:
         structured = llm.with_structured_output(schema, method="function_calling")
-        result: T = await call_with_retries(structured, messages, max_retries)
-        return result
-    except Exception:
-        # Any failure of the native path (transient-exhausted or not)
-        # falls through to the JSON-mode fallback exactly once — see
-        # `specs/llm-gateway/spec.md`.
-        return await _json_mode_with_repair(llm, messages, schema, max_retries)
+        result = await call_with_retries(structured, messages, max_retries)
+        if isinstance(result, schema):
+            return result
+        # A model that answers without calling the tool makes LangChain's
+        # tool parser return `None` instead of raising: that is a native
+        # failure like any other, never a value to hand back to a node.
+    except Exception:  # noqa: BLE001 - any native failure falls through to JSON mode
+        pass
+    # Any failure of the native path (transient-exhausted, raised, or no
+    # tool call) falls through to the JSON-mode fallback exactly once —
+    # see `specs/llm-gateway/spec.md`.
+    return await _json_mode_with_repair(llm, messages, schema, max_retries)
 
 
 async def ainvoke_structured[T: BaseModel](
