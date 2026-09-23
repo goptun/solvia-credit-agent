@@ -55,6 +55,6 @@ def test_factory_applies_the_per_tier_timeout() -> None:
 def test_default_timeouts_are_per_tier_and_smart_is_not_shorter_than_fast() -> None:
     settings = Settings()
 
-    assert settings.llm_timeout_seconds_fast == 45.0
-    assert settings.llm_timeout_seconds_smart == 60.0
+    assert settings.llm_timeout_seconds_fast == 30.0
+    assert settings.llm_timeout_seconds_smart == 45.0
     assert settings.llm_timeout_seconds_smart >= settings.llm_timeout_seconds_fast

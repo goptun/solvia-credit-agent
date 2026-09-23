@@ -22,17 +22,16 @@ class Settings(BaseSettings):
     llm_api_key: str = ""
     llm_model_fast: str = "solvia-fast"
     llm_model_smart: str = "solvia-smart"
-    llm_timeout_seconds_fast: float = 45.0
-    llm_timeout_seconds_smart: float = 60.0
-    """Per-attempt request timeouts by tier (see `docs/adr/ADR-005-llm-
-    latency-and-timeouts.md`). Measured end-to-end `knowledge_agent`
-    calls through the gateway (retries and JSON fallback included) had
-    p50 ~43-44 s on both tiers, and a single 30 s timeout cut off calls
-    that would have completed. These defaults are sized to let one
-    attempt finish rather than to bound total latency, and per-attempt
-    latency was not isolated in that measurement — a manual eval that
-    must not be cut short overrides them (e.g. 120 s), and such an
-    override is not the production value."""
+    llm_timeout_seconds_fast: float = 30.0
+    llm_timeout_seconds_smart: float = 45.0
+    """Per-attempt request timeouts by tier, from single-attempt latencies
+    measured through the gateway (`docs/adr/ADR-005-llm-latency-and-
+    timeouts.md`): a knowledge-sized structured call took 10-40 s on
+    `fast` (p50 14 s) and 20-52 s on `smart` (p50 27 s). `fast` is set
+    just above its typical worst case; `smart` equals the turn deadline
+    below, since a single attempt can never usefully outlive the turn.
+    A manual eval that must not be cut short overrides these (e.g.
+    120 s) — that override is not the production value."""
     llm_turn_deadline_seconds: float = 45.0
     """Total LLM budget for one conversation turn: retries, the JSON-mode
     fallback and smart -> fast degradation must all fit inside it; on
