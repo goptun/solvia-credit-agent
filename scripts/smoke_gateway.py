@@ -26,7 +26,11 @@ follow-up -> completed simulation), sends real messages through the
 full graph and prints, per turn: the intent classified, the node path,
 `reply_status` (`ok` | `unavailable` | `empty`), the resolved
 underlying model for each LLM call when available, and the first 120
-characters of the final reply. Replies are drawn entirely from the
+characters of the final reply (400 when a call resolved to gpt-oss), plus
+per LLM call: node, whether the completion was a native tool call, a completion with
+no tool call on a structured node (JSON mode, or a native attempt that
+returned no tool call), or plain content, the resolved model, and
+latency. Replies are drawn entirely from the
 synthetic dataset and templates, so printing a short prefix locally is
 fine — this script's *output* is never committed or written to a file,
 only the script itself.
@@ -50,12 +54,15 @@ from __future__ import annotations
 import asyncio
 import functools
 import sys
-from collections.abc import Sequence
+import time
 from dataclasses import dataclass, field
 from decimal import Decimal
-from typing import Any
+from typing import Any, cast
+from uuid import UUID
 
-from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_core.callbacks import BaseCallbackHandler
+from langchain_core.messages import HumanMessage
+from langchain_core.outputs import LLMResult
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph
@@ -118,63 +125,84 @@ _REGULATORY_QUESTION = (
 _UNANSWERABLE_QUESTION = "A Solvia oferece cartão de crédito internacional sem anuidade?"
 
 
+_STRUCTURED_NODES = {"router", "compliance_guard", "offer_simulator", "knowledge_agent"}
+"""Nodes that request structured output: for these, a completion without a
+tool call is either a JSON-mode call or a native attempt where the model
+did not call the tool — told apart only by whether a second call from
+the same node follows in the turn."""
+
+
 @dataclass(frozen=True)
 class LLMCallRecord:
     node: str
     resolved_model: str | None
+    kind: str  # "native" | "no_tool_call" | "plain" | "error:<Type>"
+    latency_seconds: float
 
 
 @dataclass
 class _CallLog:
     records: list[LLMCallRecord] = field(default_factory=list)
 
-    def record(self, node: str, result: Any) -> None:
-        metadata = getattr(result, "response_metadata", None) or {}
-        model = metadata.get("model_name") or metadata.get("model")
-        self.records.append(LLMCallRecord(node=node, resolved_model=model))
 
+class _CallbackLog(BaseCallbackHandler):
+    """Logs every raw provider call (through LangChain callbacks, so
+    native tool-calling calls — whose parsed results carry no metadata —
+    are seen too): resolved model, latency, and whether the completion
+    was a native tool call or plain content."""
 
-class _SpyLLM:
-    """Wraps an `LLMPort` so every raw provider call is logged against
-    `node_name` (and its resolved model, when the result exposes
-    `response_metadata` — native structured/tool-calling results
-    usually don't, since they're already-parsed schema instances)."""
+    run_inline = True
 
-    def __init__(self, inner: LLMPort, node_name: str, log: _CallLog) -> None:
-        self._inner = inner
-        self._node_name = node_name
+    def __init__(self, node: str, log: _CallLog) -> None:
+        self._node = node
         self._log = log
+        self._started: dict[UUID, float] = {}
 
-    async def ainvoke(self, messages: Sequence[BaseMessage], **kwargs: Any) -> Any:
-        result = await self._inner.ainvoke(messages, **kwargs)
-        self._log.record(self._node_name, result)
-        return result
+    def on_chat_model_start(
+        self, serialized: dict[str, Any], messages: Any, *, run_id: UUID, **kwargs: Any
+    ) -> None:
+        self._started[run_id] = time.perf_counter()
 
-    def bind_tools(self, tools: Sequence[Any], **kwargs: Any) -> _SpyLLM:
-        return _SpyLLM(self._inner.bind_tools(tools, **kwargs), self._node_name, self._log)
+    def on_llm_end(self, response: LLMResult, *, run_id: UUID, **kwargs: Any) -> None:
+        latency = time.perf_counter() - self._started.pop(run_id, time.perf_counter())
+        message = getattr(response.generations[0][0], "message", None)
+        metadata = getattr(message, "response_metadata", None) or {}
+        model = metadata.get("model_name") or metadata.get("model")
+        if getattr(message, "tool_calls", None):
+            kind = "native"
+        elif self._node.removesuffix("_fallback") in _STRUCTURED_NODES:
+            kind = "no_tool_call"
+        else:
+            kind = "plain"
+        self._log.records.append(LLMCallRecord(self._node, model, kind, latency))
 
-    def with_structured_output(self, schema: Any, **kwargs: Any) -> _SpyLLM:
-        return _SpyLLM(
-            self._inner.with_structured_output(schema, **kwargs), self._node_name, self._log
+    def on_llm_error(self, error: BaseException, *, run_id: UUID, **kwargs: Any) -> None:
+        latency = time.perf_counter() - self._started.pop(run_id, time.perf_counter())
+        self._log.records.append(
+            LLMCallRecord(self._node, None, f"error:{type(error).__name__}", latency)
         )
 
 
 class SpyLLMFactory(LLMFactory):
-    """An `LLMFactory` that logs every raw LLM call, for this script's
-    diagnostic reporting only — never used by the real app or tests."""
+    """An `LLMFactory` whose models log every raw LLM call, for this
+    script's diagnostic reporting only — never used by the real app or tests."""
 
     def __init__(self, settings: Any, log: _CallLog) -> None:
         super().__init__(settings)
         self._log = log
 
+    def _instrument(self, llm: LLMPort, node_name: str) -> LLMPort:
+        cast(Any, llm).callbacks = [_CallbackLog(node_name, self._log)]
+        return llm
+
     def for_node(self, node_name: str) -> LLMPort:
-        return _SpyLLM(super().for_node(node_name), node_name, self._log)
+        return self._instrument(super().for_node(node_name), node_name)
 
     def fallback_for_node(self, node_name: str) -> LLMPort | None:
         llm = super().fallback_for_node(node_name)
         if llm is None:
             return None
-        return _SpyLLM(llm, f"{node_name}_fallback", self._log)
+        return self._instrument(llm, f"{node_name}_fallback")
 
 
 @dataclass(frozen=True)
@@ -185,6 +213,7 @@ class TurnResult:
     reply_status: str  # "ok" | "unavailable" | "empty"
     resolved_models: list[LLMCallRecord]
     state_values: dict[str, Any]
+    latency_seconds: float = 0.0
     error: str | None = None
 
 
@@ -196,20 +225,26 @@ def _reply_status(reply: str | None) -> str:
     return "ok"
 
 
-def _print_turn(label: str, result: TurnResult) -> None:
-    preview = (result.reply or "")[:120].replace("\n", " ")
-    models = ", ".join(
-        f"{r.node}={r.resolved_model}" for r in result.resolved_models if r.resolved_model
+def _format_calls(records: list[LLMCallRecord]) -> str:
+    return "; ".join(
+        f"{r.node}[{r.kind}] {r.resolved_model or '?'} {r.latency_seconds:.1f}s" for r in records
     )
+
+
+def _print_turn(label: str, result: TurnResult) -> None:
+    used_gpt_oss = any("gpt-oss" in (r.resolved_model or "") for r in result.resolved_models)
+    preview = (result.reply or "")[: 400 if used_gpt_oss else 120].replace("\n", " ")
     print(
         f"[{label}] intent={result.intent!r} status={result.reply_status} "
-        f"node_path={' -> '.join(result.node_path)}"
+        f"latency={result.latency_seconds:.1f}s node_path={' -> '.join(result.node_path)}"
     )
-    if models:
-        print(f"    resolved_models: {models}")
+    if result.resolved_models:
+        print(f"    llm calls: {_format_calls(result.resolved_models)}")
+    if used_gpt_oss:
+        print("    NOTE: at least one call in this turn resolved to gpt-oss")
     if result.error:
         print(f"    error: {result.error}")
-    print(f"    reply[:120]: {preview!r}")
+    print(f"    reply[:{400 if used_gpt_oss else 120}]: {preview!r}")
 
 
 async def _run_turn(
@@ -228,12 +263,14 @@ async def _run_turn(
     if customer_id is not None:
         turn_input["customer_id"] = customer_id
 
+    started = time.perf_counter()
     try:
         async for event in graph.astream(turn_input, config=config, stream_mode="debug"):
             if event.get("type") == "task":
                 node_path.append(event["payload"]["name"])
     except Exception as exc:  # noqa: BLE001 - a smoke test reports, never crashes
         error = f"{type(exc).__name__}: {exc}"
+    latency = time.perf_counter() - started
 
     final_state = await graph.aget_state(config)
     reply = final_state.values.get("draft_reply")
@@ -244,6 +281,7 @@ async def _run_turn(
         reply_status="unavailable" if error else _reply_status(reply),
         resolved_models=call_log.records[before:],
         state_values=dict(final_state.values),
+        latency_seconds=latency,
         error=error,
     )
 
@@ -401,6 +439,7 @@ def _print_knowledge_result(
 
 async def _run_knowledge_scenarios(
     llm_factory: SpyLLMFactory,
+    call_log: _CallLog,
     embeddings: FastEmbedAdapter,
     retrieve: RetrieveFn,
     rag_settings: RagSettings,
@@ -416,6 +455,8 @@ async def _run_knowledge_scenarios(
     llm = llm_factory.for_node("knowledge_agent")
     fallback_llm = llm_factory.fallback_for_node("knowledge_agent")
 
+    before = len(call_log.records)
+    started = time.perf_counter()
     regulatory_result = await ground_answer(
         _REGULATORY_QUESTION,
         "regulation",
@@ -425,6 +466,8 @@ async def _run_knowledge_scenarios(
         spied_retrieve,
         rag_settings,
     )
+    print(f"    latency={time.perf_counter() - started:.1f}s")
+    print(f"    llm calls: {_format_calls(call_log.records[before:])}")
     regulatory_ok = _print_knowledge_result(
         "regulatory_question", _REGULATORY_QUESTION, regulatory_result, log.chunks
     )
@@ -432,6 +475,8 @@ async def _run_knowledge_scenarios(
         print("    ASSERTION FAILED: expected the regulatory question to be answered")
         regulatory_ok = False
 
+    before = len(call_log.records)
+    started = time.perf_counter()
     unanswerable_result = await ground_answer(
         _UNANSWERABLE_QUESTION,
         "product_catalog",
@@ -441,6 +486,8 @@ async def _run_knowledge_scenarios(
         spied_retrieve,
         rag_settings,
     )
+    print(f"    latency={time.perf_counter() - started:.1f}s")
+    print(f"    llm calls: {_format_calls(call_log.records[before:])}")
     unanswerable_ok = _print_knowledge_result(
         "unanswerable_question", _UNANSWERABLE_QUESTION, unanswerable_result, log.chunks
     )
@@ -486,7 +533,7 @@ async def main() -> int:
         single_turns_ok = await _run_single_turn_scenarios(graph, call_log)
         scenario_ok = await _run_multi_turn_loan_simulation_scenario(graph, call_log)
         knowledge_ok = await _run_knowledge_scenarios(
-            llm_factory, embeddings, retrieve, rag_settings
+            llm_factory, call_log, embeddings, retrieve, rag_settings
         )
     finally:
         rag_pool.close()
