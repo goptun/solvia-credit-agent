@@ -35,7 +35,7 @@ async def test_fake_llm_returns_configured_responses_in_order() -> None:
 @pytest.mark.asyncio
 async def test_fake_llm_structured_output_returns_configured_object() -> None:
     payload = {"amount": 1000}
-    llm = FakeLLM(responses=[payload])  # type: ignore[list-item]
+    llm = FakeLLM(responses=[payload])
 
     structured = llm.with_structured_output(dict)
     result = await structured.ainvoke([HumanMessage(content="24 meses")])
