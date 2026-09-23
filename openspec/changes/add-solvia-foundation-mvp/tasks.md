@@ -21,13 +21,13 @@
 
 ## 3. Engineering Foundation
 
-- [ ] 3.1 Add pre-commit config (`ruff format`, `ruff check`, `mypy`, `gitleaks`) — verify `pre-commit run --all-files` passes on the current scaffold
-- [ ] 3.2 Add a GitHub Actions CI workflow running lint, type-check, tests (with a Postgres service container for integration tests that need a real database, e.g., the checkpointer resume test), and `gitleaks` as a required check on every PR — verify the workflow file is valid YAML and a first CI run once pushed succeeds
-- [ ] 3.3 Write `CONTRIBUTING.md` documenting branch naming (`<type>/<change-id>`), Conventional Commits (English type/scope, Portuguese description), PR process, and squash-merge policy
-- [ ] 3.4 Write `CLAUDE.md` recording all engineering conventions from this change (version control, clean code, testing, tooling) for future sessions
-- [ ] 3.5 Add `.github/pull_request_template.md` in Portuguese (resumo, change OpenSpec vinculada, como testar, prints/traces quando relevante) — verify the template renders when opening a PR
-- [ ] 3.6 List as manual steps for me: (a) enable branch protection on `main` requiring the CI checks (lint, type-check, tests, gitleaks) to pass before merge, and (b) enable GitHub secret scanning and push protection on the repository — neither can be automated from here
-- [ ] 3.7 Commit: `chore(repo): configura pre-commit, CI e convenções de contribuição`
+- [x] 3.1 Add pre-commit config (`ruff format`, `ruff check`, `mypy`, `gitleaks`) — verify `pre-commit run --all-files` passes on the current scaffold
+- [x] 3.2 Add a GitHub Actions CI workflow running lint, type-check, tests (with a Postgres service container for integration tests that need a real database, e.g., the checkpointer resume test), and `gitleaks` as a required check on every PR — verify the workflow file is valid YAML and a first CI run once pushed succeeds
+- [x] 3.3 Write `CONTRIBUTING.md` documenting branch naming (`<type>/<change-id>`), Conventional Commits (English type/scope, Portuguese description), PR process, and squash-merge policy
+- [x] 3.4 Write `CLAUDE.md` recording all engineering conventions from this change (version control, clean code, testing, tooling) for future sessions
+- [x] 3.5 Add `.github/pull_request_template.md` in Portuguese (resumo, change OpenSpec vinculada, como testar, prints/traces quando relevante) — verify the template renders when opening a PR
+- [x] 3.6 List as manual steps for me: (a) enable branch protection on `main` requiring the CI checks (lint, type-check, tests, gitleaks) to pass before merge, and (b) enable GitHub secret scanning and push protection on the repository — neither can be automated from here
+- [x] 3.7 Commit: `chore(repo): configura pre-commit, CI e convenções de contribuição`
 
 ## 4. Settings and LLM Gateway (`llm-gateway`)
 
