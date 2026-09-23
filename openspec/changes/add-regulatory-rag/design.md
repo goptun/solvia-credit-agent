@@ -111,14 +111,6 @@ One new table, `rag_chunks`, created by a small idempotent SQL migration run via
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS unaccent;
 
--- A dedicated text search configuration so an unaccented query (e.g. a
--- customer typing "abusao" or "cet" without diacritics) still matches
--- accented indexed content ("abusão", "CET") — plain 'portuguese' does
--- not fold accents on its own.
-CREATE TEXT SEARCH CONFIGURATION IF NOT EXISTS portuguese_unaccent (COPY = portuguese);
-ALTER TEXT SEARCH CONFIGURATION portuguese_unaccent
-    ALTER MAPPING FOR hword, hword_part, word WITH unaccent, portuguese_stem;
-
 CREATE TABLE IF NOT EXISTS rag_chunks (
     chunk_id      TEXT PRIMARY KEY,   -- deterministic: sha256(document_id || hierarchy_path || chunk_index)
     document_id   TEXT NOT NULL,
@@ -141,6 +133,15 @@ CREATE INDEX IF NOT EXISTS rag_chunks_content_tsv_gin
     ON rag_chunks USING gin (content_tsv);
 CREATE INDEX IF NOT EXISTS rag_chunks_document_id_idx ON rag_chunks (document_id);
 CREATE INDEX IF NOT EXISTS rag_chunks_source_type_idx ON rag_chunks (source_type);
+```
+
+`content_tsv`'s `to_tsvector('portuguese_unaccent', content)` depends on a dedicated text search configuration existing first — so an unaccented query (e.g. a customer typing "cet" or "abusao" without diacritics) still matches accented indexed content, which plain `'portuguese'` does not fold on its own. Unlike every other statement above, `CREATE TEXT SEARCH CONFIGURATION` has **no `IF NOT EXISTS` clause in PostgreSQL** (verified against a real pgvector/pg16 instance while implementing this — it's a hard syntax error, not just a warning), so the migration checks `pg_catalog.pg_ts_config` in Python first and only issues the `CREATE`/`ALTER` pair when the config doesn't exist yet, before running the `CREATE TABLE` above:
+
+```sql
+-- Only when this returns no rows:
+CREATE TEXT SEARCH CONFIGURATION portuguese_unaccent (COPY = portuguese);
+ALTER TEXT SEARCH CONFIGURATION portuguese_unaccent
+    ALTER MAPPING FOR hword, hword_part, word WITH unaccent, portuguese_stem;
 ```
 
 Idempotent indexing (spec: "Idempotent, incremental indexing") upserts by `chunk_id` (`INSERT ... ON CONFLICT (chunk_id) DO UPDATE`), and re-chunks/re-embeds a document only when its manifest `sha256` differs from the `document_hash` already stored for its existing chunks — ingestion first checks `SELECT DISTINCT document_hash FROM rag_chunks WHERE document_id = :id`.

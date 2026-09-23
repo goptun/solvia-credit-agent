@@ -29,10 +29,10 @@
 
 ## 4. Index schema and migration
 
-- [ ] 4.1 Write the `rag_chunks` table + `vector`/`unaccent` extensions + a custom `portuguese_unaccent` text search configuration + HNSW + full-text index migration SQL, per `design.md` — "Index schema" — verify `python -m rag.migrate` runs against a local pgvector-enabled Postgres, `\d rag_chunks` shows the expected columns and indexes, and a manual `SELECT to_tsvector('portuguese_unaccent', 'código') @@ to_tsquery('portuguese_unaccent', 'codigo')` returns true
-- [ ] 4.2 Change `docker-compose.yml`'s `postgres` service to the `pgvector/pgvector:pg16` image — verify `docker compose up` boots and `CREATE EXTENSION vector;` succeeds inside the running container
-- [ ] 4.3 Implement idempotent upsert-by-`chunk_id` indexing with per-document-hash reindex skipping, per `design.md` — verify an integration test (against a pgvector service container) ingests a document twice with no changes (no new rows) and once with an edited chunk size budget for one document only (only that document's chunks change)
-- [ ] 4.4 Commit: `feat(rag): adiciona schema de índice pgvector e indexação idempotente`
+- [x] 4.1 Write the `rag_chunks` table + `vector`/`unaccent` extensions + a custom `portuguese_unaccent` text search configuration + HNSW + full-text index migration SQL, per `design.md` — "Index schema" — verify `python -m rag.migrate` runs against a local pgvector-enabled Postgres, `\d rag_chunks` shows the expected columns and indexes, and a manual `SELECT to_tsvector('portuguese_unaccent', 'código') @@ to_tsquery('portuguese_unaccent', 'codigo')` returns true (note: `CREATE TEXT SEARCH CONFIGURATION` has no `IF NOT EXISTS` in PostgreSQL — verified against the real instance — so its existence is checked in Python before creating it)
+- [x] 4.2 Change `docker-compose.yml`'s `postgres` service to the `pgvector/pgvector:pg16` image — verify `docker compose up` boots and `CREATE EXTENSION vector;` succeeds inside the running container
+- [x] 4.3 Implement idempotent upsert-by-`chunk_id` indexing with per-document-hash reindex skipping, per `design.md` — verify an integration test (against a pgvector service container) ingests a document twice with no changes (no new rows) and once with an edited chunk size budget for one document only (only that document's chunks change, a sibling document is untouched)
+- [x] 4.4 Commit: `feat(rag): adiciona schema de índice pgvector e indexação idempotente`
 
 ## 5. Embeddings port and hybrid retrieval
 
