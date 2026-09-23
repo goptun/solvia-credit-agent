@@ -4,6 +4,7 @@ independent of a conversation."""
 from __future__ import annotations
 
 from httpx import ASGITransport, AsyncClient
+from langchain_core.messages import AIMessage
 
 from apps.agent.llm.fake import FakeLLM
 from apps.agent.llm.resilience import UNAVAILABLE_MESSAGE
@@ -67,6 +68,21 @@ async def test_deadline_expiry_returns_503_with_the_unavailable_message() -> Non
         smart_llm=SlowLLM(1.0),
         knowledge_retrieve=_retrieve_chunk,
         llm_turn_deadline_seconds=0.1,
+    )
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post("/knowledge/answer", json={"question": "meus direitos?"})
+
+    assert response.status_code == 503
+    assert response.json()["detail"] == UNAVAILABLE_MESSAGE
+
+
+async def test_structured_output_failure_returns_503_with_the_unavailable_message() -> None:
+    unusable = FakeLLM(responses=[None, AIMessage(content="sem json")])
+    app = build_test_app(
+        fast_llm=FakeLLM(responses=[None, AIMessage(content="sem json")]),
+        smart_llm=unusable,
+        knowledge_retrieve=_retrieve_chunk,
     )
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:

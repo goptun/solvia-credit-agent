@@ -37,6 +37,21 @@ _APPROVAL_ROOTS = ("aprova",)
 _GUARANTEE_ROOTS = ("garanti", "certeza", "100%", "com certeza", "sem risco")
 """Roots/phrases that turn a mention of approval into a promise/guarantee."""
 
+_HEDGE_PHRASES = (
+    "sujeito a analise",
+    "sujeita a analise",
+    "depende de analise",
+    "nao garant",
+    "nao posso garantir",
+    "nao ha garantia",
+    "condicionad",
+)
+"""Explicit hedge phrases (normalized: lowercase, no accents). Deliberately
+phrases, not single-word roots: "analise", "simulac" or "estimad" also
+appear in promise text ("após análise, seu empréstimo foi aprovado"), and
+this list gates the fail-closed path, where a false pass is the costly
+error."""
+
 BLOCKED_PROMISE_REPLY = (
     "Não posso garantir a aprovação do seu crédito — a análise depende de diversos "
     "fatores. Posso, no entanto, seguir com a simulação para que você veja as "
@@ -70,3 +85,16 @@ def keyword_flags_approval_promise(text: str) -> bool:
     has_approval_word = any(root in normalized for root in _APPROVAL_ROOTS)
     has_guarantee_word = any(root in normalized for root in _GUARANTEE_ROOTS)
     return has_approval_word and has_guarantee_word
+
+
+def keyword_flags_unhedged_approval_mention(text: str) -> bool:
+    """Stricter deterministic screen, used only when the LLM approval-
+    promise check is unavailable (fail closed): flags any mention of
+    approval that carries no explicit hedge phrase ("sujeito à análise",
+    "não posso garantir"...), even without an explicit guarantee word. Broader —
+    and so more likely to block — than `keyword_flags_approval_promise`
+    on purpose; a reply that never mentions approval is unaffected."""
+    normalized = normalize(text)
+    has_approval_word = any(root in normalized for root in _APPROVAL_ROOTS)
+    has_hedge = any(phrase in normalized for phrase in _HEDGE_PHRASES)
+    return has_approval_word and not has_hedge
