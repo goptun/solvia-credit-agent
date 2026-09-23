@@ -5,8 +5,10 @@ See `specs/conversation-api/spec.md`.
 
 from __future__ import annotations
 
+import uuid
 from collections.abc import AsyncIterator
 
+import structlog
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from langchain_core.messages import HumanMessage
@@ -14,6 +16,7 @@ from langchain_core.runnables import RunnableConfig
 
 from apps.agent.llm.health import check_gateway_reachable
 from apps.agent.llm.resilience import UNAVAILABLE_MESSAGE
+from apps.agent.observability.tracing import reset_current_turn, set_current_turn
 from apps.agent.state import ConversationState
 from apps.api.context import AppContext
 from apps.api.events import final, node_finished, node_started
@@ -56,20 +59,30 @@ async def post_message(
             raise HTTPException(status_code=404, detail="unknown customer_id")
         graph_input = ConversationState(messages=[HumanMessage(content=body.message)])
 
+    trace_id = str(uuid.uuid4())
+
     async def event_stream() -> AsyncIterator[str]:
         reply = UNAVAILABLE_MESSAGE
+        structlog.contextvars.bind_contextvars(trace_id=trace_id)
         try:
-            async for event in context.graph.astream(
-                graph_input, config=config, stream_mode="debug"
-            ):
-                if event.get("type") == "task":
-                    yield node_started(event["payload"]["name"])
-                elif event.get("type") == "task_result":
-                    yield node_finished(event["payload"]["name"])
+            with context.tracer.turn(trace_id, conversation_id=conversation_id) as turn:
+                token = set_current_turn(turn)
+                try:
+                    async for event in context.graph.astream(
+                        graph_input, config=config, stream_mode="debug"
+                    ):
+                        if event.get("type") == "task":
+                            yield node_started(event["payload"]["name"])
+                        elif event.get("type") == "task_result":
+                            yield node_finished(event["payload"]["name"])
+                finally:
+                    reset_current_turn(token)
             final_snapshot = await context.graph.aget_state(config)
             reply = final_snapshot.values.get("draft_reply") or UNAVAILABLE_MESSAGE
         except Exception:
             reply = UNAVAILABLE_MESSAGE
+        finally:
+            structlog.contextvars.unbind_contextvars("trace_id")
         yield final(reply)
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")

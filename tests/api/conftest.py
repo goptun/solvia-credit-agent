@@ -12,6 +12,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from apps.agent.graph import build_graph
 from apps.agent.llm.fake import FakeLLM
 from apps.agent.llm.settings import Settings
+from apps.agent.observability.tracing import FakeTracer
 from apps.agent.synthetic_data.models import Customer
 from apps.api.context import AppContext
 from apps.api.routes import router
@@ -47,5 +48,6 @@ def build_test_app(
         customer_repository=repo,
         checkpointer=MemorySaver(),
         graph=graph,
+        tracer=FakeTracer(),
     )
     return app

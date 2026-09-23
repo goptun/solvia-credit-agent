@@ -87,11 +87,11 @@
 
 ## 9. Observability (`observability`)
 
-- [ ] 9.1 Configure structlog JSON logging with a trace-id correlation processor — verify a unit test asserts the trace id is present in emitted log records
-- [ ] 9.2 Implement the secret/PII redaction processor — verify a unit test asserts known secret and PII fields are redacted before emission
-- [ ] 9.3 Integrate LangFuse tracing (one trace per turn, one span per node, one span per LLM call) — verify a test using a fake LangFuse client asserts span counts match the nodes and LLM calls executed for a turn
-- [ ] 9.4 Verify no secrets or infra details appear in trace payloads — add a unit test on span serialization
-- [ ] 9.5 Commit: `feat(observability): adiciona logging estruturado e tracing LangFuse`
+- [x] 9.1 Configure structlog JSON logging with a trace-id correlation processor — verify a unit test asserts the trace id is present in emitted log records
+- [x] 9.2 Implement the secret/PII redaction processor — verify a unit test asserts known secret and PII fields are redacted before emission
+- [x] 9.3 Integrate LangFuse tracing (one trace per turn, one span per node, one span per LLM call) — verify a test using a fake LangFuse client asserts span counts match the nodes and LLM calls executed for a turn
+- [x] 9.4 Verify no secrets or infra details appear in trace payloads — add a unit test on span serialization
+- [x] 9.5 Commit: `feat(observability): adiciona logging estruturado e tracing LangFuse`
 
 ## 10. Local Environment and Documentation
 

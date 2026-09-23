@@ -9,6 +9,7 @@ flow), `consent_check` gates financial data access, `financial_analyst`/
 
 from __future__ import annotations
 
+from collections.abc import Awaitable, Callable
 from typing import Literal
 
 from langgraph.checkpoint.base import BaseCheckpointSaver
@@ -22,10 +23,27 @@ from apps.agent.nodes.financial_analyst import make_financial_analyst_node
 from apps.agent.nodes.offer_simulator import make_offer_simulator_node
 from apps.agent.nodes.responder import make_responder_node
 from apps.agent.nodes.router import make_router_node
+from apps.agent.observability.tracing import get_current_turn
 from apps.agent.repositories.customers import CustomerRepository
 from apps.agent.state import ConversationState
 
 _GATED_INTENTS = {"loan_simulation", "profile_analysis"}
+
+
+def _traced(
+    node_name: str, node_fn: Callable[[ConversationState], Awaitable[ConversationState]]
+) -> Callable[[ConversationState], Awaitable[ConversationState]]:
+    """Wrap a node so it opens a span on the active turn trace, if any —
+    a no-op when tracing isn't configured (e.g. in tests)."""
+
+    async def wrapped(state: ConversationState) -> ConversationState:
+        turn = get_current_turn()
+        if turn is None:
+            return await node_fn(state)
+        with turn.node_span(node_name):
+            return await node_fn(state)
+
+    return wrapped
 
 
 def _route_after_router(state: ConversationState) -> str:
@@ -69,19 +87,25 @@ def build_graph(
     # `TypedDict` node signature in this version's stubs, even though the
     # runtime behavior is correct (exercised by tests/agent/test_graph.py,
     # including the real-Postgres checkpointer test).
-    graph.add_node("router", make_router_node(llm_factory))  # type: ignore[call-overload]
     graph.add_node(  # type: ignore[call-overload]
-        "consent_check", make_consent_check_node(customer_repository)
+        "router", _traced("router", make_router_node(llm_factory))
     )
     graph.add_node(  # type: ignore[call-overload]
-        "financial_analyst", make_financial_analyst_node(customer_repository)
+        "consent_check", _traced("consent_check", make_consent_check_node(customer_repository))
     )
     graph.add_node(  # type: ignore[call-overload]
-        "offer_simulator", make_offer_simulator_node(llm_factory)
+        "financial_analyst",
+        _traced("financial_analyst", make_financial_analyst_node(customer_repository)),
     )
-    graph.add_node("responder", make_responder_node(llm_factory))  # type: ignore[call-overload]
     graph.add_node(  # type: ignore[call-overload]
-        "compliance_guard", make_compliance_guard_node(llm_factory)
+        "offer_simulator", _traced("offer_simulator", make_offer_simulator_node(llm_factory))
+    )
+    graph.add_node(  # type: ignore[call-overload]
+        "responder", _traced("responder", make_responder_node(llm_factory))
+    )
+    graph.add_node(  # type: ignore[call-overload]
+        "compliance_guard",
+        _traced("compliance_guard", make_compliance_guard_node(llm_factory)),
     )
 
     graph.set_entry_point("router")

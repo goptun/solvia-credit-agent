@@ -15,6 +15,7 @@ from apps.agent.llm.google import build_google_llm
 from apps.agent.llm.openai_compatible import build_openai_compatible_llm
 from apps.agent.llm.port import LLMPort
 from apps.agent.llm.settings import Settings
+from apps.agent.llm.traced import TracedLLM
 
 Tier = Literal["fast", "smart"]
 
@@ -30,10 +31,17 @@ design.md — "Synthetic consent flow") and is intentionally absent here."""
 
 
 class LLMFactory:
-    """Builds `LLMPort` instances for agent nodes, from settings alone."""
+    """Builds `LLMPort` instances for agent nodes, from settings alone.
 
-    def __init__(self, settings: Settings) -> None:
+    `enable_tracing=True` (used by the real app, never by tests) wraps
+    every `for_node`/`fallback_for_node` result in `TracedLLM`, so each
+    call opens an LLM span on the active turn trace (see
+    `apps.agent.observability.tracing`).
+    """
+
+    def __init__(self, settings: Settings, enable_tracing: bool = False) -> None:
         self._settings = settings
+        self._enable_tracing = enable_tracing
 
     def _build(self, model: str) -> LLMPort:
         # Concrete LangChain chat models expose a wider surface than
@@ -58,7 +66,10 @@ class LLMFactory:
         `consent_check`, which never calls an LLM) — callers should not
         call this for such nodes.
         """
-        return self.for_alias(NODE_TIER_MAP[node_name])
+        llm = self.for_alias(NODE_TIER_MAP[node_name])
+        if self._enable_tracing:
+            return TracedLLM(llm, call_name=node_name)
+        return llm
 
     def fallback_for_node(self, node_name: str) -> LLMPort | None:
         """The degraded alias for `node_name`, if any.
@@ -66,6 +77,9 @@ class LLMFactory:
         Only `smart`-tier nodes degrade, to `fast`; `fast`-tier nodes
         have no further fallback (see `design.md` — degradation).
         """
-        if NODE_TIER_MAP[node_name] == "smart":
-            return self.for_alias("fast")
-        return None
+        if NODE_TIER_MAP[node_name] != "smart":
+            return None
+        llm = self.for_alias("fast")
+        if self._enable_tracing:
+            return TracedLLM(llm, call_name=f"{node_name}_fallback")
+        return llm
