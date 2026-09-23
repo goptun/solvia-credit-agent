@@ -172,6 +172,20 @@ negatives) — see `openspec/changes/add-regulatory-rag/design.md` —
 "Retrieval quality evaluation" for the methodology and the recorded
 baseline.
 
+### End-to-end refusal evaluation (manual, real LLM)
+
+`rag.eval.run` decides refusals from the similarity threshold alone.
+`scripts/eval_end_to_end.py` runs the real grounding stage (`ground_answer`
+with the real LLM, through the SSH tunnel) over the same question set and
+prints, alongside the retrieval-only numbers, the end-to-end false-refusal
+rate on answerable questions and refusal accuracy (far vs. near-miss) on
+unanswerable ones, attributed to the threshold or to the LLM stage. Like
+the smoke test it is never run by CI:
+
+```bash
+PYTHONPATH=. uv run python scripts/eval_end_to_end.py
+```
+
 ### Manual smoke test against the real gateway
 
 `scripts/smoke_gateway.py` sends one real message per classifiable
