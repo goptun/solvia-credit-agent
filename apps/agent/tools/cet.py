@@ -21,6 +21,8 @@ from __future__ import annotations
 from collections.abc import Sequence
 from decimal import ROUND_HALF_UP, Decimal
 
+from apps.agent.tools.exceptions import CetCalculationError
+
 _MAX_MONTHLY_RATE = Decimal("2")
 """Upper search bound (200% a.m.) — far above any plausible result;
 only used to bracket the root for bisection."""
@@ -43,12 +45,17 @@ def _monthly_irr(net_released: Decimal, payments: Sequence[Decimal]) -> Decimal:
     f_high = _net_present_value(high, net_released, payments)
 
     # NPV is decreasing in rate for a positive net_released and positive
-    # payments; if the bracket doesn't already contain a sign change,
-    # the payments are too small relative to net_released to ever reach
-    # NPV == 0 in the search range — return the upper bound as a
-    # (very high) cost estimate rather than looping forever.
+    # payments; if the bracket doesn't already contain a sign change, no
+    # rate in [0%, 200% a.m.] reconciles net_released with the payment
+    # schedule — a degenerate cash flow, not a real (if extreme) CET.
+    # Reporting a fixed 200% here would silently misreport the result.
     if f_low * f_high > 0:
-        return high
+        raise CetCalculationError(
+            "no sign change in the IRR search bracket [0%, 200% a.m.] — "
+            "net_released and the payment schedule do not reconcile to any "
+            "rate in range (net_released="
+            f"{net_released}, total_payments={sum(payments, Decimal('0'))})"
+        )
 
     for _ in range(_BISECTION_ITERATIONS):
         mid = (low + high) / 2

@@ -8,7 +8,10 @@ from __future__ import annotations
 
 from decimal import Decimal
 
+import pytest
+
 from apps.agent.tools.cet import annual_cet
+from apps.agent.tools.exceptions import CetCalculationError
 
 
 def test_single_installment_matches_closed_form_reference() -> None:
@@ -49,3 +52,18 @@ def test_cet_reflects_iof_and_fees_via_a_lower_net_released() -> None:
     cet_low_net = annual_cet(Decimal("1000"), payments)
 
     assert cet_low_net > cet_high_net
+
+
+def test_net_released_above_total_payments_raises_instead_of_reporting_200_percent() -> None:
+    """Degenerate cash flow: more was "released" than will ever be repaid
+    — no rate in [0%, 200% a.m.] reconciles that, so this must raise
+    rather than silently reporting a fixed 200% CET."""
+    with pytest.raises(CetCalculationError):
+        annual_cet(Decimal("2000"), [Decimal("500")])
+
+
+def test_non_positive_net_released_raises() -> None:
+    """Another degenerate case: nothing (or a negative amount) was
+    actually released to the customer."""
+    with pytest.raises(CetCalculationError):
+        annual_cet(Decimal("-100"), [Decimal("50")])
