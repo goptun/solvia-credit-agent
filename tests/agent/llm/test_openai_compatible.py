@@ -40,6 +40,7 @@ def test_factory_applies_the_per_tier_timeout() -> None:
     from apps.agent.llm.factory import LLMFactory
 
     settings = Settings(
+        llm_provider="openai_compatible",
         llm_base_url="http://gateway.invalid/v1",
         llm_api_key="k",
         llm_timeout_seconds_fast=7.0,
