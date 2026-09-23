@@ -1,52 +1,97 @@
-# ADR-005: `knowledge_agent` LLM latency, smart vs. fast tier, and per-tier timeouts
+# ADR-005: `knowledge_agent` LLM latency, false refusals, and timeouts
 
 ## Status
 
-Accepted. Numbers are from a small manual sample and are meant to justify defaults, not to be a benchmark (see Caveats).
+Accepted. Numbers come from small manual samples and justify defaults; they are not a benchmark (see Caveats).
 
 ## Context
 
-Task 14.3 added a manual end-to-end evaluation (`scripts/eval_end_to_end.py`) that runs the real grounding stage (`ground_answer` with the real LLM through the gateway) over the 31-question eval set. Its first real run died on an LLM timeout under the single global `LLM_TIMEOUT_SECONDS=30`, which prompted measuring latency and comparing the `smart` tier (current mapping for `knowledge_agent`) with `fast`.
+Task 14.3 added a manual end-to-end evaluation (`scripts/eval_end_to_end.py`) that runs the real grounding stage (`ground_answer` with the real LLM through the gateway) over the 31-question eval set. Its first real run died on an LLM timeout under a single global 30 s timeout, which led to measuring latency, where it comes from, how much of the end-to-end false-refusal rate the prompt actually explains, and what the timeouts should be.
 
-## Measurements
+## 1. Where the latency comes from
 
-Two earlier back-to-back runs were **discarded**: the gateway's upstream provider was returning `429 quota exceeded` (a per-minute quota), so their errors and latencies (p95 ~250 s smart, ~19 of 31 errored on fast) measured rate limiting, not the tiers. The comparison below is from paced reruns (`--pause-seconds 8` between LLM-reaching questions), same corpus (482 chunks, MiniLM), same 31 questions, timeout override 120 s for the run (not the production value).
+Single-attempt probe (one call each, no retries, 120 s timeout, 6.9 k-character `knowledge_agent`-sized prompt with 5 real chunks). "Resolved" is the model the gateway actually served.
 
-| | smart (`solvia-smart`) | fast (`solvia-fast`) |
+| Call | `solvia-fast` | `solvia-smart` |
 |---|---|---|
-| Questions evaluated (errors excluded) | 22 answerable, 5 unanswerable | 21 answerable, 5 unanswerable |
-| Errors (call failed even at 120 s) | 4 of 31 | 5 of 31 |
-| False-refusal rate, answerable | 50.0% (11/22; threshold 4, LLM stage 7) | 42.9% (9/21; threshold 4, LLM stage 5) |
-| — colloquial / lexical | 60.0% / 47.1% | 66.7% / 38.9% |
+| (a) trivial plain completion ("ok", 1 token), 2 runs | 21.7 s, 23.8 s (both resolved `gemini-3.5-flash-lite`) | 20.1 s, 14.1 s (both `gemini-3.5-flash-lite`) |
+| (b) native tool-calling with the `KnowledgeAnswer` schema, 2 runs | 17.0 s, 11.4 s (`gemini-3.5-flash-lite`; both succeeded natively) | 20.2 s (`gemini-3-flash-preview`, 753 reasoning tokens), 52.1 s (`gemini-3.5-flash-lite`); both succeeded natively |
+| (c) JSON mode, same prompt, 2 runs | 14.0 s ok, 9.7 s **parse failure** | 26.8 s, 26.7 s (both ok) |
+| Real `ainvoke_structured` path, 1 run | 40.1 s, 1 native attempt, no fallback | 27.9 s, 1 native attempt, no fallback |
+
+The same models called directly through the gateway (bypassing the combos), 2 calls each:
+
+| Model | Result |
+|---|---|
+| `gemini/gemini-3.8-flash` | `429 quota exceeded` in 0.35–0.38 s, both calls |
+| `gemini/gemini-3.7-flash` | `503` (8.3 s, then 0.1 s) |
+| `gemini/gemini-3.6-flash` | `429` in 0.4 s, both calls |
+| `gemini/gemini-3-flash-preview` | `429` in 0.4 s, then **200 in 1.2 s** |
+| `gemini/gemini-3.5-flash-lite` | 200 in **34.7 s** and **9.4 s** (one-token answer) |
+
+**Root cause: upstream availability, not the tool-calling path and not (visibly) the combo order.**
+- Native tool-calling works: it succeeded on the first attempt every time, so the JSON-mode fallback never engaged and `structured.py` needs no change. (JSON mode is the flakier path — 1 of 4 responses did not parse — which the existing repair retry covers.)
+- The better models fail *fast* (429/503 in well under a second — cheap to retry within a turn). When they do answer they are fast (`gemini-3-flash-preview`: 1.2 s). Traffic therefore mostly lands on `gemini-3.5-flash-lite`, which needs 9–35 s even for a one-token reply; 11 of 12 probe calls through the combos resolved to it.
+- I could not see the combo definitions (the gateway's management API requires dashboard authentication and I did not attempt to bypass it), and the `gemini-3.8-flash` timeouts seen in the gateway UI showed up from this side as `429`, not timeouts.
+
+What to change **in the gateway** (not in this repo): give each combo at least one model with real quota headroom (a paid or higher-quota key for the models that answer in ~1 s), and move `gemini-3.5-flash-lite` last or replace it — it is the slow landing spot. Fast-failing 429/503s in front of it are fine.
+
+## 2. Smart vs. fast on the eval set
+
+An early pair of back-to-back runs was **discarded** (upstream `429` quota, not the tiers). Paced runs (8 s between LLM-reaching questions, 120 s eval timeout):
+
+| | smart | fast |
+|---|---|---|
+| False-refusal, answerable | 50.0% (11/22 evaluated) | 42.9% (9/21) |
 | Refusal accuracy, unanswerable | 100% (5/5) | 100% (5/5) |
-| — far / near-miss | 100% / 100% | 100% / 100% |
-| Citation hit rate (answered answerable; expected document and article cited) | 100% (11/11) | 100% (12/12) |
-| Latency, calls that reached the LLM | n=19: p50 43.1 s, p95 184.4 s, max 190.2 s | n=18: p50 44.4 s, p95 118.2 s, max 143.8 s |
-| Calls over 30 s | 15 of 19 | 13 of 18 |
+| Citation hit rate (answered) | 100% (11/11) | 100% (12/12) |
+| Whole-call latency p50 / p95 / max | 43.1 / 184.4 / 190.2 s | 44.4 / 118.2 / 143.8 s |
+| Errors even at 120 s | 4 of 31 | 5 of 31 |
 
-## Reading the results
+A later smart run on a healthier gateway (per-question decomposition, below) had **no errors** (25/25 answerable and 6/6 unanswerable evaluated), whole-call latency p50 16.7 s / p95 39.8 s / max 66.5 s (2 of 23 calls over 30 s), false-refusal 44.0% (11/25), unanswerable 6/6 refused, citation hit 92.9% (13/14). Latency swings by a factor of ~3 between runs on the same code — it tracks the gateway's upstream state, not the tier. Fast was not meaningfully faster or better; `knowledge_agent` stays on `smart`.
 
-- **Fast is not meaningfully faster here.** Both tiers sit at ~43–44 s p50; the tail differs (184 s vs 118 s p95) but with n≈19 that is noise-level. The latency is dominated by the gateway path (upstream provider behavior, retries, and the native-then-JSON-mode structured-output fallback), not by the reasoning-vs-non-reasoning tier. There is no case here for moving `knowledge_agent` to `fast` for speed.
-- **Quality is comparable at this sample size.** Refusal accuracy and citation hit rate are equal (100%); false-refusal is 50% vs 43% — a 2-question difference on ~21, within noise. Fast has a smaller output budget (`max_tokens` 256 vs 1024), which is a risk for multi-claim answers that this sample does not exercise.
-- **Both tiers over-refuse answerable questions end to end** — 43–50% false-refusal, of which the threshold accounts for 4 questions (the retrieval-only filter) and the LLM grounding stage for 5–7 more (empty or fully-invalid claims). Unanswerable questions are refused correctly (100%, near-miss included), so the refusal rule is doing its job on negatives; the open question is its cost on positives. The explicit "return empty claims" rule added in task 14.3 was not A/B-tested against the previous prompt, so whether it *causes* part of the over-refusal is unknown; that comparison is the natural next experiment.
-- **Citations are trustworthy when an answer is given**: every answered question cited the expected document and article.
+## 3. Where the false refusals come from
+
+For each refused answerable question, was the expected document/article among the retrieved top-5? (Smart, paced, 25 answerable questions, 11 refused.)
+
+| Cause | Count | Attributable to |
+|---|---|---|
+| Refused by the similarity threshold | 4 (the gold chunk **was** in the retrieved context for 3 of them) | retrieval score / threshold |
+| LLM refused although the gold chunk was in context | **1** | the prompt |
+| Gold chunk not retrieved (LLM refused what the context could not answer) | 6 | retrieval recall |
+
+Only **1 of 11** false refusals is attributable to the prompt. The high end-to-end false-refusal rate is mostly a retrieval problem (6 questions never surfaced the right chunk, matching the ~68% recall@k) plus the threshold discarding 3 correct retrievals. The LLM stage refusing when the context does not contain the answer is the *correct* behavior, not a defect.
+
+### Prompt A/B (only on the attributable subset)
+
+Question set: the 1 LLM-attributable question, plus all 6 unanswerable ones; smart tier, paced, 3 repetitions per instruction.
+
+| Instruction | Attributable question refused | Unanswerable refused |
+|---|---|---|
+| Short (`Se os trechos não permitirem responder à pergunta, retorne uma lista de claims vazia.`) | 0 of 3 runs | 5/5, 6/6, 5/5 evaluated (1 transient error in two runs) |
+| Long "REGRA DE RECUSA" paragraph (added in the first pass of task 14.3) | **3 of 3 runs** | 6/6 in all three |
+
+The short instruction lowered false refusals without breaking unanswerable refusals, so it is kept (it already states the empty-`claims` rule explicitly) and the longer paragraph was removed along with the A/B code. **Weak evidence:** the subset is a single question, so this decides one question's behavior, not a general property of the two wordings.
+
+## 4. Per-turn deadline
+
+`LLM_TURN_DEADLINE_SECONDS` (default 45 s) is a single budget per conversation turn, carried in a context variable and enforced in `ainvoke_structured` and `invoke_with_resilience`: retries, the JSON-mode fallback and smart -> fast degradation must all fit inside it; on expiry the in-flight call is cancelled, the fallback is *not* tried, and the turn returns the unavailable reply (`knowledge_agent` returns it as its draft; the standalone endpoint returns `503`). Without an active deadline (tests, manual scripts) nothing changes. Its interaction with the measurements above: single smart attempts took 20–52 s against a 45 s budget, so a *slow* smart attempt rarely leaves room for a retry — but the failures that dominate today (429/503) return in under a second, and those retries do fit.
 
 ## Decision
 
-Replace the single `LLM_TIMEOUT_SECONDS` with per-tier settings, `LLM_TIMEOUT_SECONDS_FAST` (default **45 s**) and `LLM_TIMEOUT_SECONDS_SMART` (default **60 s**), applied by the factory to the resolved tier. `knowledge_agent` stays on `smart`.
-
-Justification, and its limits: a 30 s single-attempt timeout cut off calls that would have completed (the first real run failed on it), and end-to-end call latency through the gateway had a ~43–44 s median on both tiers. The defaults are therefore sized so one attempt is not cut off before it can finish, with `smart` allowed longer for reasoning-token spend. They are **not** derived from a measured per-attempt latency: the eval timed the whole `ground_answer` call, which includes up to three retries and the JSON-mode fallback, so per-attempt latency was not isolated. They are starting values to tune once per-attempt latency is read from the LangFuse traces.
-
-The 120 s used in the eval runs is a measurement override so that runs are not cut short; it is **not** the production value, and the script documents this.
+- Timeouts are per tier: `LLM_TIMEOUT_SECONDS_FAST` = **30 s**, `LLM_TIMEOUT_SECONDS_SMART` = **45 s**, replacing the single global value. From single-attempt knowledge-sized calls (n = 5 per tier: fast 9.7 / 11.4 / 14.0 / 17.0 / 40.1 s, p50 14 s; smart 20.2 / 26.7 / 26.8 / 27.9 / 52.1 s, p50 27 s): `fast` is set just above its typical worst case, and `smart` equals the turn deadline because a single attempt can never usefully outlive the turn. The 120 s used in the eval runs is a measurement override and is **not** the production value.
+- `knowledge_agent` stays on `smart`, with the short refusal instruction.
+- No change to `structured.py`; gateway-side changes are recommended above.
 
 ## Caveats
 
-- Small sample: 31 questions, 21–22 evaluated per run after excluding 4–5 errors; one question is ~4.5 pp. Differences of a couple of questions between tiers are noise.
-- Latency includes retries and fallback, and depends on the upstream provider's quota state at the time (two runs were unusable because of it). Numbers will differ on another day.
-- The 4–5 errored questions per run are excluded from the rates, which can bias them in either direction.
-- Not measured from the VPS; the tunnel adds its own latency.
+- Small samples: n = 5 single-attempt latencies per tier; 31 eval questions (21–25 evaluated per run); the prompt A/B decides one question. One question is 4 pp of false-refusal rate.
+- Latency depends on the upstream provider's quota state at the time; runs differed by ~3x. A 30 s fast timeout would have cut off one of five samples (40.1 s).
+- Measured through an SSH tunnel from a development machine, not from the VPS.
+- Two probe calls per model directly against the gateway are a snapshot, not an availability study.
 
 ## Consequences
 
-- `LLM_TIMEOUT_SECONDS` no longer exists; deployments must use the per-tier variables (defaults apply if unset).
-- Follow-ups worth doing, not done here: read per-attempt latency from traces and retune the defaults; A/B the refusal rule against the previous prompt to see how much of the LLM-stage false refusal it causes; decide whether the gateway's quota needs a different upstream for eval runs.
+- `LLM_TIMEOUT_SECONDS` no longer exists; use the per-tier variables (defaults apply if unset). `LLM_TURN_DEADLINE_SECONDS` is new.
+- The next experiments with evidence behind them are on the retrieval side, not the prompt: (1) the threshold discarded the gold chunk for 3 answerable questions while the LLM stage already refuses 2 of the 6 unanswerable ones by itself — a lower threshold is worth testing against the near-miss set; (2) 6 questions never retrieved the gold chunk (retrieval recall, reranking).
+- Re-measure latency from the VPS as part of `add-vps-deploy`, after the gateway's combos are fixed.
