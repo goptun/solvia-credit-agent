@@ -28,10 +28,19 @@ class RagSettings(BaseSettings):
     rag_rrf_k: int = 60
     rag_top_k: int = 5
 
-    rag_min_relevance_score: float = 0.75
+    rag_min_relevance_score: float = 0.6
     """Cosine-similarity threshold (not a rank-based fused score — see
     `design.md` — "Grounding and citation validation") below which the
-    knowledge agent refuses to answer instead of guessing."""
+    knowledge agent refuses to answer instead of guessing.
+
+    Calibrated against the real eval set's best-similarity distribution
+    (`tasks.md` — task 6.4's rerun): with `paraphrase-multilingual-
+    MiniLM-L12-v2`, the answerable and unanswerable questions'
+    best-similarity scores overlap substantially (answerable range
+    ~0.50-0.85, unanswerable range ~0.52-0.65) — no threshold perfectly
+    separates them. The original 0.75 default was picked without this
+    data and answered only 28% of answerable questions; 0.6 answers 88%
+    while still refusing half the unanswerable ones."""
 
     rag_reranking_enabled: bool = False
 

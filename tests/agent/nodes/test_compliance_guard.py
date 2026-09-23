@@ -63,6 +63,30 @@ async def test_disclaimer_is_not_added_for_other_intents() -> None:
     assert "demonstração" not in _reply(updates)
 
 
+async def test_informational_disclaimer_is_added_for_regulatory_questions() -> None:
+    factory, _ = _factory_with_llm_verdict(False)
+    node = make_compliance_guard_node(factory)
+    state = initial_state("cust-1")
+    state["draft_reply"] = "Aqui está a resposta sobre a regulação."
+    state["intent"] = "regulatory_question"
+
+    updates = await node(state)
+
+    assert "não constitui aconselhamento jurídico" in _reply(updates)
+
+
+async def test_informational_disclaimer_is_absent_for_other_intents() -> None:
+    factory, _ = _factory_with_llm_verdict(False)
+    node = make_compliance_guard_node(factory)
+    state = initial_state("cust-1")
+    state["draft_reply"] = "Aqui está sua simulação."
+    state["intent"] = "loan_simulation"
+
+    updates = await node(state)
+
+    assert "aconselhamento jurídico" not in _reply(updates)
+
+
 async def test_keyword_check_blocks_and_short_circuits_the_llm_call() -> None:
     factory, structured = _factory_with_llm_verdict(False)
     node = make_compliance_guard_node(factory)

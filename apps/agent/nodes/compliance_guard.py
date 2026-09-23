@@ -17,6 +17,7 @@ from apps.agent.llm.factory import LLMFactory
 from apps.agent.llm.structured import ainvoke_structured
 from apps.agent.nodes.compliance import (
     BLOCKED_PROMISE_REPLY,
+    INFORMATIONAL_DISCLAIMER,
     inject_disclaimer,
     keyword_flags_approval_promise,
     mask_pii,
@@ -26,6 +27,7 @@ from apps.agent.state import ConversationState
 ComplianceGuardNode = Callable[[ConversationState], Awaitable[ConversationState]]
 
 _DISCLAIMER_INTENTS = {"loan_simulation", "profile_analysis"}
+_INFORMATIONAL_DISCLAIMER_INTENTS = {"regulatory_question"}
 
 
 class ApprovalPromiseCheck(BaseModel):
@@ -67,8 +69,13 @@ def make_compliance_guard_node(llm_factory: LLMFactory) -> ComplianceGuardNode:
             masked = BLOCKED_PROMISE_REPLY
             compliance_flags.append("approval_promise_blocked")
 
-        needs_disclaimer = state.get("intent") in _DISCLAIMER_INTENTS
+        intent = state.get("intent")
+        needs_disclaimer = intent in _DISCLAIMER_INTENTS
+        needs_informational_disclaimer = intent in _INFORMATIONAL_DISCLAIMER_INTENTS
         final_reply = inject_disclaimer(masked, needs_disclaimer)
+        final_reply = inject_disclaimer(
+            final_reply, needs_informational_disclaimer, INFORMATIONAL_DISCLAIMER
+        )
 
         return ConversationState(draft_reply=final_reply, compliance_flags=compliance_flags)
 

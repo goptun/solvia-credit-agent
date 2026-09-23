@@ -27,6 +27,11 @@ DISCLAIMER = (
     "as condições vigentes antes de qualquer decisão financeira."
 )
 
+INFORMATIONAL_DISCLAIMER = (
+    "\n\nEste conteúdo é informativo e não constitui aconselhamento jurídico. "
+    "Consulte um profissional qualificado para orientação específica ao seu caso."
+)
+
 _APPROVAL_ROOTS = ("aprova",)
 """Roots present in "aprovação"/"aprovado"/"aprovar"/etc."""
 _GUARANTEE_ROOTS = ("garanti", "certeza", "100%", "com certeza", "sem risco")
@@ -48,11 +53,13 @@ def mask_pii(text: str) -> str:
     return masked
 
 
-def inject_disclaimer(text: str, needs_disclaimer: bool) -> str:
-    """Append the mandatory disclaimer via a fixed template — never generated."""
+def inject_disclaimer(text: str, needs_disclaimer: bool, disclaimer: str = DISCLAIMER) -> str:
+    """Append a mandatory disclaimer via a fixed template — never generated.
+    Defaults to the simulation/analysis `DISCLAIMER`; pass
+    `INFORMATIONAL_DISCLAIMER` for regulatory answers."""
     if not needs_disclaimer:
         return text
-    return text + DISCLAIMER
+    return text + disclaimer
 
 
 def keyword_flags_approval_promise(text: str) -> bool:

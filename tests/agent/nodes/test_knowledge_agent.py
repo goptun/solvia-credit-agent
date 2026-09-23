@@ -43,7 +43,7 @@ def _chunk(chunk_id: str, similarity: float, *, matched_fts: bool = True) -> Ret
 
 def _retrieve_returning(chunks: list[RetrievedChunk]) -> RetrieveFn:
     async def retrieve(
-        question: str, vector: list[float], source_type: SourceType
+        question: str, vector: list[float], source_type: SourceType | None
     ) -> list[RetrievedChunk]:
         return chunks
 

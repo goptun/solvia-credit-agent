@@ -15,7 +15,7 @@ from apps.agent.nodes.compliance_guard import ApprovalPromiseCheck
 from apps.agent.nodes.router import RouterDecision
 from apps.agent.observability.tracing import FakeTracer, reset_current_turn, set_current_turn
 from apps.agent.state import ConversationState
-from tests.agent.nodes.fakes import StubCustomerRepository
+from tests.agent.nodes.fakes import StubCustomerRepository, fake_knowledge_agent_node
 
 
 class _TracedScriptedLLMFactory(LLMFactory):
@@ -41,7 +41,9 @@ async def test_out_of_scope_turn_produces_one_node_span_per_node_and_one_llm_spa
         ]
     )
     factory = _TracedScriptedLLMFactory(fast=fast_llm, smart=FakeLLM())
-    app = build_graph(factory, StubCustomerRepository(None), checkpointer=MemorySaver())
+    app = build_graph(
+        factory, StubCustomerRepository(None), fake_knowledge_agent_node, checkpointer=MemorySaver()
+    )
 
     tracer = FakeTracer()
     config: RunnableConfig = {"configurable": {"thread_id": "trace-turn-1"}}

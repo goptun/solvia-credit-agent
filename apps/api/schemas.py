@@ -19,3 +19,19 @@ class LiveResponse(BaseModel):
 class ReadyResponse(BaseModel):
     status: Literal["ready", "not_ready"]
     gateway_reachable: bool
+
+
+class KnowledgeQuestionRequest(BaseModel):
+    question: str
+
+
+class CitationResponse(BaseModel):
+    norm: str | None
+    article_ref: str | None
+    source_url: str | None
+
+
+class KnowledgeAnswerResponse(BaseModel):
+    answer: str
+    citations: list[CitationResponse]
+    refused: bool

@@ -26,7 +26,11 @@ from apps.agent.synthetic_data.models import (
     Customer,
     CustomerProfile,
 )
-from tests.agent.nodes.fakes import ScriptedLLMFactory, StubCustomerRepository
+from tests.agent.nodes.fakes import (
+    ScriptedLLMFactory,
+    StubCustomerRepository,
+    fake_knowledge_agent_node,
+)
 
 _DATABASE_URL = os.environ.get("DATABASE_URL")
 
@@ -65,7 +69,9 @@ async def test_out_of_scope_flow_end_to_end() -> None:
         ]
     )
     factory = ScriptedLLMFactory(fast=fast_llm)
-    app = build_graph(factory, StubCustomerRepository(None), checkpointer=MemorySaver())
+    app = build_graph(
+        factory, StubCustomerRepository(None), fake_knowledge_agent_node, checkpointer=MemorySaver()
+    )
 
     config: RunnableConfig = {"configurable": {"thread_id": "t-oos"}}
     result = await app.ainvoke(
@@ -79,6 +85,38 @@ async def test_out_of_scope_flow_end_to_end() -> None:
     reply = _reply(result)
     assert "fora do que posso ajudar" in reply
     assert "demonstração" not in reply  # no disclaimer outside sim/analysis
+
+
+async def _node_path(app: Any, graph_input: ConversationState, config: RunnableConfig) -> list[str]:
+    node_path: list[str] = []
+    async for event in app.astream(graph_input, config=config, stream_mode="debug"):
+        if event.get("type") == "task":
+            node_path.append(event["payload"]["name"])
+    return node_path
+
+
+@pytest.mark.parametrize("intent", ["product_question", "regulatory_question"])
+async def test_knowledge_intents_route_to_knowledge_agent_not_responder(intent: str) -> None:
+    fast_llm = FakeLLM(
+        responses=[
+            RouterDecision(intent=intent),  # type: ignore[arg-type]
+            ApprovalPromiseCheck(promises_approval=False),
+        ]
+    )
+    factory = ScriptedLLMFactory(fast=fast_llm)
+    app = build_graph(
+        factory, StubCustomerRepository(None), fake_knowledge_agent_node, checkpointer=MemorySaver()
+    )
+    config: RunnableConfig = {"configurable": {"thread_id": f"t-{intent}"}}
+
+    graph_input = ConversationState(
+        customer_id="cust-1", messages=[HumanMessage(content="pergunta qualquer")]
+    )
+    node_path = await _node_path(app, graph_input, config)
+
+    assert "knowledge_agent" in node_path
+    assert "responder" not in node_path
+    assert node_path.index("knowledge_agent") < node_path.index("compliance_guard")
 
 
 async def test_loan_simulation_with_valid_consent_completes_in_one_turn() -> None:
@@ -96,7 +134,7 @@ async def test_loan_simulation_with_valid_consent_completes_in_one_turn() -> Non
     )
     factory = ScriptedLLMFactory(fast=fast_llm, smart=smart_llm)
     repo = StubCustomerRepository(_customer(ConsentStatus.VALID))
-    app = build_graph(factory, repo, checkpointer=MemorySaver())
+    app = build_graph(factory, repo, fake_knowledge_agent_node, checkpointer=MemorySaver())
 
     config: RunnableConfig = {"configurable": {"thread_id": "t-sim"}}
     result = await app.ainvoke(
@@ -133,7 +171,7 @@ async def test_missing_consent_then_confirmation_resumes_the_loan_simulation() -
     )
     factory = ScriptedLLMFactory(fast=fast_llm, smart=smart_llm)
     repo = StubCustomerRepository(_customer(ConsentStatus.MISSING))
-    app = build_graph(factory, repo, checkpointer=MemorySaver())
+    app = build_graph(factory, repo, fake_knowledge_agent_node, checkpointer=MemorySaver())
     config: RunnableConfig = {"configurable": {"thread_id": "t-consent"}}
 
     first_turn = await app.ainvoke(
@@ -179,7 +217,9 @@ async def test_postgres_checkpointer_resumes_after_a_simulated_process_restart()
 
     async with postgres_checkpointer(_DATABASE_URL) as checkpointer:
         # "Process 1": start the conversation, hit the consent gate.
-        app_before_restart = build_graph(factory, repo, checkpointer=checkpointer)
+        app_before_restart = build_graph(
+            factory, repo, fake_knowledge_agent_node, checkpointer=checkpointer
+        )
         first_turn = await app_before_restart.ainvoke(
             ConversationState(
                 customer_id="cust-1",
@@ -192,7 +232,9 @@ async def test_postgres_checkpointer_resumes_after_a_simulated_process_restart()
     # "Process 2": a brand-new graph instance and a brand-new checkpointer
     # connection — nothing here is shared in memory with process 1.
     async with postgres_checkpointer(_DATABASE_URL) as checkpointer_after_restart:
-        app_after_restart = build_graph(factory, repo, checkpointer=checkpointer_after_restart)
+        app_after_restart = build_graph(
+            factory, repo, fake_knowledge_agent_node, checkpointer=checkpointer_after_restart
+        )
         resumed_state = await app_after_restart.aget_state(config)
 
         assert resumed_state.values["customer_id"] == "cust-1"

@@ -11,6 +11,7 @@ from apps.agent.llm.factory import LLMFactory, Tier
 from apps.agent.llm.fake import FakeLLM
 from apps.agent.llm.port import LLMPort
 from apps.agent.llm.settings import Settings
+from apps.agent.state import ConversationState
 from apps.agent.synthetic_data.models import Customer
 
 
@@ -22,6 +23,14 @@ class ScriptedLLMFactory(LLMFactory):
 
     def for_alias(self, tier: Tier) -> LLMPort:
         return self._fast if tier == "fast" else self._smart
+
+
+async def fake_knowledge_agent_node(state: ConversationState) -> ConversationState:
+    """A minimal `KnowledgeAgentNode` double for graph-level tests that
+    don't exercise the `product_question`/`regulatory_question` path
+    themselves (grounded-answer behavior is covered by
+    `tests/agent/nodes/test_knowledge_agent.py`)."""
+    return ConversationState(draft_reply="Resposta fictícia do knowledge_agent.")
 
 
 class StubCustomerRepository:

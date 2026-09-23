@@ -25,7 +25,7 @@ def _search_sync(
     pool: ConnectionPool,
     question: str,
     query_vector: Vector,
-    source_type: SourceType,
+    source_type: SourceType | None,
     settings: RagSettings,
 ) -> list[RetrievedChunk]:
     reranker = get_reranker(settings.rag_reranking_enabled)
@@ -48,7 +48,7 @@ async def hybrid_search_async(
     settings: RagSettings,
     question: str,
     query_vector: Vector,
-    source_type: SourceType,
+    source_type: SourceType | None,
 ) -> list[RetrievedChunk]:
     return await asyncio.to_thread(
         _search_sync, pool, question, query_vector, source_type, settings

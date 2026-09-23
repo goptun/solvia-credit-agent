@@ -11,6 +11,10 @@ Requires:
     against the gateway").
   - `.env` configured with a real `LLM_BASE_URL`/`LLM_API_KEY`
     (`LLM_PROVIDER` left as the default `openai_compatible`).
+  - `DATABASE_URL` pointing at a Postgres with the regulatory corpus
+    already migrated and indexed (`python -m rag.migrate`, then
+    `python -m rag.ingest fetch`/`index`) — the `product_question` turn
+    below routes through real retrieval, not a static catalog.
 
 Run with (from the repository root): `PYTHONPATH=. uv run python scripts/smoke_gateway.py`
 (`PYTHONPATH=.` is needed because this project isn't installed as a
@@ -34,6 +38,7 @@ multi-turn scenario's assertions fail.
 from __future__ import annotations
 
 import asyncio
+import functools
 import sys
 from collections.abc import Sequence
 from dataclasses import dataclass, field
@@ -44,6 +49,7 @@ from langchain_core.messages import BaseMessage, HumanMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph
+from psycopg_pool import ConnectionPool
 
 from apps.agent.checkpointer import build_serde
 from apps.agent.graph import build_graph
@@ -51,6 +57,7 @@ from apps.agent.llm.factory import LLMFactory
 from apps.agent.llm.port import LLMPort
 from apps.agent.llm.resilience import UNAVAILABLE_MESSAGE
 from apps.agent.llm.settings import get_settings
+from apps.agent.nodes.knowledge_agent import make_knowledge_agent_node
 
 # Reused only for verifying that the responder's rendered numbers match
 # the simulation tool's own output — not re-implementing the formatting
@@ -58,6 +65,10 @@ from apps.agent.llm.settings import get_settings
 from apps.agent.nodes.responder import _format_brl, _format_percent
 from apps.agent.repositories.customers import InMemoryCustomerRepository
 from apps.agent.state import ConversationState
+from apps.api.settings import get_api_settings
+from rag.embeddings.fastembed_adapter import FastEmbedAdapter
+from rag.retrieval.live import hybrid_search_async
+from rag.settings import get_rag_settings
 
 _VALID_CONSENT_CUSTOMER = "cust-0000"
 _MISSING_CONSENT_CUSTOMER = "cust-0007"
@@ -291,17 +302,36 @@ async def _run_multi_turn_loan_simulation_scenario(
 
 async def main() -> int:
     settings = get_settings()
+    api_settings = get_api_settings()
+    rag_settings = get_rag_settings()
     call_log = _CallLog()
     llm_factory = SpyLLMFactory(settings, call_log)
     customer_repository = InMemoryCustomerRepository.from_fixtures()
-    graph = build_graph(
-        llm_factory, customer_repository, checkpointer=MemorySaver(serde=build_serde())
-    )
 
-    print(f"Gateway: {settings.llm_base_url} (provider={settings.llm_provider})\n")
+    # `product_question` and `regulatory_question` route through
+    # knowledge_agent, which needs a real corpus already ingested into
+    # `DATABASE_URL` (see `rag/ingest/__main__.py`'s `index` command)
+    # — this script exercises the real retrieval path, not a stub.
+    embeddings = FastEmbedAdapter(rag_settings.rag_embedding_model)
+    rag_pool = ConnectionPool(api_settings.database_url, open=True)
+    try:
+        retrieve = functools.partial(hybrid_search_async, rag_pool, rag_settings)
+        knowledge_agent_node = make_knowledge_agent_node(
+            llm_factory, embeddings, retrieve, rag_settings
+        )
+        graph = build_graph(
+            llm_factory,
+            customer_repository,
+            knowledge_agent_node,
+            checkpointer=MemorySaver(serde=build_serde()),
+        )
 
-    single_turns_ok = await _run_single_turn_scenarios(graph, call_log)
-    scenario_ok = await _run_multi_turn_loan_simulation_scenario(graph, call_log)
+        print(f"Gateway: {settings.llm_base_url} (provider={settings.llm_provider})\n")
+
+        single_turns_ok = await _run_single_turn_scenarios(graph, call_log)
+        scenario_ok = await _run_multi_turn_loan_simulation_scenario(graph, call_log)
+    finally:
+        rag_pool.close()
 
     success = single_turns_ok and scenario_ok
     print(f"\n{'PASS' if success else 'FAIL'}")
