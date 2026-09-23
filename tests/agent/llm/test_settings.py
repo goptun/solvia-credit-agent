@@ -19,6 +19,8 @@ def clean_env(monkeypatch: pytest.MonkeyPatch) -> None:
         "GOOGLE_PROJECT",
         "GOOGLE_LOCATION",
         "GOOGLE_API_KEY",
+        "LLM_MAX_TOKENS_FAST",
+        "LLM_MAX_TOKENS_SMART",
     ]:
         monkeypatch.delenv(key, raising=False)
 
@@ -53,3 +55,25 @@ def test_settings_defaults_use_the_gateway_aliases(clean_env: None) -> None:
     assert settings.llm_model_fast == "solvia-fast"
     assert settings.llm_model_smart == "solvia-smart"
     assert settings.llm_provider == "openai_compatible"
+
+
+def test_max_tokens_defaults_give_smart_tier_room_for_reasoning_tokens(
+    clean_env: None,
+) -> None:
+    settings = Settings()
+
+    assert settings.llm_max_tokens_fast == 256
+    assert settings.llm_max_tokens_smart == 1024
+    assert settings.llm_max_tokens_smart >= 1024
+
+
+def test_max_tokens_is_configurable_per_tier(
+    clean_env: None, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("LLM_MAX_TOKENS_FAST", "128")
+    monkeypatch.setenv("LLM_MAX_TOKENS_SMART", "2048")
+
+    settings = Settings()
+
+    assert settings.llm_max_tokens_fast == 128
+    assert settings.llm_max_tokens_smart == 2048

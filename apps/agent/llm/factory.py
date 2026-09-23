@@ -43,7 +43,7 @@ class LLMFactory:
         self._settings = settings
         self._enable_tracing = enable_tracing
 
-    def _build(self, model: str) -> LLMPort:
+    def _build(self, model: str, max_tokens: int) -> LLMPort:
         # Concrete LangChain chat models expose a wider surface than
         # `LLMPort` (different parameter names on `ainvoke`/`bind_tools`);
         # this cast is the one place that narrows them down to the
@@ -51,13 +51,14 @@ class LLMFactory:
         if self._settings.llm_provider == "fake":
             return FakeLLM()
         if self._settings.llm_provider == "google":
-            return cast(LLMPort, build_google_llm(self._settings, model))
-        return cast(LLMPort, build_openai_compatible_llm(self._settings, model))
+            return cast(LLMPort, build_google_llm(self._settings, model, max_tokens))
+        return cast(LLMPort, build_openai_compatible_llm(self._settings, model, max_tokens))
 
     def for_alias(self, tier: Tier) -> LLMPort:
         """Build the `LLMPort` for a tier directly (`fast` or `smart`)."""
-        model = self._settings.llm_model_fast if tier == "fast" else self._settings.llm_model_smart
-        return self._build(model)
+        if tier == "fast":
+            return self._build(self._settings.llm_model_fast, self._settings.llm_max_tokens_fast)
+        return self._build(self._settings.llm_model_smart, self._settings.llm_max_tokens_smart)
 
     def for_node(self, node_name: str) -> LLMPort:
         """Resolve the LLM for `node_name` per `NODE_TIER_MAP`.

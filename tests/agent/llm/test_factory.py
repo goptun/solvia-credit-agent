@@ -52,6 +52,23 @@ def test_fast_tier_nodes_have_no_fallback(factory: LLMFactory) -> None:
     assert factory.fallback_for_node("compliance_guard") is None
 
 
+def test_for_alias_passes_the_per_tier_max_tokens_to_the_built_client() -> None:
+    settings = Settings(
+        llm_provider="openai_compatible",
+        llm_base_url="http://gateway.invalid/v1",
+        llm_api_key="k",
+        llm_max_tokens_fast=256,
+        llm_max_tokens_smart=1024,
+    )
+    factory = LLMFactory(settings)
+
+    fast_llm = factory.for_alias("fast")
+    smart_llm = factory.for_alias("smart")
+
+    assert fast_llm.max_tokens == 256  # type: ignore[attr-defined]
+    assert smart_llm.max_tokens == 1024  # type: ignore[attr-defined]
+
+
 def test_tier_reassignment_requires_no_node_code_changes() -> None:
     """Simulates moving a node to a different tier purely via the mapping."""
     original = NODE_TIER_MAP["router"]

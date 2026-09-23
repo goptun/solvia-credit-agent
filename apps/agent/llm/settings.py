@@ -24,6 +24,12 @@ class Settings(BaseSettings):
     llm_model_smart: str = "solvia-smart"
     llm_timeout_seconds: float = 30.0
     llm_max_retries: int = 3
+    llm_max_tokens_fast: int = 256
+    llm_max_tokens_smart: int = 1024
+    """`smart` defaults well above `fast` because the gateway's smart-tier
+    model spends `reasoning_tokens` out of this same budget before
+    emitting visible content — a low value here reproduces the
+    empty-completion finding in `docs/infra-assessment.md`."""
 
     google_vertexai: bool = False
     google_project: str | None = None

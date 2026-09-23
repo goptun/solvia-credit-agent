@@ -14,8 +14,9 @@ from dataclasses import dataclass
 from typing import Any
 
 from langchain_core.messages import AIMessage, BaseMessage
-from tenacity import AsyncRetrying, stop_after_attempt, wait_exponential
+from tenacity import AsyncRetrying, retry_if_exception, stop_after_attempt, wait_exponential
 
+from apps.agent.llm.errors import RetryableLLMError, is_transient
 from apps.agent.llm.port import LLMPort
 
 UNAVAILABLE_MESSAGE = (
@@ -44,6 +45,19 @@ def _extract_resolved_model(message: AIMessage) -> str | None:
     return str(model) if model else None
 
 
+def _is_empty_length_completion(result: Any) -> bool:
+    """`True` for an `AIMessage` with no content and `finish_reason ==
+    "length"` — the reasoning-token exhaustion finding in
+    `docs/infra-assessment.md`: the smart-tier model can spend its whole
+    `max_tokens` budget on internal reasoning and emit nothing visible."""
+    if not isinstance(result, AIMessage):
+        return False
+    content = result.content
+    is_empty = not content or (isinstance(content, str) and not content.strip())
+    finish_reason = (result.response_metadata or {}).get("finish_reason")
+    return is_empty and finish_reason == "length"
+
+
 async def call_with_retries(
     llm: Any,
     messages: Sequence[BaseMessage],
@@ -54,6 +68,11 @@ async def call_with_retries(
     (`.ainvoke(...) -> AIMessage`) and a `.with_structured_output(...)`
     call (`.ainvoke(...) -> <schema instance>`).
 
+    Only transient failures are retried (`apps.agent.llm.errors.is_transient`)
+    — a 4xx or a validation error is never retried here. An `AIMessage`
+    result that is empty with `finish_reason == "length"` is treated as
+    transient too, since the call itself didn't raise.
+
     There is no universally safe fallback object for a structured call
     (unlike the fixed unavailable `AIMessage` for plain calls), so a
     structured-output call that exhausts retries raises instead of
@@ -63,10 +82,17 @@ async def call_with_retries(
     async for attempt in AsyncRetrying(
         stop=stop_after_attempt(max(max_retries, 1)),
         wait=wait_exponential(multiplier=0.5, max=8),
+        retry=retry_if_exception(is_transient),
         reraise=True,
     ):
         with attempt:
-            return await llm.ainvoke(messages, **kwargs)
+            result = await llm.ainvoke(messages, **kwargs)
+            if _is_empty_length_completion(result):
+                raise RetryableLLMError(
+                    "empty completion with finish_reason='length' "
+                    "(reasoning tokens likely exhausted max_tokens)"
+                )
+            return result
     raise RuntimeError("retry loop exited without a result")  # pragma: no cover
 
 
