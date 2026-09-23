@@ -3,10 +3,12 @@ approval-promise detection."""
 
 from __future__ import annotations
 
+import pytest
 import structlog
 from langchain_core.messages import AIMessage
 
 from apps.agent.llm.fake import FakeLLM, FakeStructuredLLM
+from apps.agent.nodes.compliance import keyword_flags_unhedged_approval_mention
 from apps.agent.nodes.compliance_guard import (
     APPROVAL_CHECK_DEGRADED_FLAG,
     ApprovalPromiseCheck,
@@ -171,7 +173,7 @@ async def test_check_that_cannot_produce_a_result_lets_a_hedged_reply_through_bu
 ):
     node = make_compliance_guard_node(_factory_where_the_llm_check_cannot_produce_a_result())
     state = initial_state("cust-1")
-    state["draft_reply"] = "A aprovação depende da análise de crédito."
+    state["draft_reply"] = "A aprovação depende de análise de crédito."
 
     with structlog.testing.capture_logs() as logs:
         updates = await node(state)
@@ -205,3 +207,52 @@ async def test_an_expired_turn_deadline_degrades_the_check_instead_of_skipping_i
 
     assert "approval_promise_blocked" in updates["compliance_flags"]
     assert APPROVAL_CHECK_DEGRADED_FLAG in updates["compliance_flags"]
+
+
+@pytest.mark.parametrize(
+    "promise",
+    [
+        "Seu crédito está aprovado, veja a simulação.",
+        "Após análise, seu empréstimo foi aprovado.",
+        "Você será aprovado rapidamente.",
+        "Aprovação estimada para hoje: seu crédito está aprovado.",
+    ],
+)
+def test_strict_screen_flags_promises_that_reuse_words_like_analise_and_simulacao(
+    promise: str,
+) -> None:
+    assert keyword_flags_unhedged_approval_mention(promise) is True
+
+
+@pytest.mark.parametrize(
+    "hedged",
+    [
+        "Sua aprovação está sujeita à análise de crédito.",
+        "A proposta sujeita a análise pode ser recusada; aprovação não é automática.",
+        "A aprovação depende de análise de crédito.",
+        "Não posso garantir a aprovação do seu crédito.",
+        "Não garantimos a aprovação.",
+        "Não há garantia de aprovação.",
+        "A oferta é condicionada à aprovação de crédito.",
+    ],
+)
+def test_strict_screen_lets_explicitly_hedged_sentences_through(hedged: str) -> None:
+    assert keyword_flags_unhedged_approval_mention(hedged) is False
+
+
+def test_strict_screen_ignores_text_that_never_mentions_approval() -> None:
+    assert keyword_flags_unhedged_approval_mention("Aqui está a simulação estimada.") is False
+
+
+async def test_a_degraded_check_blocks_the_promise_examples_that_hedge_words_used_to_pass() -> None:
+    node = make_compliance_guard_node(_factory_where_the_llm_check_cannot_produce_a_result())
+    for promise in (
+        "Seu crédito está aprovado, veja a simulação.",
+        "Após análise, seu empréstimo foi aprovado.",
+    ):
+        state = initial_state("cust-1")
+        state["draft_reply"] = promise
+
+        updates = await node(state)
+
+        assert "approval_promise_blocked" in updates["compliance_flags"], promise
