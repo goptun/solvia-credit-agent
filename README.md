@@ -116,6 +116,23 @@ LLM_API_KEY=<your gateway API key>
 `GET /health/ready` reports whether the gateway is reachable through
 the tunnel.
 
+### Manual smoke test against the real gateway
+
+`scripts/smoke_gateway.py` sends one real message per classifiable
+intent (product question, loan simulation, profile analysis, complaint,
+out of scope) through the full graph, against the real `9router`
+gateway. It is **not** part of the automated test suite and is never
+run by CI — it needs the SSH tunnel above and a real `LLM_API_KEY`:
+
+```bash
+PYTHONPATH=. uv run python scripts/smoke_gateway.py
+```
+
+It prints only the intent the router actually classified, the sequence
+of nodes executed, and whether a final reply was produced for each
+intent — never the reply content or the message text, to avoid leaking
+model output into terminal history.
+
 ### Run everything with Docker Compose
 
 ```bash
