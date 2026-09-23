@@ -14,23 +14,33 @@ false-refusal rate on answerable questions and refusal accuracy on
 unanswerable ones (far vs. near-miss), attributing each refusal to the
 similarity threshold or to the LLM grounding stage.
 
-Run with: `PYTHONPATH=. uv run python scripts/eval_end_to_end.py`
-Makes one LLM call per question that clears the threshold (at most 31).
-Prints only metrics, never question or reply text.
+Run with: `PYTHONPATH=. uv run python scripts/eval_end_to_end.py [--tier fast|smart]`
+`--pause-seconds N` sleeps between LLM-reaching questions to stay under the
+upstream provider's per-minute quota (a burst of back-to-back calls got
+`429 quota exceeded` and made a first run's latency/error numbers
+meaningless). `--tier` temporarily remaps `knowledge_agent` to a tier for this run only
+(nothing is changed in `NODE_TIER_MAP` on disk) to compare smart vs. fast.
+Makes one LLM call per question that clears the threshold (at most 31)
+and reports LLM latency and citation hit rate. The timeout used here
+comes from `LLM_TIMEOUT_SECONDS_FAST`/`_SMART` — override them for a run
+that must not be cut short, but that override is not the production
+value. Prints only metrics, never question or reply text.
 """
 
 from __future__ import annotations
 
+import argparse
 import asyncio
 import functools
 import sys
+import time
 
 import psycopg
 from psycopg_pool import ConnectionPool
 
-from apps.agent.llm.factory import LLMFactory
+from apps.agent.llm.factory import NODE_TIER_MAP, LLMFactory, Tier
 from apps.agent.llm.settings import get_settings
-from apps.agent.nodes.knowledge_agent import REFUSAL_REPLY, RetrieveFn, ground_answer
+from apps.agent.nodes.knowledge_agent import RetrieveFn, ground_answer
 from apps.api.settings import get_api_settings
 from rag.corpus.manifest import SourceType
 from rag.embeddings.fastembed_adapter import FastEmbedAdapter
@@ -42,7 +52,7 @@ from rag.retrieval.retrieved_chunk import RetrievedChunk
 from rag.settings import get_rag_settings
 
 
-async def main() -> int:
+async def main(tier: Tier | None, pause_seconds: float) -> int:
     llm_settings = get_settings()
     api_settings = get_api_settings()
     rag_settings = get_rag_settings()
@@ -64,6 +74,9 @@ async def main() -> int:
         )
     _print_report(retrieval_report)
 
+    if tier is not None:
+        NODE_TIER_MAP["knowledge_agent"] = tier
+    print(f"\nknowledge_agent tier for this run: {NODE_TIER_MAP['knowledge_agent']}")
     llm_factory = LLMFactory(llm_settings)
     llm = llm_factory.for_node("knowledge_agent")
     fallback_llm = llm_factory.fallback_for_node("knowledge_agent")
@@ -81,14 +94,27 @@ async def main() -> int:
             return results
 
         async def ground(question: str, source_type: SourceType | None) -> GroundingOutcome:
+            start = time.perf_counter()
             result = await ground_answer(
                 question, source_type, llm, fallback_llm, embeddings, spy_retrieve, rag_settings
             )
+            elapsed = time.perf_counter() - start
+            if pause_seconds and last_results:
+                await asyncio.sleep(pause_seconds)
             best = max((chunk.vector_similarity for chunk in last_results), default=0.0)
-            below_threshold = best < rag_settings.rag_min_relevance_score
+            by_threshold = not last_results or best < rag_settings.rag_min_relevance_score
+            cited = tuple(
+                (chunk.document_id, chunk.article_ref)
+                for citation in result.citations
+                for chunk in last_results
+                if (chunk.norm, chunk.article_ref, chunk.source_url)
+                == (citation.norm, citation.article_ref, citation.source_url)
+            )
             return GroundingOutcome(
-                refused=result.refused and result.answer == REFUSAL_REPLY,
-                refused_by_threshold=result.refused and below_threshold,
+                refused=result.refused,
+                refused_by_threshold=result.refused and by_threshold,
+                llm_latency_seconds=None if by_threshold else elapsed,
+                cited=cited,
             )
 
         print("\n== End-to-end (real LLM grounding, threshold + LLM stage) ==")
@@ -101,4 +127,8 @@ async def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(asyncio.run(main()))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--tier", choices=["fast", "smart"], default=None)
+    parser.add_argument("--pause-seconds", type=float, default=0.0)
+    args = parser.parse_args()
+    sys.exit(asyncio.run(main(args.tier, args.pause_seconds)))

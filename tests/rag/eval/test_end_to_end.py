@@ -120,3 +120,45 @@ async def test_a_failing_grounding_call_is_counted_as_an_error_not_a_refusal() -
     assert report.unanswerable_errors == 1
     assert report.correct_refusals == 0
     assert "ERRORS" in format_report(report)
+
+
+async def test_reports_llm_latency_and_citation_hit_rate() -> None:
+    q_ref = AnswerableQuestion(
+        question="hit",
+        expected_document_id="cdc-consolidada",
+        expected_refs=["art. 54-A"],
+        evidence="x",
+    )
+    q_wrong = AnswerableQuestion(
+        question="wrong",
+        expected_document_id="cdc-consolidada",
+        expected_refs=["art. 54-A"],
+        evidence="x",
+    )
+    q_thr = _answerable("thr")
+    questions = EvalQuestionSet(answerable=[q_ref, q_wrong, q_thr], unanswerable=[])
+    outcomes = {
+        "hit": GroundingOutcome(
+            refused=False,
+            refused_by_threshold=False,
+            llm_latency_seconds=10.0,
+            cited=(("cdc-consolidada", "art. 54-A"),),
+        ),
+        "wrong": GroundingOutcome(
+            refused=False,
+            refused_by_threshold=False,
+            llm_latency_seconds=40.0,
+            cited=(("cdc-consolidada", "art. 6º"),),
+        ),
+        "thr": _THRESHOLD_REFUSAL,
+    }
+
+    report = await run_end_to_end(questions, _scripted(outcomes, []))
+
+    assert report.answered == 2
+    assert report.citation_hit_rate == 0.5
+    assert report.llm_latencies == (10.0, 40.0)
+    text = format_report(report)
+    assert "max 40.0s" in text
+    assert ">30s: 1" in text
+    assert "citation hit rate (answered answerable): 50.00%" in text
