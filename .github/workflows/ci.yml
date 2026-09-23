@@ -38,7 +38,10 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16-alpine
+        # pgvector/pgvector:pg16 is a strict superset of postgres:16-alpine
+        # (same Postgres 16, `vector`/`unaccent` extensions preinstalled) —
+        # one service backs both the checkpointer tests and rag_chunks.
+        image: pgvector/pgvector:pg16
         env:
           POSTGRES_USER: solvia
           POSTGRES_PASSWORD: solvia
@@ -66,6 +69,9 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --all-extras --dev
+
+      - name: Migrate rag_chunks schema
+        run: uv run python -m rag.migrate
 
       - name: Run tests
         run: uv run pytest --cov --cov-report=term-missing

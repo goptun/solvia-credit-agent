@@ -74,10 +74,10 @@
 
 ## 10. CI and infrastructure tests
 
-- [ ] 10.1 Add a pgvector service container to the CI workflow (alongside the existing Postgres checkpointer service, or replacing it with the pgvector image if one service can serve both) — verify the CI run shows the service healthy before the test step
-- [ ] 10.2 Add small committed fixtures (a handful of chunks, not the full corpus) for unit/integration tests so CI never fetches the corpus or downloads an embedding model — verify `grep` over the CI workflow shows no invocation of `rag.ingest fetch` or a real `FastEmbedAdapter` model download
-- [ ] 10.3 Run the full test suite, lint, type-check, and `gitleaks` locally — verify all pass
-- [ ] 10.4 Commit: `test(ci): adiciona serviço pgvector e fixtures para os testes de recuperação`
+- [x] 10.1 Add a pgvector service container to the CI workflow (alongside the existing Postgres checkpointer service, or replacing it with the pgvector image if one service can serve both) — verify the CI run shows the service healthy before the test step. Replaced `postgres:16-alpine` with `pgvector/pgvector:pg16` (a strict superset — same Postgres 16, extensions preinstalled) and added a `rag.migrate` step before tests, so one service backs both the checkpointer and `rag_chunks`
+- [x] 10.2 Add small committed fixtures (a handful of chunks, not the full corpus) for unit/integration tests so CI never fetches the corpus or downloads an embedding model — verify `grep` over the CI workflow shows no invocation of `rag.ingest fetch` or a real `FastEmbedAdapter` model download. No new fixture files needed: every `rag/`/`apps/` test already seeds its own small chunks directly via `index_document` + `FakeEmbeddings` (never a committed corpus dump), and the real-model tests are already gated behind `RAG_RUN_REAL_EMBEDDING_TESTS=1`, which CI never sets — verified `grep` over `.github/workflows/ci.yml` for `rag.ingest`/`RAG_RUN_REAL_EMBEDDING_TESTS`/`fastembed` returns nothing
+- [x] 10.3 Run the full test suite, lint, type-check, and `gitleaks` locally — verify all pass
+- [x] 10.4 Commit: `test(ci): adiciona serviço pgvector e fixtures para os testes de recuperação`
 
 ## 11. Documentation
 
