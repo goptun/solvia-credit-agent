@@ -95,11 +95,11 @@
 
 ## 10. Local Environment and Documentation
 
-- [ ] 10.1 Write `docker-compose.yml` (dev profile: `api`, `postgres`; LangFuse via env) — verify `docker compose config` validates and `docker compose up` boots `api` + `postgres` locally
-- [ ] 10.2 Write `.env.example` with every required variable and safe placeholders, including `LLM_BASE_URL` documented as pointing at the local SSH tunnel (e.g., `http://localhost:<port>/v1`) — verify `gitleaks` passes and no real secret, host, or IP is present
-- [ ] 10.3 Write `README.md` with an architecture diagram (Mermaid), key decisions, run instructions, and an explicit section on establishing the SSH tunnel to the `9router` gateway for local development (the gateway is never exposed publicly) — verify all listed commands actually run against the scaffold
-- [ ] 10.4 Run the full test suite, lint, type-check, and `gitleaks` locally — verify all pass
-- [ ] 10.5 Commit: `docs(repo): adiciona docker-compose, env de exemplo e README`
+- [x] 10.1 Write `docker-compose.yml` (dev profile: `api`, `postgres`; LangFuse via env) — verify `docker compose config` validates and `docker compose up` boots `api` + `postgres` locally
+- [x] 10.2 Write `.env.example` with every required variable and safe placeholders, including `LLM_BASE_URL` documented as pointing at the local SSH tunnel (e.g., `http://localhost:<port>/v1`) — verify `gitleaks` passes and no real secret, host, or IP is present
+- [x] 10.3 Write `README.md` with an architecture diagram (Mermaid), key decisions, run instructions, and an explicit section on establishing the SSH tunnel to the `9router` gateway for local development (the gateway is never exposed publicly) — verify all listed commands actually run against the scaffold
+- [x] 10.4 Run the full test suite, lint, type-check, and `gitleaks` locally — verify all pass
+- [x] 10.5 Commit: `docs(repo): adiciona docker-compose, env de exemplo e README`
 
 ## 11. Pull Request
 
