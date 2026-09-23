@@ -30,7 +30,7 @@ _LONG_ARTICLE_TEXT = "Art. 1º Caput do artigo. " + " ".join(
 )
 
 
-def _fake_embed_documents(texts: list[str]) -> list[Sequence[float]]:
+def _fake_embed_documents(texts: Sequence[str]) -> list[list[float]]:
     return [[0.1] * 384 for _ in texts]
 
 

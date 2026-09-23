@@ -16,7 +16,11 @@ class RagSettings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    rag_embedding_model: str = "intfloat/multilingual-e5-small"
+    rag_embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    """See `design.md` — "Embedding model trade-offs": the only
+    `fastembed`-supported small multilingual option; `intfloat/
+    multilingual-e5-small` (an earlier assumption) is not in
+    `fastembed`'s model catalog."""
     rag_chunk_max_chars: int = 1500
 
     rag_k_vector: int = 20

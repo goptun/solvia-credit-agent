@@ -20,7 +20,7 @@ from rag.corpus.manifest import ManifestDocument
 from rag.ingest.chunking import chunk_extracted_document
 from rag.ingest.extracted_document import ExtractedDocument
 
-EmbedDocumentsFn = Callable[[list[str]], list[Sequence[float]]]
+EmbedDocumentsFn = Callable[[Sequence[str]], list[list[float]]]
 
 _UPSERT_CHUNK = """
 INSERT INTO rag_chunks (

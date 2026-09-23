@@ -29,7 +29,9 @@ def test_defaults_use_the_small_multilingual_model_and_reranking_disabled(
 ) -> None:
     settings = RagSettings()
 
-    assert settings.rag_embedding_model == "intfloat/multilingual-e5-small"
+    assert settings.rag_embedding_model == (
+        "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    )
     assert settings.rag_reranking_enabled is False
     assert "bcb.gov.br" in settings.rag_official_domains
     assert "planalto.gov.br" in settings.rag_official_domains
