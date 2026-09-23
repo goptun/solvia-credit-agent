@@ -3,11 +3,15 @@ schema: spec-driven
 # Project context (optional)
 # This is shown to AI when creating artifacts.
 # Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Project: Solvia (solvia-credit-agent), public portfolio repo. Agentic credit assistant for contact centers on synthetic Open Finance Brasil data.
+  Stack: Python 3.12, uv, ruff, mypy strict, pytest; LangGraph + Postgres checkpointer; FastAPI (SSE); LangFuse; Postgres + pgvector; fastembed; Docker Compose.
+  LLM: OpenAI-compatible gateway (9router) via aliases solvia-fast / solvia-smart only; never reference underlying model names. Structured output = native tool calling first, JSON-mode fallback with fence stripping. Tests always use the fake LLM.
+  Infra: existing nginx reverse proxy on the VPS; gateway reachable only via Tailscale/SSH tunnel; LangFuse Cloud.
+  Secrets policy (non-negotiable): the repo is public. Never commit or print keys, tokens, IPs, hostnames, usernames, or .env contents; placeholders only; gitleaks in pre-commit and CI.
+  Conventions: trunk-based, one branch per change (<type>/<change-id>), Conventional Commits with type/scope in English and description in pt-BR, atomic commits, PR per change with squash merge. Code and docs in English; user-facing messages in pt-BR.
+  Architecture: domain logic is pure Python (no LangChain/FastAPI imports); thin graph nodes; ports and adapters with DI; the LLM never computes financial numbers.
+  Process: any task touching the VPS is read-only unless I explicitly approve; gates in tasks.md are blocking.
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.
