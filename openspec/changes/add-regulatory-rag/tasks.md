@@ -93,5 +93,5 @@
 
 ## 13. Pull Request
 
-- [ ] 13.1 Push the branch and open a PR using the `.github/pull_request_template.md` template, including the recall@k/MRR/refusal-accuracy baseline from task 6.4 and the smoke test output from task 12.2 in the PR description — verify CI (including the pgvector service container job) passes on the PR
+- [x] 13.1 Push the branch and open a PR using the `.github/pull_request_template.md` template, including the recall@k/MRR/refusal-accuracy baseline from task 6.4 and the smoke test output from task 12.2 in the PR description — verify CI (including the pgvector service container job) passes on the PR — **PR #3**: https://github.com/goptun/solvia-credit-agent/pull/3 — all 3 CI checks pass (Lint & type-check, Tests incl. the pgvector service container + `rag.migrate` step, Secret scanning)
 - [ ] 13.2 Present the PR link to me for review before merge
