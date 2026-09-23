@@ -23,6 +23,7 @@ from apps.api.events import final, node_finished, node_started
 from apps.api.schemas import LiveResponse, MessageRequest, ReadyResponse
 
 router = APIRouter()
+logger = structlog.get_logger(__name__)
 
 
 def _context(request: Request) -> AppContext:
@@ -63,6 +64,7 @@ async def post_message(
 
     async def event_stream() -> AsyncIterator[str]:
         reply = UNAVAILABLE_MESSAGE
+        current_node: str | None = None
         structlog.contextvars.bind_contextvars(trace_id=trace_id)
         try:
             with context.tracer.turn(trace_id, conversation_id=conversation_id) as turn:
@@ -72,14 +74,23 @@ async def post_message(
                         graph_input, config=config, stream_mode="debug"
                     ):
                         if event.get("type") == "task":
-                            yield node_started(event["payload"]["name"])
+                            current_node = event["payload"]["name"]
+                            yield node_started(current_node)
                         elif event.get("type") == "task_result":
                             yield node_finished(event["payload"]["name"])
                 finally:
                     reset_current_turn(token)
             final_snapshot = await context.graph.aget_state(config)
             reply = final_snapshot.values.get("draft_reply") or UNAVAILABLE_MESSAGE
-        except Exception:
+        except Exception as exc:
+            # `trace_id` is already bound via contextvars and merges into
+            # this record automatically — never log the exception message
+            # or any conversation content, only its type and where it hit.
+            logger.error(
+                "conversation_turn_failed",
+                exception_type=type(exc).__name__,
+                node=current_node,
+            )
             reply = UNAVAILABLE_MESSAGE
         finally:
             structlog.contextvars.unbind_contextvars("trace_id")

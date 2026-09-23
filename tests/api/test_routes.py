@@ -3,14 +3,20 @@ and health checks."""
 
 from __future__ import annotations
 
+import json
+from collections.abc import Sequence
 from datetime import date
+from typing import Any
 
 import pytest
 from httpx import ASGITransport, AsyncClient
+from langchain_core.messages import AIMessage, BaseMessage
 
 from apps.agent.llm.fake import FakeLLM
+from apps.agent.llm.resilience import UNAVAILABLE_MESSAGE
 from apps.agent.nodes.compliance_guard import ApprovalPromiseCheck
 from apps.agent.nodes.router import RouterDecision
+from apps.agent.observability.logging import configure_logging
 from apps.agent.synthetic_data.models import (
     Consent,
     ConsentStatus,
@@ -143,6 +149,61 @@ async def test_mismatched_customer_id_on_existing_conversation_is_rejected() -> 
             json={"customer_id": "cust-outro", "message": "oi de novo"},
         )
         assert second.status_code == 409
+
+
+class _RaisesStructured:
+    async def ainvoke(self, messages: Sequence[BaseMessage], **kwargs: Any) -> Any:
+        raise ValueError("this fake never supports function calling")
+
+
+class _AlwaysFailsEverythingLLM:
+    """Structured calls raise; plain calls return text that never parses
+    as JSON — every JSON-mode attempt (including the one repair retry)
+    fails, so the node's call to `ainvoke_structured` raises
+    `StructuredOutputError`, which the API layer must catch and log."""
+
+    async def ainvoke(self, messages: Sequence[BaseMessage], **kwargs: Any) -> AIMessage:
+        return AIMessage(content="isto nunca vira JSON, e contém 'oi' junto")
+
+    def bind_tools(self, tools: Sequence[Any], **kwargs: Any) -> _AlwaysFailsEverythingLLM:
+        return self
+
+    def with_structured_output(self, schema: Any, **kwargs: Any) -> _RaisesStructured:
+        return _RaisesStructured()
+
+
+async def test_unhandled_node_exception_is_logged_without_content_or_secrets(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    configure_logging()
+    app = build_test_app(fast_llm=_AlwaysFailsEverythingLLM(), customer=_CUSTOMER)
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post(
+            "/conversations/conv-fail/messages",
+            json={"customer_id": "cust-1", "message": "oi"},
+        )
+
+    assert response.status_code == 200
+    events = parse_sse(response.text)
+    assert events[-1]["type"] == "final"
+    assert events[-1]["data"]["reply"] == UNAVAILABLE_MESSAGE
+
+    captured = capsys.readouterr()
+    log_lines = [json.loads(line) for line in captured.out.strip().splitlines() if line.strip()]
+    error_records = [line for line in log_lines if line.get("event") == "conversation_turn_failed"]
+    assert len(error_records) == 1
+
+    record = error_records[0]
+    assert record["exception_type"] == "StructuredOutputError"
+    assert record["node"] == "router"
+    assert record.get("trace_id")
+
+    # No conversation content or secrets in the record — only structured,
+    # known-safe fields.
+    serialized = json.dumps(record)
+    assert "oi" not in serialized
+    assert "nunca vira JSON" not in serialized
 
 
 async def test_health_live_is_always_ok() -> None:

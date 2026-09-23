@@ -15,10 +15,10 @@ from apps.agent.synthetic_data.models import Customer
 
 
 class ScriptedLLMFactory(LLMFactory):
-    def __init__(self, fast: FakeLLM | None = None, smart: FakeLLM | None = None) -> None:
+    def __init__(self, fast: LLMPort | None = None, smart: LLMPort | None = None) -> None:
         super().__init__(Settings(llm_provider="fake"))
-        self._fast = fast if fast is not None else FakeLLM()
-        self._smart = smart if smart is not None else FakeLLM()
+        self._fast: LLMPort = fast if fast is not None else FakeLLM()
+        self._smart: LLMPort = smart if smart is not None else FakeLLM()
 
     def for_alias(self, tier: Tier) -> LLMPort:
         return self._fast if tier == "fast" else self._smart

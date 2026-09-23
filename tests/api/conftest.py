@@ -11,6 +11,7 @@ from langgraph.checkpoint.memory import MemorySaver
 
 from apps.agent.graph import build_graph
 from apps.agent.llm.fake import FakeLLM
+from apps.agent.llm.port import LLMPort
 from apps.agent.llm.settings import Settings
 from apps.agent.observability.tracing import FakeTracer
 from apps.agent.synthetic_data.models import Customer
@@ -32,8 +33,8 @@ def parse_sse(text: str) -> list[dict[str, Any]]:
 
 
 def build_test_app(
-    fast_llm: FakeLLM | None = None,
-    smart_llm: FakeLLM | None = None,
+    fast_llm: LLMPort | None = None,
+    smart_llm: LLMPort | None = None,
     customer: Customer | None = None,
 ) -> FastAPI:
     factory = ScriptedLLMFactory(fast=fast_llm or FakeLLM(), smart=smart_llm or FakeLLM())
