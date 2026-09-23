@@ -114,6 +114,37 @@ async def test_all_citations_invalid_falls_back_to_refusal() -> None:
     assert "não encontrei" in reply.lower()
 
 
+async def test_empty_claims_from_the_llm_is_a_refusal() -> None:
+    """Above the similarity threshold but the chunks don't answer the
+    question: the LLM grounding stage returns no claims and the reply
+    is the refusal, not an empty or invented answer."""
+    chunk = _chunk("chunk-1", similarity=0.9)
+    smart_llm = FakeLLM(responses=[KnowledgeAnswer(claims=[])])
+    node = make_knowledge_agent_node(
+        ScriptedLLMFactory(smart=smart_llm), _EMBEDDINGS, _retrieve_returning([chunk]), _SETTINGS
+    )
+
+    reply = _reply(await node(_state_with_question("Pergunta próxima mas não respondida")))
+
+    assert "não encontrei" in reply.lower()
+    assert len(smart_llm.calls) == 1
+
+
+async def test_prompt_instructs_the_llm_to_return_empty_claims_when_chunks_do_not_answer() -> None:
+    chunk = _chunk("chunk-1", similarity=0.9)
+    smart_llm = FakeLLM(responses=[KnowledgeAnswer(claims=[])])
+    node = make_knowledge_agent_node(
+        ScriptedLLMFactory(smart=smart_llm), _EMBEDDINGS, _retrieve_returning([chunk]), _SETTINGS
+    )
+
+    await node(_state_with_question("Qualquer pergunta"))
+
+    (prompt,) = smart_llm.calls
+    text = str(prompt[0].content)
+    assert "lista VAZIA" in text
+    assert "NÃO respondem diretamente" in text
+
+
 async def test_low_similarity_refuses_without_calling_the_llm() -> None:
     chunk = _chunk("chunk-1", similarity=0.1)
     smart_llm = FakeLLM()  # no responses configured — a call would raise
