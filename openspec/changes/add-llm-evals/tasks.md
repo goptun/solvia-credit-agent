@@ -1,13 +1,13 @@
 ## 0. Branch and plan
 
-- [ ] 0.1 From an up-to-date `main` (`git fetch origin && git checkout main && git pull`), create branch `feat/add-llm-evals` (the plan artifacts in `openspec/changes/add-llm-evals/` come along) — verify with `git branch --show-current`
-- [ ] 0.2 Run `openspec validate add-llm-evals --strict`, then commit the plan as `chore(openspec): adiciona plano da change add-llm-evals` — verify validation passes and `git status` is clean afterwards
+- [x] 0.1 From an up-to-date `main` (`git fetch origin && git checkout main && git pull`), create branch `feat/add-llm-evals` (the plan artifacts in `openspec/changes/add-llm-evals/` come along) — verify with `git branch --show-current`
+- [x] 0.2 Run `openspec validate add-llm-evals --strict`, then commit the plan as `chore(openspec): adiciona plano da change add-llm-evals` — verify validation passes and `git status` is clean afterwards
 
 ## 1. Package skeleton and settings
 
-- [ ] 1.1 Create the `evals/` package skeleton (`core/`, `adapters/`, `suites/`, `cli.py`, `__main__.py`), add `evals` to the mypy `files` list, and create `tests/evals/` — verify `uv run python -m evals --help` lists the subcommands (`run`, `baseline`, `report`, `review-sample`, `fixture`, `langfuse`) and `uv run mypy .` passes
-- [ ] 1.2 Add `EvalsSettings` (pydantic-settings, same pattern as `rag/settings.py`): `EVALS_MAX_GATEWAY_CALLS` (300), `EVALS_PACING_SECONDS` (6), `EVALS_MAX_ERROR_SHARE` (0.05), `EVALS_MAX_FALLBACK_SHARE` (0.10), `EVALS_SEED` (42) — verify a unit test loads the defaults and overrides from env vars
-- [ ] 1.3 Commit: `chore(evals): cria o esqueleto do pacote de avaliação e suas configurações`
+- [x] 1.1 Create the `evals/` package skeleton (`core/`, `adapters/`, `suites/`, `cli.py`, `__main__.py`), add `evals` to the mypy `files` list, and create `tests/evals/` — verify `uv run python -m evals --help` lists the subcommands (`run`, `baseline`, `report`, `review-sample`, `fixture`, `langfuse`) and `uv run mypy .` passes
+- [x] 1.2 Add `EvalsSettings` (pydantic-settings, same pattern as `rag/settings.py`): `EVALS_MAX_GATEWAY_CALLS` (300), `EVALS_PACING_SECONDS` (6), `EVALS_MAX_ERROR_SHARE` (0.05), `EVALS_MAX_FALLBACK_SHARE` (0.10), `EVALS_SEED` (42) — verify a unit test loads the defaults and overrides from env vars
+- [x] 1.3 Commit: `chore(evals): cria o esqueleto do pacote de avaliação e suas configurações`
 
 ## 2. Pure metrics (`evals/core`, no LangChain/psycopg imports)
 
