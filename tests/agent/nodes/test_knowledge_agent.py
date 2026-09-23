@@ -3,7 +3,7 @@ similarity-based (never rank-based) refusal threshold."""
 
 from __future__ import annotations
 
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import AIMessage, HumanMessage
 
 from apps.agent.llm.deadline import turn_deadline
 from apps.agent.llm.fake import FakeLLM
@@ -222,5 +222,35 @@ async def test_turn_deadline_expiry_returns_the_unavailable_reply() -> None:
 
     with turn_deadline(0.1):
         reply = _reply(await node(_state_with_question("Pergunta qualquer")))
+
+    assert reply == UNAVAILABLE_MESSAGE
+
+
+async def test_knowledge_agent_uses_the_json_fallback_when_the_model_returns_no_tool_call() -> None:
+    chunk = _chunk("chunk-1", similarity=0.9)
+    answer = KnowledgeAnswer(claims=[Claim(text="Resposta via JSON.", chunk_id="chunk-1")])
+    smart_llm = FakeLLM(responses=[None, AIMessage(content=answer.model_dump_json())])
+    node = make_knowledge_agent_node(
+        ScriptedLLMFactory(smart=smart_llm), _EMBEDDINGS, _retrieve_returning([chunk]), _SETTINGS
+    )
+
+    reply = _reply(await node(_state_with_question("Pergunta qualquer")))
+
+    assert "Resposta via JSON." in reply
+    assert "Lei nº 8.078/1990" in reply  # the citation is still rendered from chunk metadata
+
+
+async def test_knowledge_agent_returns_the_unavailable_reply_when_both_paths_fail() -> None:
+    chunk = _chunk("chunk-1", similarity=0.9)
+    smart_llm = FakeLLM(responses=[None, AIMessage(content="sem json")])
+    fast_llm = FakeLLM(responses=[None, AIMessage(content="sem json")])
+    node = make_knowledge_agent_node(
+        ScriptedLLMFactory(fast=fast_llm, smart=smart_llm),
+        _EMBEDDINGS,
+        _retrieve_returning([chunk]),
+        _SETTINGS,
+    )
+
+    reply = _reply(await node(_state_with_question("Pergunta qualquer")))
 
     assert reply == UNAVAILABLE_MESSAGE

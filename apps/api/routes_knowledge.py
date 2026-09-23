@@ -18,7 +18,7 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException, Request
 
 from apps.agent.llm.deadline import turn_deadline
-from apps.agent.llm.errors import LLMDeadlineExceeded
+from apps.agent.llm.errors import LLMDeadlineExceeded, StructuredOutputError
 from apps.agent.llm.resilience import UNAVAILABLE_MESSAGE
 from apps.agent.nodes.knowledge_agent import ground_answer
 from apps.api.context import AppContext
@@ -50,7 +50,7 @@ async def post_knowledge_answer(
                 context.knowledge_retrieve,
                 context.rag_settings,
             )
-    except LLMDeadlineExceeded as exc:
+    except (LLMDeadlineExceeded, StructuredOutputError) as exc:
         raise HTTPException(status_code=503, detail=UNAVAILABLE_MESSAGE) from exc
 
     return KnowledgeAnswerResponse(

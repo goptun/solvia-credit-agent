@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from langchain_core.messages import HumanMessage
 from pydantic import BaseModel
 
-from apps.agent.llm.errors import LLMDeadlineExceeded
+from apps.agent.llm.errors import LLMDeadlineExceeded, StructuredOutputError
 from apps.agent.llm.factory import LLMFactory
 from apps.agent.llm.port import LLMPort
 from apps.agent.llm.resilience import UNAVAILABLE_MESSAGE
@@ -172,7 +172,7 @@ def make_knowledge_agent_node(
             result = await ground_answer(
                 question, source_type, llm, fallback_llm, embeddings, retrieve, rag_settings
             )
-        except LLMDeadlineExceeded:
+        except (LLMDeadlineExceeded, StructuredOutputError):
             return ConversationState(draft_reply=UNAVAILABLE_MESSAGE)
         return ConversationState(draft_reply=result.answer)
 
