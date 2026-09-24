@@ -20,6 +20,7 @@ from evals.core.schemas import (
 DATASET_DIR = Path(__file__).parent / "datasets"
 DATASET_NAMES = ("retrieval", "router", "slots", "compliance")
 REVIEW_FILE = DATASET_DIR / "review.yaml"
+BASELINE_DIR = Path(__file__).parent / "baselines"
 
 AnyDataset = RetrievalDataset | RouterDataset | SlotsDataset | ComplianceDataset
 

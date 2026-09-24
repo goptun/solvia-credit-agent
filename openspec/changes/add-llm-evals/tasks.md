@@ -61,8 +61,8 @@
 - [x] 8.2 Implement the offline retrieval suite: migrate, index the fixture, run each answerable/unanswerable question through the production hybrid search with the eval session's `hnsw.ef_search` at its maximum, output recall/MRR by stratum, similarity quantiles and the threshold table — verify a test against the pgvector service with `FakeEmbeddings` and a test that two consecutive runs print identical metrics
 - [x] 8.3 Run the offline retrieval suite locally with the real embedding model — verify the numbers are plausible against ADR-003 (recall@k on the old questions ≈ 68%) and record them in the task notes as **informational only** (this machine is ARM; the enforced retrieval numbers come from CI, see 9.9); no gateway involved
   - Nota (**informativa, máquina ARM local — não é baseline**; os números aplicados vêm do CI, ver 9.9): recall@5 0,740 e MRR 0,529 (n=73 respondíveis; coloquial 0,636 / lexical 0,825; product-catalog 1,0); recusa falsa 21,9% e recusa correta 72% no limiar 0,60; similaridade mediana 0,67 (respondíveis) vs 0,54 (irrespondíveis). Coerente com o ADR-003 (≈68% no conjunto antigo, mais fácil). Achado: o índice é idempotente por hash de documento, então um esquema compartilhado serviria vetores do modelo errado — cada modelo de embedding usa o próprio esquema (`evals_eval_<modelo>_<hash>`).
-- [ ] 8.4 Implement `python -m evals report` (Markdown tables with CIs and optional diff against a baseline) and `--update-readme` (rewrites only the `<!-- evals:metrics:start/end -->` block) — verify golden-file tests for both and that content outside the markers is untouched
-- [ ] 8.5 Commit: `feat(evals): adiciona as suítes offline de recuperação e compliance, o CLI e o gerador de relatório`
+- [x] 8.4 Implement `python -m evals report` (Markdown tables with CIs and optional diff against a baseline) and `--update-readme` (rewrites only the `<!-- evals:metrics:start/end -->` block) — verify golden-file tests for both and that content outside the markers is untouched
+- [x] 8.5 Commit: `feat(evals): adiciona as suítes offline de recuperação e compliance, o CLI e o gerador de relatório`
 
 ## 9. Baselines and the CI gate
 

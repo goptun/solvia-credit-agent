@@ -76,6 +76,40 @@ def _run(args: argparse.Namespace) -> int:
     return 0
 
 
+def _report(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from evals.core.baseline import Baseline
+    from evals.core.report import MarkersNotFound, render_baselines, render_run, replace_block
+    from evals.core.run import RunRecord
+    from evals.datasets import BASELINE_DIR
+
+    baselines_dir = Path(args.baselines_dir) if args.baselines_dir else BASELINE_DIR
+    if args.update_readme:
+        committed = [
+            Baseline.model_validate_json(path.read_text(encoding="utf-8"))
+            for path in sorted(baselines_dir.glob("*.json"))
+        ]
+        readme = Path(args.readme)
+        try:
+            updated = replace_block(readme.read_text(encoding="utf-8"), render_baselines(committed))
+        except MarkersNotFound as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 2
+        readme.write_text(updated, encoding="utf-8")
+        return 0
+    if not args.run:
+        print("ERROR: pass --run RUN.json or --update-readme", file=sys.stderr)
+        return 2
+    record = RunRecord.model_validate_json(Path(args.run).read_text(encoding="utf-8"))
+    baselines: dict[str, Baseline] = {}
+    for path in args.baseline:
+        baseline = Baseline.model_validate_json(Path(path).read_text(encoding="utf-8"))
+        baselines[baseline.suite] = baseline
+    print(render_run(record, baselines), end="")
+    return 0
+
+
 def _fixture(args: argparse.Namespace) -> int:
     from evals.adapters.fixture import (
         FIXTURE_PATH,
@@ -141,6 +175,19 @@ def build_parser() -> argparse.ArgumentParser:
             command.add_argument("--seed", type=int, default=get_evals_settings().evals_seed)
             command.add_argument("--output", default=None, help="write the run JSON to a file")
             command.set_defaults(handler=_run)
+        if name == "report":
+            command.add_argument("--run", default=None, help="run JSON to render")
+            command.add_argument(
+                "--baseline", action="append", default=[], help="baseline JSON to diff against"
+            )
+            command.add_argument(
+                "--update-readme",
+                action="store_true",
+                help="rewrite the README metrics block from the committed baselines",
+            )
+            command.add_argument("--readme", default="README.md")
+            command.add_argument("--baselines-dir", default=None)
+            command.set_defaults(handler=_report)
         if name == "fixture":
             command.add_argument("action", choices=("build", "verify"))
             command.set_defaults(handler=_fixture)
