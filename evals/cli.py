@@ -6,6 +6,7 @@ import argparse
 import sys
 from collections.abc import Callable, Sequence
 
+from evals.core.baseline import Baseline
 from evals.datasets import DATASET_NAMES, current_hashes, load_dataset
 from evals.review import render_review
 from evals.settings import get_evals_settings
@@ -73,13 +74,68 @@ def _run(args: argparse.Namespace) -> int:
         Path(args.output).write_text(record.to_json(), encoding="utf-8")
     else:
         print(record.to_json(), end="")
+    if not args.compare_baseline:
+        return 0
+    from evals.core.gate import gate
+
+    outcome = gate(record, _committed_baselines(args.baselines_dir))
+    print(outcome.text, end="", file=sys.stdout if args.output else sys.stderr)
+    return outcome.exit_code
+
+
+def _committed_baselines(directory: str | None) -> dict[str, Baseline]:
+    from pathlib import Path
+
+    from evals.datasets import BASELINE_DIR
+
+    baselines = {}
+    for path in sorted((Path(directory) if directory else BASELINE_DIR).glob("*.json")):
+        baseline = Baseline.model_validate_json(path.read_text(encoding="utf-8"))
+        baselines[baseline.suite] = baseline
+    return baselines
+
+
+def _baseline(args: argparse.Namespace) -> int:
+    from datetime import UTC, datetime
+    from pathlib import Path
+
+    from evals.adapters.environment import changed_files_since, git_dirty, head_sha
+    from evals.core.baseline_update import RepoState, Source, baseline_problems, build_baseline
+    from evals.core.run import RunRecord
+    from evals.datasets import BASELINE_DIR, load_approvals
+
+    source: Source = "run" if args.from_run else "artifact"
+    path = Path(args.from_run or args.from_artifact)
+    if path.is_dir():
+        candidates = sorted(path.glob("*.json"))
+        if len(candidates) != 1:
+            print(f"ERROR: expected exactly one .json in {path}", file=sys.stderr)
+            return 2
+        path = candidates[0]
+    record = RunRecord.model_validate_json(path.read_text(encoding="utf-8"))
+    repo = RepoState(
+        head_sha=head_sha(),
+        dirty=git_dirty(),
+        approvals=load_approvals(),
+        changed_since=changed_files_since,
+    )
+    problems = baseline_problems(record, args.suite, args.mode, source, repo)
+    if problems:
+        print(f"refusing to record the {args.suite!r} baseline:", *problems, sep="\n  - ")
+        return 1
+    baseline = build_baseline(record, args.suite, datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"))
+    target = (
+        Path(args.baselines_dir) if args.baselines_dir else BASELINE_DIR
+    ) / f"{args.suite}.json"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(baseline.model_dump_json(indent=2) + "\n", encoding="utf-8")
+    print(f"recorded {target} ({len(baseline.metrics)} metrics, commit {baseline.git_sha[:7]})")
     return 0
 
 
 def _report(args: argparse.Namespace) -> int:
     from pathlib import Path
 
-    from evals.core.baseline import Baseline
     from evals.core.report import MarkersNotFound, render_baselines, render_run, replace_block
     from evals.core.run import RunRecord
     from evals.datasets import BASELINE_DIR
@@ -107,6 +163,14 @@ def _report(args: argparse.Namespace) -> int:
         baseline = Baseline.model_validate_json(Path(path).read_text(encoding="utf-8"))
         baselines[baseline.suite] = baseline
     print(render_run(record, baselines), end="")
+    return 0
+
+
+def _relevant(args: argparse.Namespace) -> int:
+    from evals.core.relevance import retrieval_eval_relevant
+
+    changed = [line.strip() for line in sys.stdin if line.strip()]
+    print("true" if retrieval_eval_relevant(changed, on_main=args.on_main) else "false")
     return 0
 
 
@@ -151,6 +215,7 @@ def build_parser() -> argparse.ArgumentParser:
         ("review-sample", "print a stratified dataset sample for maintainer review"),
         ("fixture", "build or verify the committed corpus chunk fixture"),
         ("langfuse", "mirror datasets to LangFuse"),
+        ("relevant", "print whether the retrieval eval applies to the changed files on stdin"),
     ):
         command = commands.add_parser(name, help=help_text)
         command.set_defaults(handler=_not_implemented)
@@ -174,6 +239,12 @@ def build_parser() -> argparse.ArgumentParser:
             command.add_argument("--mode", choices=("offline", "live"), required=True)
             command.add_argument("--seed", type=int, default=get_evals_settings().evals_seed)
             command.add_argument("--output", default=None, help="write the run JSON to a file")
+            command.add_argument("--baselines-dir", default=None)
+            command.add_argument(
+                "--compare-baseline",
+                action="store_true",
+                help="print the diff against the committed baselines; exit 1 on regression",
+            )
             command.set_defaults(handler=_run)
         if name == "report":
             command.add_argument("--run", default=None, help="run JSON to render")
@@ -188,6 +259,20 @@ def build_parser() -> argparse.ArgumentParser:
             command.add_argument("--readme", default="README.md")
             command.add_argument("--baselines-dir", default=None)
             command.set_defaults(handler=_report)
+        if name == "relevant":
+            command.add_argument("--on-main", action="store_true")
+            command.set_defaults(handler=_relevant)
+        if name == "baseline":
+            command.add_argument("action", choices=("update",))
+            command.add_argument("--suite", required=True)
+            command.add_argument("--mode", choices=("offline", "live"), default="offline")
+            source = command.add_mutually_exclusive_group(required=True)
+            source.add_argument("--from-run", default=None, help="a local run JSON")
+            source.add_argument(
+                "--from-artifact", default=None, help="a CI run artifact (file or directory)"
+            )
+            command.add_argument("--baselines-dir", default=None)
+            command.set_defaults(handler=_baseline)
         if name == "fixture":
             command.add_argument("action", choices=("build", "verify"))
             command.set_defaults(handler=_fixture)

@@ -69,6 +69,16 @@ class RunRecord(BaseModel):
     seed: int
     environment: dict[str, str]
     suites: dict[str, SuiteResult]
+    sample_fraction: float | None = None
+    """Set when only a stratified fraction of each dataset ran."""
+    incomplete: bool = False
+    """The run stopped before covering every selected item (e.g. the budget)."""
+    contaminated: bool = False
+    contamination_reasons: list[str] = []
+    model_sets_unset: bool = False
+    """Live only: no approved expected-model set, so the mix cannot be judged."""
+    aliases: dict[str, str] = {}
+    resolved_model_mix: dict[str, dict[str, int]] = {}
 
     def to_json(self) -> str:
         return self.model_dump_json(indent=2) + "\n"
