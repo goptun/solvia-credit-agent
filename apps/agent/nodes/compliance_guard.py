@@ -40,7 +40,7 @@ class ApprovalPromiseCheck(BaseModel):
     promises_approval: bool
 
 
-async def _llm_flags_approval_promise(llm_factory: LLMFactory, text: str) -> bool | None:
+async def llm_flags_approval_promise(llm_factory: LLMFactory, text: str) -> bool | None:
     """The LLM's verdict, or `None` when the check could not produce a
     valid result (structured-output failure, timeout, or the turn
     deadline) — the caller must fail closed on `None`, never treat it
@@ -76,7 +76,7 @@ def make_compliance_guard_node(llm_factory: LLMFactory) -> ComplianceGuardNode:
         compliance_flags: list[str] = []
         blocked = keyword_flags_approval_promise(masked)
         if not blocked:
-            llm_verdict = await _llm_flags_approval_promise(llm_factory, masked)
+            llm_verdict = await llm_flags_approval_promise(llm_factory, masked)
             if llm_verdict is None:
                 # Fail closed: without a valid LLM verdict, decide with
                 # the stricter deterministic screen and say so.

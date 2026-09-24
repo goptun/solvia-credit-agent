@@ -143,3 +143,9 @@ def render_review(
             out.extend(f"  {line}" for line in evidence(item.retrieval))
         out.append("")
     return "\n".join(out)
+
+
+def strata_by_id(loaded: LoadedDataset) -> dict[str, Hashable]:
+    """The review strata per item id — also the strata of live `--sample`, so a
+    sample covers what a review sample covers."""
+    return {item.id: item.stratum for item in review_items(loaded)}
