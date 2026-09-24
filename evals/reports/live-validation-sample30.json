@@ -1,0 +1,2019 @@
+{
+  "mode": "live",
+  "git_sha": "cd269ae951ec230c7dbf000b9544f4bab62fd880",
+  "git_dirty": false,
+  "seed": 42,
+  "environment": {
+    "ci": "false",
+    "os": "darwin",
+    "arch": "x86_64",
+    "python": "3.12.0"
+  },
+  "suites": {
+    "router": {
+      "datasets": [
+        {
+          "name": "router",
+          "version": 2,
+          "sha256": "55d380faf90cf55ea3d32a7f4da1e6f74db5bdada6ea3f03be2d189b8b7b6dd0"
+        }
+      ],
+      "metrics": {
+        "router.accuracy": {
+          "value": 0.952381,
+          "n": 21,
+          "direction": "higher",
+          "ci_low": 0.773306,
+          "ci_high": 0.991544,
+          "deterministic": false
+        },
+        "router.accuracy.category.ambiguous": {
+          "value": 1.0,
+          "n": 7,
+          "direction": "higher",
+          "ci_low": 0.64567,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "router.accuracy.category.clear": {
+          "value": 1.0,
+          "n": 12,
+          "direction": "higher",
+          "ci_low": 0.757506,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "router.accuracy.category.continuation": {
+          "value": 0.5,
+          "n": 2,
+          "direction": "higher",
+          "ci_low": 0.094531,
+          "ci_high": 0.905469,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "confusion_matrix": {
+          "product_question": {
+            "product_question": 4,
+            "regulatory_question": 0,
+            "loan_simulation": 0,
+            "profile_analysis": 0,
+            "complaint": 0,
+            "out_of_scope": 0,
+            "continue": 0
+          },
+          "regulatory_question": {
+            "product_question": 0,
+            "regulatory_question": 3,
+            "loan_simulation": 0,
+            "profile_analysis": 0,
+            "complaint": 0,
+            "out_of_scope": 0,
+            "continue": 0
+          },
+          "loan_simulation": {
+            "product_question": 0,
+            "regulatory_question": 0,
+            "loan_simulation": 3,
+            "profile_analysis": 0,
+            "complaint": 0,
+            "out_of_scope": 0,
+            "continue": 0
+          },
+          "profile_analysis": {
+            "product_question": 0,
+            "regulatory_question": 0,
+            "loan_simulation": 0,
+            "profile_analysis": 2,
+            "complaint": 1,
+            "out_of_scope": 0,
+            "continue": 0
+          },
+          "complaint": {
+            "product_question": 0,
+            "regulatory_question": 0,
+            "loan_simulation": 0,
+            "profile_analysis": 0,
+            "complaint": 2,
+            "out_of_scope": 0,
+            "continue": 0
+          },
+          "out_of_scope": {
+            "product_question": 0,
+            "regulatory_question": 0,
+            "loan_simulation": 0,
+            "profile_analysis": 0,
+            "complaint": 0,
+            "out_of_scope": 4,
+            "continue": 0
+          },
+          "continue": {
+            "product_question": 1,
+            "regulatory_question": 0,
+            "loan_simulation": 0,
+            "profile_analysis": 0,
+            "complaint": 0,
+            "out_of_scope": 0,
+            "continue": 1
+          }
+        },
+        "misclassified": [
+          {
+            "id": "T-062",
+            "expected": "continue",
+            "predicted": "product_question"
+          }
+        ],
+        "unavailable_ids": [],
+        "items": [
+          {
+            "id": "T-004",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-006",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-009",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-016",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-018",
+            "output": {
+              "predicted": "loan_simulation"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-024",
+            "output": {
+              "predicted": "loan_simulation"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-026",
+            "output": {
+              "predicted": "profile_analysis"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-031",
+            "output": {
+              "predicted": "profile_analysis"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-034",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-038",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-044",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-045",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-051",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-052",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-053",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-054",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-055",
+            "output": {
+              "predicted": "loan_simulation"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-056",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-057",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-060",
+            "output": {
+              "predicted": "continue"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-062",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 0.0
+            }
+          }
+        ],
+        "items_selected": 21,
+        "items_scored": 21,
+        "unavailable": {}
+      }
+    },
+    "slots": {
+      "datasets": [
+        {
+          "name": "slots",
+          "version": 2,
+          "sha256": "d8816af9786daaa4660afeaefc0c073c2952dc1fcbe29c34b1da1508df26d911"
+        }
+      ],
+      "metrics": {
+        "slots.exact_match.amount": {
+          "value": 0.909091,
+          "n": 11,
+          "direction": "higher",
+          "ci_low": 0.622642,
+          "ci_high": 0.983768,
+          "deterministic": false
+        },
+        "slots.exact_match.term_months": {
+          "value": 0.909091,
+          "n": 11,
+          "direction": "higher",
+          "ci_low": 0.622642,
+          "ci_high": 0.983768,
+          "deterministic": false
+        },
+        "slots.exact_match.amortization_type": {
+          "value": 0.909091,
+          "n": 11,
+          "direction": "higher",
+          "ci_low": 0.622642,
+          "ci_high": 0.983768,
+          "deterministic": false
+        },
+        "slots.exact_match.all_fields": {
+          "value": 0.727273,
+          "n": 11,
+          "direction": "higher",
+          "ci_low": 0.434355,
+          "ci_high": 0.902539,
+          "deterministic": false
+        },
+        "slots.no_invented_value": {
+          "value": 0.823529,
+          "n": 17,
+          "direction": "higher",
+          "ci_low": 0.589705,
+          "ci_high": 0.938089,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "mismatches": [
+          {
+            "id": "S-026",
+            "expected": {
+              "amount": "5000",
+              "term_months": null,
+              "amortization_type": "SAC"
+            },
+            "predicted": {
+              "amount": "5000",
+              "term_months": "0",
+              "amortization_type": "SAC"
+            }
+          },
+          {
+            "id": "S-027",
+            "expected": {
+              "amount": "3000",
+              "term_months": "12",
+              "amortization_type": null
+            },
+            "predicted": {
+              "amount": "3000",
+              "term_months": "12",
+              "amortization_type": "FIBONACCI"
+            }
+          },
+          {
+            "id": "S-028",
+            "expected": {
+              "amount": null,
+              "term_months": "12",
+              "amortization_type": "PRICE"
+            },
+            "predicted": {
+              "amount": "0",
+              "term_months": "12",
+              "amortization_type": "PRICE"
+            }
+          }
+        ],
+        "unavailable_ids": [],
+        "items": [
+          {
+            "id": "S-012",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": null,
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-016",
+            "output": {
+              "predicted": {
+                "amount": "6500",
+                "term_months": "12",
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-017",
+            "output": {
+              "predicted": {
+                "amount": "20000",
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-019",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-021",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-022",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-026",
+            "output": {
+              "predicted": {
+                "amount": "5000",
+                "term_months": "0",
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 0.0
+            }
+          },
+          {
+            "id": "S-027",
+            "output": {
+              "predicted": {
+                "amount": "3000",
+                "term_months": "12",
+                "amortization_type": "FIBONACCI"
+              }
+            },
+            "scores": {
+              "exact_match": 0.0
+            }
+          },
+          {
+            "id": "S-028",
+            "output": {
+              "predicted": {
+                "amount": "0",
+                "term_months": "12",
+                "amortization_type": "PRICE"
+              }
+            },
+            "scores": {
+              "exact_match": 0.0
+            }
+          },
+          {
+            "id": "S-031",
+            "output": {
+              "predicted": {
+                "amount": "10000",
+                "term_months": "12",
+                "amortization_type": "PRICE"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-034",
+            "output": {
+              "predicted": {
+                "amount": "8000",
+                "term_months": "18",
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          }
+        ],
+        "items_selected": 11,
+        "items_scored": 11,
+        "unavailable": {}
+      }
+    },
+    "compliance-llm": {
+      "datasets": [
+        {
+          "name": "compliance",
+          "version": 2,
+          "sha256": "126940c4e2dded3741cabe3414dfda6085d8c360e38abb930d8979b612a8de46"
+        }
+      ],
+      "metrics": {
+        "llm.precision": {
+          "value": 1.0,
+          "n": 5,
+          "direction": "higher",
+          "ci_low": 0.565518,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "llm.recall": {
+          "value": 1.0,
+          "n": 5,
+          "direction": "higher",
+          "ci_low": 0.565518,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "llm.false_positive_rate": {
+          "value": 0.0,
+          "n": 7,
+          "direction": "lower",
+          "ci_low": 0.0,
+          "ci_high": 0.35433,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "missed_promises": [],
+        "false_positives": [],
+        "unavailable_ids": [],
+        "items": [
+          {
+            "id": "C-003",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-004",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-007",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-008",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-013",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-016",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-020",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-024",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-033",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-035",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-038",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-040",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          }
+        ],
+        "items_selected": 12,
+        "items_scored": 12,
+        "unavailable": {}
+      }
+    },
+    "grounding": {
+      "datasets": [
+        {
+          "name": "retrieval",
+          "version": 2,
+          "sha256": "cf34185e30b2ec65181061c2b30d0add76a8c378cd312d9aea9131b54599c817"
+        }
+      ],
+      "metrics": {
+        "grounding.false_refusal_rate": {
+          "value": 0.32,
+          "n": 25,
+          "direction": "lower",
+          "ci_low": 0.172052,
+          "ci_high": 0.515897,
+          "deterministic": false
+        },
+        "grounding.refusal_accuracy": {
+          "value": 1.0,
+          "n": 4,
+          "direction": "higher",
+          "ci_low": 0.510109,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "grounding.refusal_accuracy.far": {
+          "value": 1.0,
+          "n": 2,
+          "direction": "higher",
+          "ci_low": 0.34238,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "grounding.refusal_accuracy.near_miss": {
+          "value": 1.0,
+          "n": 2,
+          "direction": "higher",
+          "ci_low": 0.34238,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "grounding.citation_validity": {
+          "value": 1.0,
+          "n": 17,
+          "direction": "higher",
+          "ci_low": 0.815682,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "grounding.expected_ref_hit": {
+          "value": 0.941176,
+          "n": 17,
+          "direction": "higher",
+          "ci_low": 0.73018,
+          "ci_high": 0.98954,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "false_refusal_causes": {
+          "threshold": 5,
+          "gold_not_retrieved": 3,
+          "llm_refused_gold_in_context": 0
+        },
+        "unavailable_ids": [],
+        "items": [
+          {
+            "id": "R-001",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 6º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-008",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-012",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 18"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-013",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 46"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-014",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-019",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-022",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-023",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cet-disclosure:art. 6º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-024",
+            "output": {
+              "refused": false,
+              "cited": [
+                "product-catalog:None"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-025",
+            "output": {
+              "refused": false,
+              "cited": [
+                "product-catalog:None"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-031",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-035",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 43"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-041",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 104-A"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-043",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 6º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-045",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-050",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 5º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-058",
+            "output": {
+              "refused": false,
+              "cited": [
+                "open-finance-regulamento:art. 14"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-059",
+            "output": {
+              "refused": false,
+              "cited": [
+                "open-finance-regulamento:art. 16"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-061",
+            "output": {
+              "refused": false,
+              "cited": [
+                "open-finance-regulamento:art. 9º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-062",
+            "output": {
+              "refused": false,
+              "cited": [
+                "open-finance-regulamento:art. 26"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-065",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-068",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-069",
+            "output": {
+              "refused": false,
+              "cited": [
+                "product-catalog:None"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-072",
+            "output": {
+              "refused": false,
+              "cited": [
+                "product-catalog:None"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-073",
+            "output": {
+              "refused": false,
+              "cited": [
+                "product-catalog:None"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-078",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "refused": 1.0
+            }
+          },
+          {
+            "id": "R-084",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "refused": 1.0
+            }
+          },
+          {
+            "id": "R-094",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "refused": 1.0
+            }
+          },
+          {
+            "id": "R-096",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "refused": 1.0
+            }
+          }
+        ],
+        "items_selected": 29,
+        "items_scored": 29,
+        "unavailable": {}
+      }
+    },
+    "operational": {
+      "datasets": [],
+      "metrics": {
+        "compliance_guard.no_tool_call_rate": {
+          "value": 0.666667,
+          "n": 12,
+          "direction": "lower",
+          "ci_low": 0.390622,
+          "ci_high": 0.86188,
+          "deterministic": false
+        },
+        "compliance_guard.json_fallback_rate": {
+          "value": 0.666667,
+          "n": 12,
+          "direction": "lower",
+          "ci_low": 0.390622,
+          "ci_high": 0.86188,
+          "deterministic": false
+        },
+        "compliance_guard.latency_p50_seconds": {
+          "value": 0.836,
+          "n": 20,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "compliance_guard.latency_p95_seconds": {
+          "value": 1.429,
+          "n": 20,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "compliance_guard.attempts_mean": {
+          "value": 1.667,
+          "n": 20,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "knowledge_agent.no_tool_call_rate": {
+          "value": 0.142857,
+          "n": 21,
+          "direction": "lower",
+          "ci_low": 0.04981,
+          "ci_high": 0.346361,
+          "deterministic": false
+        },
+        "knowledge_agent.json_fallback_rate": {
+          "value": 0.142857,
+          "n": 21,
+          "direction": "lower",
+          "ci_low": 0.04981,
+          "ci_high": 0.346361,
+          "deterministic": false
+        },
+        "knowledge_agent.latency_p50_seconds": {
+          "value": 1.171,
+          "n": 24,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "knowledge_agent.latency_p95_seconds": {
+          "value": 3.861,
+          "n": 24,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "knowledge_agent.attempts_mean": {
+          "value": 1.143,
+          "n": 24,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "offer_simulator.no_tool_call_rate": {
+          "value": 0.0,
+          "n": 11,
+          "direction": "lower",
+          "ci_low": 0.0,
+          "ci_high": 0.258833,
+          "deterministic": false
+        },
+        "offer_simulator.json_fallback_rate": {
+          "value": 0.0,
+          "n": 11,
+          "direction": "lower",
+          "ci_low": 0.0,
+          "ci_high": 0.258833,
+          "deterministic": false
+        },
+        "offer_simulator.latency_p50_seconds": {
+          "value": 1.527,
+          "n": 11,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "offer_simulator.latency_p95_seconds": {
+          "value": 3.381,
+          "n": 11,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "offer_simulator.attempts_mean": {
+          "value": 1.0,
+          "n": 11,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "router.no_tool_call_rate": {
+          "value": 0.0,
+          "n": 21,
+          "direction": "lower",
+          "ci_low": 0.0,
+          "ci_high": 0.154639,
+          "deterministic": false
+        },
+        "router.json_fallback_rate": {
+          "value": 0.0,
+          "n": 21,
+          "direction": "lower",
+          "ci_low": 0.0,
+          "ci_high": 0.154639,
+          "deterministic": false
+        },
+        "router.latency_p50_seconds": {
+          "value": 0.886,
+          "n": 21,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "router.latency_p95_seconds": {
+          "value": 1.087,
+          "n": 21,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "router.attempts_mean": {
+          "value": 1.0,
+          "n": 21,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "calls": [
+          {
+            "operation": "router-1",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 3.332
+          },
+          {
+            "operation": "router-2",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.779
+          },
+          {
+            "operation": "router-3",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.748
+          },
+          {
+            "operation": "router-4",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.991
+          },
+          {
+            "operation": "router-5",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.922
+          },
+          {
+            "operation": "router-6",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.087
+          },
+          {
+            "operation": "router-7",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.009
+          },
+          {
+            "operation": "router-8",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.886
+          },
+          {
+            "operation": "router-9",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.991
+          },
+          {
+            "operation": "router-10",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.951
+          },
+          {
+            "operation": "router-11",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.962
+          },
+          {
+            "operation": "router-12",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.806
+          },
+          {
+            "operation": "router-13",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.862
+          },
+          {
+            "operation": "router-14",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.79
+          },
+          {
+            "operation": "router-15",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.832
+          },
+          {
+            "operation": "router-16",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.864
+          },
+          {
+            "operation": "router-17",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.707
+          },
+          {
+            "operation": "router-18",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.838
+          },
+          {
+            "operation": "router-19",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.95
+          },
+          {
+            "operation": "router-20",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.928
+          },
+          {
+            "operation": "router-21",
+            "node": "router",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.869
+          },
+          {
+            "operation": "offer_simulator-22",
+            "node": "offer_simulator",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 3.042
+          },
+          {
+            "operation": "offer_simulator-23",
+            "node": "offer_simulator",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 2.939
+          },
+          {
+            "operation": "offer_simulator-24",
+            "node": "offer_simulator",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.766
+          },
+          {
+            "operation": "offer_simulator-25",
+            "node": "offer_simulator",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.729
+          },
+          {
+            "operation": "offer_simulator-26",
+            "node": "offer_simulator",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.965
+          },
+          {
+            "operation": "offer_simulator-27",
+            "node": "offer_simulator",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.751
+          },
+          {
+            "operation": "offer_simulator-28",
+            "node": "offer_simulator",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 2.751
+          },
+          {
+            "operation": "offer_simulator-29",
+            "node": "offer_simulator",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.783
+          },
+          {
+            "operation": "offer_simulator-30",
+            "node": "offer_simulator",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 3.72
+          },
+          {
+            "operation": "offer_simulator-31",
+            "node": "offer_simulator",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.796
+          },
+          {
+            "operation": "offer_simulator-32",
+            "node": "offer_simulator",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.527
+          },
+          {
+            "operation": "compliance_guard-33",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.944
+          },
+          {
+            "operation": "compliance_guard-33",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.694
+          },
+          {
+            "operation": "compliance_guard-34",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.775
+          },
+          {
+            "operation": "compliance_guard-35",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.078
+          },
+          {
+            "operation": "compliance_guard-36",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.83
+          },
+          {
+            "operation": "compliance_guard-37",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.842
+          },
+          {
+            "operation": "compliance_guard-37",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.648
+          },
+          {
+            "operation": "compliance_guard-38",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.57
+          },
+          {
+            "operation": "compliance_guard-38",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.733
+          },
+          {
+            "operation": "compliance_guard-39",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.858
+          },
+          {
+            "operation": "compliance_guard-39",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.421
+          },
+          {
+            "operation": "compliance_guard-40",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.224
+          },
+          {
+            "operation": "compliance_guard-40",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.793
+          },
+          {
+            "operation": "compliance_guard-41",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.955
+          },
+          {
+            "operation": "compliance_guard-41",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.829
+          },
+          {
+            "operation": "compliance_guard-42",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.886
+          },
+          {
+            "operation": "compliance_guard-42",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.875
+          },
+          {
+            "operation": "compliance_guard-43",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.718
+          },
+          {
+            "operation": "compliance_guard-43",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.733
+          },
+          {
+            "operation": "compliance_guard-44",
+            "node": "compliance_guard",
+            "alias": "solvia-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.778
+          },
+          {
+            "operation": "knowledge_agent-45",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 4.062
+          },
+          {
+            "operation": "knowledge_agent-46",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.808
+          },
+          {
+            "operation": "knowledge_agent-47",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.38
+          },
+          {
+            "operation": "knowledge_agent-48",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.424
+          },
+          {
+            "operation": "knowledge_agent-48",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.148
+          },
+          {
+            "operation": "knowledge_agent-50",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.768
+          },
+          {
+            "operation": "knowledge_agent-52",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 2.722
+          },
+          {
+            "operation": "knowledge_agent-53",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.787
+          },
+          {
+            "operation": "knowledge_agent-54",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.108
+          },
+          {
+            "operation": "knowledge_agent-56",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.971
+          },
+          {
+            "operation": "knowledge_agent-56",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.0
+          },
+          {
+            "operation": "knowledge_agent-57",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.279
+          },
+          {
+            "operation": "knowledge_agent-58",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.216
+          },
+          {
+            "operation": "knowledge_agent-60",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 2.621
+          },
+          {
+            "operation": "knowledge_agent-60",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.199
+          },
+          {
+            "operation": "knowledge_agent-61",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.757
+          },
+          {
+            "operation": "knowledge_agent-62",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.287
+          },
+          {
+            "operation": "knowledge_agent-63",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.122
+          },
+          {
+            "operation": "knowledge_agent-64",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.156
+          },
+          {
+            "operation": "knowledge_agent-65",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 6.016
+          },
+          {
+            "operation": "knowledge_agent-67",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.067
+          },
+          {
+            "operation": "knowledge_agent-68",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.185
+          },
+          {
+            "operation": "knowledge_agent-69",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.007
+          },
+          {
+            "operation": "knowledge_agent-71",
+            "node": "knowledge_agent",
+            "alias": "solvia-smart",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.949
+          }
+        ]
+      }
+    }
+  },
+  "sample_fraction": 0.3,
+  "incomplete": false,
+  "contaminated": false,
+  "contamination_reasons": [],
+  "model_sets_unset": true,
+  "aliases": {
+    "fast": "solvia-fast",
+    "smart": "solvia-smart"
+  },
+  "budget": {
+    "max_calls": 100,
+    "used": 76,
+    "estimated_typical": 66,
+    "estimated_pessimistic": 87
+  },
+  "resolved_model_mix": {
+    "solvia-fast": {
+      "gemini-3.5-flash-lite": 41
+    },
+    "solvia-smart": {
+      "gemini-3.5-flash-lite": 35
+    }
+  }
+}
