@@ -79,7 +79,8 @@
   - Nota: PR rascunho #6; `Evals (offline)` passou em 1 min, executou a suíte de recuperação, imprimiu o aviso "no baseline recorded for suite 'retrieval' yet" e enviou o artefato `evals-retrieval-run` (run 35938100407).
 - [x] 9.9 Download the retrieval run artifact with `gh run download` (repository read only; artifact name and run id from `gh run list`), run `python -m evals baseline update --suite retrieval --from-artifact <path>` on a clean tree, and commit only `evals/baselines/retrieval.json`: `chore(evals): registra o baseline offline de recuperação a partir do artefato do CI` — verify the command accepts the artifact (CI, x86_64, commit is an ancestor of `HEAD` with only `evals/baselines/` changed since) and record the baseline values
   - Nota: artefato aceito (ci=true, linux x86_64, commit dab1db7 = HEAD). Baseline de recuperação: recall@5 0,7397 e MRR 0,5219 (n=73), 24 métricas, tolerâncias 0,03 geral / 0,06 por estrato. O mesmo código rodado localmente deu MRR 0,529 — a diferença que motiva gravar o baseline no ambiente do CI.
-- [ ] 9.10 Push the baseline commit — verify the next `Evals (offline)` run compares against the new baseline and shows a zero (or within-tolerance) diff, and that the job stays green; if the CI diff is beyond tolerance, record the baseline again from the newer artifact rather than widening tolerances
+- [x] 9.10 Push the baseline commit — verify the next `Evals (offline)` run compares against the new baseline and shows a zero (or within-tolerance) diff, and that the job stays green; if the CI diff is beyond tolerance, record the baseline again from the newer artifact rather than widening tolerances
+  - Nota: run 35938320590 (commit 36d3ff0) comparou contra o baseline novo com diferença zero (`recall_at_k` 0,7397, `mrr` 0,5219, `masking.exact_match` 0,7895), job verde em 52 s. Tolerâncias não foram alteradas.
 
 ## 10. Live infrastructure (fake LLM only)
 
