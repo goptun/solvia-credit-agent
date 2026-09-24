@@ -56,6 +56,26 @@ def _review_sample(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from evals.runner import UnknownSuite, run_offline
+
+    if args.mode != "offline":
+        print("live runs are not available yet", file=sys.stderr)
+        return 2
+    try:
+        record = run_offline([name.strip() for name in args.suite.split(",")], args.seed)
+    except UnknownSuite as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+    if args.output:
+        Path(args.output).write_text(record.to_json(), encoding="utf-8")
+    else:
+        print(record.to_json(), end="")
+    return 0
+
+
 def _fixture(args: argparse.Namespace) -> int:
     from evals.adapters.fixture import (
         FIXTURE_PATH,
@@ -115,6 +135,12 @@ def build_parser() -> argparse.ArgumentParser:
                 help="show the top-3 fixture-index chunks per retrieval item (needs DATABASE_URL)",
             )
             command.set_defaults(handler=_review_sample)
+        if name == "run":
+            command.add_argument("--suite", required=True, help="comma-separated suite names")
+            command.add_argument("--mode", choices=("offline", "live"), required=True)
+            command.add_argument("--seed", type=int, default=get_evals_settings().evals_seed)
+            command.add_argument("--output", default=None, help="write the run JSON to a file")
+            command.set_defaults(handler=_run)
         if name == "fixture":
             command.add_argument("action", choices=("build", "verify"))
             command.set_defaults(handler=_fixture)
