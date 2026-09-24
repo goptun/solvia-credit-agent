@@ -6,7 +6,7 @@ import argparse
 import sys
 from collections.abc import Callable, Sequence
 
-from evals.datasets import DATASET_NAMES, load_dataset
+from evals.datasets import DATASET_NAMES, current_hashes, load_dataset
 from evals.review import render_review
 from evals.settings import get_evals_settings
 
@@ -19,6 +19,11 @@ def _not_implemented(args: argparse.Namespace) -> int:
 
 
 def _review_sample(args: argparse.Namespace) -> int:
+    if args.hashes:
+        print("datasets:")
+        for name, approval in current_hashes().items():
+            print(f"  {name}: {{version: {approval.version}, sha256: {approval.sha256}}}")
+        return 0
     names = DATASET_NAMES if args.dataset == "all" else (args.dataset,)
     if not args.evidence:
         for name in names:
@@ -99,6 +104,11 @@ def build_parser() -> argparse.ArgumentParser:
             command.add_argument("--dataset", choices=("all", *DATASET_NAMES), default="all")
             command.add_argument("--n", type=int, default=15)
             command.add_argument("--seed", type=int, default=get_evals_settings().evals_seed)
+            command.add_argument(
+                "--hashes",
+                action="store_true",
+                help="print the current version and hash of every dataset (for review.yaml)",
+            )
             command.add_argument(
                 "--evidence",
                 action="store_true",

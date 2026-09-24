@@ -52,8 +52,8 @@
 
 ## 7. GATE: dataset review (BLOCKING — no baseline before this passes)
 
-- [ ] 7.1 Run `python -m evals review-sample --n 15 --seed 42` for each of the four datasets (retrieval samples with their top-3 retrieved chunks, using the real local embedding model — informational, no gateway) and present the four stratified samples to the maintainer, then STOP and wait for approval; apply any requested changes (bumping the dataset version) and re-sample the changed strata — verify the maintainer has explicitly approved every dataset
-- [ ] 7.2 Record the approved content hash of each dataset in `evals/datasets/review.yaml` — verify a test that `baseline update` reads it and refuses a dataset whose hash differs; commit: `chore(evals): registra a aprovação dos datasets pelo mantenedor`
+- [x] 7.1 Run `python -m evals review-sample --n 15 --seed 42` for each of the four datasets (retrieval samples with their top-3 retrieved chunks, using the real local embedding model — informational, no gateway) and present the four stratified samples to the maintainer, then STOP and wait for approval; apply any requested changes (bumping the dataset version) and re-sample the changed strata — verify the maintainer has explicitly approved every dataset
+- [x] 7.2 Record the approved content hash of each dataset in `evals/datasets/review.yaml` — verify a test that `baseline update` reads it and refuses a dataset whose hash differs; commit: `chore(evals): registra a aprovação dos datasets pelo mantenedor`
 
 ## 8. Offline suites and CLI
 

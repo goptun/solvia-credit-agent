@@ -9,6 +9,7 @@ from pathlib import Path
 
 import yaml
 
+from evals.core.approval import Approval, ReviewRecord
 from evals.core.schemas import (
     ComplianceDataset,
     RetrievalDataset,
@@ -18,6 +19,7 @@ from evals.core.schemas import (
 
 DATASET_DIR = Path(__file__).parent / "datasets"
 DATASET_NAMES = ("retrieval", "router", "slots", "compliance")
+REVIEW_FILE = DATASET_DIR / "review.yaml"
 
 AnyDataset = RetrievalDataset | RouterDataset | SlotsDataset | ComplianceDataset
 
@@ -53,3 +55,16 @@ def load_dataset(name: str, directory: Path | None = None) -> LoadedDataset:
     return LoadedDataset(
         name=name, version=dataset.version, sha256=file_sha256(path), dataset=dataset
     )
+
+
+def load_approvals(path: Path | None = None) -> dict[str, Approval]:
+    """The approved dataset versions recorded by the maintainer."""
+    raw = yaml.safe_load((path or REVIEW_FILE).read_text(encoding="utf-8"))
+    return dict(ReviewRecord.model_validate(raw).datasets)
+
+
+def current_hashes(directory: Path | None = None) -> dict[str, Approval]:
+    """Version and content hash of every dataset as committed now — what a
+    maintainer pastes into `review.yaml` after approving them."""
+    loaded = (load_dataset(name, directory) for name in DATASET_NAMES)
+    return {item.name: Approval(version=item.version, sha256=item.sha256) for item in loaded}

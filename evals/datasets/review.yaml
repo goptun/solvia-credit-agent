@@ -1,0 +1,11 @@
+# Maintainer approval of the evaluation datasets (task 7.2 of add-llm-evals).
+# `baseline update` refuses any dataset whose current content hash differs, and
+# a test fails if a committed dataset changes without this file being updated.
+# After re-approving a dataset: `python -m evals review-sample --hashes`.
+approved_by: maintainer
+approved_on: "2026-09-23"
+datasets:
+  retrieval: {version: 2, sha256: cf34185e30b2ec65181061c2b30d0add76a8c378cd312d9aea9131b54599c817}
+  router: {version: 2, sha256: 55d380faf90cf55ea3d32a7f4da1e6f74db5bdada6ea3f03be2d189b8b7b6dd0}
+  slots: {version: 2, sha256: d8816af9786daaa4660afeaefc0c073c2952dc1fcbe29c34b1da1508df26d911}
+  compliance: {version: 2, sha256: 126940c4e2dded3741cabe3414dfda6085d8c360e38abb930d8979b612a8de46}
