@@ -165,3 +165,14 @@ def test_update_readme_without_markers_fails_and_leaves_the_file(tmp_path: Path)
 def test_report_needs_a_run_or_update_readme() -> None:
     assert main(["report"]) == 2
     assert json.loads(_record().to_json())["mode"] == "offline"
+
+
+def test_only_breakdowns_count_as_strata_and_headline_dotted_names_are_kept() -> None:
+    from evals.core.tolerances import is_stratum
+
+    assert is_stratum("recall_at_k.style.lexical") and is_stratum("mrr.difficulty.hard")
+    assert is_stratum("router.accuracy.category.clear") and is_stratum(
+        "grounding.refusal_accuracy.far"
+    )
+    assert not is_stratum("keyword.precision") and not is_stratum("slots.exact_match.amount")
+    assert not is_stratum("recall_at_k")

@@ -4,13 +4,10 @@ from __future__ import annotations
 
 from evals.core.baseline import Baseline, compare, render_table
 from evals.core.run import MetricValue, RunRecord
+from evals.core.tolerances import is_stratum
 
 README_START = "<!-- evals:metrics:start -->"
 README_END = "<!-- evals:metrics:end -->"
-
-STRATUM_SEPARATOR = "."
-"""Metric names `recall_at_k.style.lexical` hold a breakdown; the README block
-shows only the headline (unstratified) metrics."""
 
 
 class MarkersNotFound(ValueError):
@@ -92,13 +89,13 @@ def render_baselines(baselines: list[Baseline]) -> str:
     for baseline in sorted(baselines, key=lambda b: (b.mode, b.suite)):
         datasets = ", ".join(f"{d.name} v{d.version}" for d in baseline.datasets)
         lines = [
-            f"**{baseline.suite}** ({baseline.mode}, commit `{baseline.git_sha}`, {datasets})",
+            f"**{baseline.suite}** ({baseline.mode}, commit `{baseline.git_sha[:7]}`, {datasets})",
             "",
             "| metric | value | 95% CI | n |",
             "|---|---|---|---|",
         ]
         for name, metric in baseline.metrics.items():
-            if STRATUM_SEPARATOR in name:
+            if is_stratum(name):
                 continue
             lines.append(
                 f"| {name} | {metric.value:.4f} | "
