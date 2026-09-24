@@ -1,0 +1,19 @@
+# Underlying models each gateway alias may resolve to during a live run.
+#
+# `expected`: every model a run may legitimately hit; any call that resolves
+#             outside it contaminates the run.
+# `primary`:  the subset that counts as the normal path; too many calls
+#             outside it (EVALS_MAX_FALLBACK_SHARE) contaminates the run.
+#
+# Both are left empty until the maintainer approves them from the validation
+# run's observed model mix. A run against empty sets still executes, but its
+# report says baselining is blocked until they are approved.
+# Underlying model names are measured output, allowed in evaluation tooling
+# and reports (never in application code).
+aliases:
+  solvia-fast:
+    expected: []
+    primary: []
+  solvia-smart:
+    expected: []
+    primary: []

@@ -31,6 +31,39 @@ def render_metrics(metrics: dict[str, MetricValue]) -> str:
     return "\n".join(lines)
 
 
+def _render_live_header(record: RunRecord) -> list[str]:
+    """Call counts, the resolved-model mix, and why the run can or cannot
+    become a baseline."""
+    lines = []
+    if record.budget:
+        lines.append(
+            f"Gateway calls: **{record.budget['used']}** of a budget of "
+            f"{record.budget['max_calls']} (estimated {record.budget['estimated_typical']}, "
+            f"up to {record.budget['estimated_pessimistic']})."
+        )
+    if record.sample_fraction is not None:
+        lines.append(
+            f"**Sampled run** ({record.sample_fraction:.0%}): it can never become a baseline."
+        )
+    if record.incomplete:
+        lines.append("**Incomplete run.**")
+    if record.contaminated:
+        lines.append("**Contaminated run** — reported, never a baseline: ")
+        lines.extend(f"- {reason}" for reason in record.contamination_reasons)
+    if record.model_sets_unset:
+        lines.append(
+            "**Baselining is blocked until the expected model sets are approved** "
+            "(`evals/live_config.yaml` has none for the aliases used). Observed mix, "
+            "to propose them:"
+        )
+    if record.resolved_model_mix:
+        rows = ["| alias | resolved model | calls |", "|---|---|---|"]
+        for alias, models in record.resolved_model_mix.items():
+            rows.extend(f"| {alias} | {model} | {count} |" for model, count in models.items())
+        lines.append("\n".join(rows))
+    return ["\n\n".join(lines)] if lines else []
+
+
 def render_run(record: RunRecord, baselines: dict[str, Baseline] | None = None) -> str:
     """One section per suite: the metric table and, when a baseline for that
     suite is given, the comparison against it."""
@@ -39,6 +72,8 @@ def render_run(record: RunRecord, baselines: dict[str, Baseline] | None = None) 
         f"_mode `{record.mode}`, commit `{record.git_sha}`"
         f"{' (dirty)' if record.git_dirty else ''}, seed {record.seed}_"
     ]
+    if record.mode == "live":
+        sections.extend(_render_live_header(record))
     for name, suite in record.suites.items():
         datasets = ", ".join(f"{d.name} v{d.version}" for d in suite.datasets)
         sections.append(f"## {name}\n\nDatasets: {datasets}\n\n{render_metrics(suite.metrics)}")

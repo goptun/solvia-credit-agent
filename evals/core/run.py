@@ -78,6 +78,8 @@ class RunRecord(BaseModel):
     model_sets_unset: bool = False
     """Live only: no approved expected-model set, so the mix cannot be judged."""
     aliases: dict[str, str] = {}
+    budget: dict[str, int] = {}
+    """Live: `max_calls`, `used`, `estimated_typical`, `estimated_pessimistic`."""
     resolved_model_mix: dict[str, dict[str, int]] = {}
 
     def to_json(self) -> str:

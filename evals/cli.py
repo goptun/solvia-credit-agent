@@ -62,9 +62,10 @@ def _run(args: argparse.Namespace) -> int:
 
     from evals.runner import UnknownSuite, run_offline
 
-    if args.mode != "offline":
-        print("live runs are not available yet", file=sys.stderr)
-        return 2
+    if args.mode == "live":
+        from evals.live_cli import run_live_command
+
+        return run_live_command(args)
     try:
         record = run_offline([name.strip() for name in args.suite.split(",")], args.seed)
     except UnknownSuite as exc:
@@ -240,6 +241,15 @@ def build_parser() -> argparse.ArgumentParser:
             command.add_argument("--seed", type=int, default=get_evals_settings().evals_seed)
             command.add_argument("--output", default=None, help="write the run JSON to a file")
             command.add_argument("--baselines-dir", default=None)
+            command.add_argument(
+                "--sample",
+                type=float,
+                default=None,
+                help="live only: run a stratified fraction (0-1] of each dataset",
+            )
+            command.add_argument(
+                "--report", default=None, help="live only: write evals/reports/LABEL.{json,md}"
+            )
             command.add_argument(
                 "--compare-baseline",
                 action="store_true",
