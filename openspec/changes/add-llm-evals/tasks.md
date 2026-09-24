@@ -93,10 +93,11 @@
 
 ## 11. LangFuse integration
 
-- [ ] 11.1 Implement the publisher port, a fake, and the real adapter, and `langfuse sync` using deterministic item ids (`<dataset>:<item id>`) — verify a test against the fake that a second sync creates no duplicates and stores the dataset version in metadata
-- [ ] 11.2 Publish live runs with `run_experiment(max_concurrency=1, …)` including per-item scores and aggregates — verify a fake-client test asserts run name, scores, and that no payload string matches key, hostname or IP patterns
-- [ ] 11.3 Degrade gracefully without credentials — verify a test that the report is still written and the skipped publication is logged
-- [ ] 11.4 Commit: `feat(evals): integra datasets e execuções live ao LangFuse`
+- [x] 11.1 Implement the publisher port, a fake, and the real adapter, and `langfuse sync` using deterministic item ids (`<dataset>:<item id>`) — verify a test against the fake that a second sync creates no duplicates and stores the dataset version in metadata
+- [x] 11.2 Publish live runs with `run_experiment(max_concurrency=1, …)` including per-item scores and aggregates — verify a fake-client test asserts run name, scores, and that no payload string matches key, hostname or IP patterns
+  - Nota de implementação: a publicação acontece depois da execução e o `task` do `run_experiment` reproduz a saída já registrada (o gateway é chamado uma só vez, pelo runner, sob orçamento e pacing); os avaliadores devolvem as notas por item e os agregados. A escolha mantém orçamento e pacing exatos e evita uma segunda passagem pelo gateway.
+- [x] 11.3 Degrade gracefully without credentials — verify a test that the report is still written and the skipped publication is logged
+- [x] 11.4 Commit: `feat(evals): integra datasets e execuções live ao LangFuse`
 
 ## 12. Migration and documentation
 

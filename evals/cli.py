@@ -175,6 +175,20 @@ def _relevant(args: argparse.Namespace) -> int:
     return 0
 
 
+def _langfuse(args: argparse.Namespace) -> int:
+    from evals.adapters.langfuse_publisher import build_publisher
+    from evals.publishing import sync_datasets
+
+    publisher = build_publisher()
+    if publisher is None:
+        print("ERROR: LANGFUSE_PUBLIC_KEY/LANGFUSE_SECRET_KEY are not set", file=sys.stderr)
+        return 2
+    names = DATASET_NAMES if args.dataset == "all" else (args.dataset,)
+    synced = sync_datasets(publisher, [load_dataset(name) for name in names])
+    print(f"synced {synced} items into {len(names)} dataset(s)")
+    return 0
+
+
 def _fixture(args: argparse.Namespace) -> int:
     from evals.adapters.fixture import (
         FIXTURE_PATH,
@@ -251,6 +265,11 @@ def build_parser() -> argparse.ArgumentParser:
                 "--report", default=None, help="live only: write evals/reports/LABEL.{json,md}"
             )
             command.add_argument(
+                "--no-publish",
+                action="store_true",
+                help="live only: do not publish the run to LangFuse",
+            )
+            command.add_argument(
                 "--compare-baseline",
                 action="store_true",
                 help="print the diff against the committed baselines; exit 1 on regression",
@@ -269,6 +288,10 @@ def build_parser() -> argparse.ArgumentParser:
             command.add_argument("--readme", default="README.md")
             command.add_argument("--baselines-dir", default=None)
             command.set_defaults(handler=_report)
+        if name == "langfuse":
+            command.add_argument("action", choices=("sync",))
+            command.add_argument("--dataset", choices=("all", *DATASET_NAMES), default="all")
+            command.set_defaults(handler=_langfuse)
         if name == "relevant":
             command.add_argument("--on-main", action="store_true")
             command.set_defaults(handler=_relevant)

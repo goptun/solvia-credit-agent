@@ -35,7 +35,7 @@ from evals.core.classification import (
     precision_recall,
     slot_exact_match,
 )
-from evals.core.grounding import CitedRef, GroundingItem, grounding_metrics
+from evals.core.grounding import CitedRef, GroundingItem, cites_expected, grounding_metrics
 from evals.core.retrieval import RankedChunk
 from evals.core.run import MetricValue, proportion_metric
 from evals.core.schemas import (
@@ -84,6 +84,15 @@ class Summary:
 
 
 @dataclass(frozen=True)
+class ItemReport:
+    """What one scored item contributes to a published run: its output and
+    per-item scores (1.0 = success)."""
+
+    output: dict[str, Any]
+    scores: dict[str, float]
+
+
+@dataclass(frozen=True)
 class LiveSuite[I, O]:
     """One live suite: how to pick its items, run one, and summarize all.
 
@@ -95,6 +104,7 @@ class LiveSuite[I, O]:
     item_id: Callable[[I], str]
     run_item: Callable[[I, LiveContext], Awaitable[O | None]]
     summarize: Callable[[Sequence[tuple[I, O]], Sequence[str], int], Summary]
+    describe: Callable[[I, O], ItemReport] | None = None
 
     def stratum(self, loaded: LoadedDataset) -> Callable[[I], Hashable]:
         strata = strata_by_id(loaded)
@@ -147,6 +157,11 @@ def _summarize_router(
     )
 
 
+def _describe_router(item: RouterItem, predicted: str) -> ItemReport:
+    correct = predicted == item.expected or predicted in item.acceptable
+    return ItemReport({"predicted": predicted}, {"correct": float(correct)})
+
+
 ROUTER = LiveSuite[RouterItem, str](
     name="router",
     dataset="router",
@@ -154,6 +169,7 @@ ROUTER = LiveSuite[RouterItem, str](
     item_id=lambda item: item.id,
     run_item=_run_router,
     summarize=_summarize_router,
+    describe=_describe_router,
 )
 
 
@@ -231,6 +247,13 @@ def _summarize_slots(
     )
 
 
+def _describe_slots(item: SlotItem, predicted: dict[str, str | None]) -> ItemReport:
+    expected = _slot_dict(
+        item.expected.amount, item.expected.term_months, item.expected.amortization_type
+    )
+    return ItemReport({"predicted": predicted}, {"exact_match": float(expected == predicted)})
+
+
 SLOTS = LiveSuite[SlotItem, dict[str, str | None]](
     name="slots",
     dataset="slots",
@@ -238,6 +261,7 @@ SLOTS = LiveSuite[SlotItem, dict[str, str | None]](
     item_id=lambda item: item.id,
     run_item=_run_slots,
     summarize=_summarize_slots,
+    describe=_describe_slots,
 )
 
 
@@ -269,6 +293,12 @@ def _summarize_compliance(
     )
 
 
+def _describe_compliance(item: ApprovalItem, flagged: bool) -> ItemReport:
+    return ItemReport(
+        {"flags_promise": flagged}, {"correct": float(flagged == (item.label == "promise"))}
+    )
+
+
 COMPLIANCE_LLM = LiveSuite[ApprovalItem, bool](
     name="compliance-llm",
     dataset="compliance",
@@ -276,6 +306,7 @@ COMPLIANCE_LLM = LiveSuite[ApprovalItem, bool](
     item_id=lambda item: item.id,
     run_item=_run_compliance,
     summarize=_summarize_compliance,
+    describe=_describe_compliance,
 )
 
 
@@ -351,6 +382,23 @@ def _summarize_grounding(
     )
 
 
+def _describe_grounding(item: RetrievalItem, grounding: GroundingItem) -> ItemReport:
+    if item.kind == "answerable":
+        scores = {
+            "answered": float(not grounding.refused),
+            "cites_expected": float(cites_expected(grounding)),
+        }
+    else:
+        scores = {"refused": float(grounding.refused)}
+    return ItemReport(
+        {
+            "refused": grounding.refused,
+            "cited": [f"{c.document_id}:{c.article_ref}" for c in grounding.cited],
+        },
+        scores,
+    )
+
+
 GROUNDING = LiveSuite[RetrievalItem, GroundingItem](
     name="grounding",
     dataset="retrieval",
@@ -358,6 +406,7 @@ GROUNDING = LiveSuite[RetrievalItem, GroundingItem](
     item_id=lambda item: item.id,
     run_item=_run_grounding,
     summarize=_summarize_grounding,
+    describe=_describe_grounding,
 )
 
 

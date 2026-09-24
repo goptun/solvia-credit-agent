@@ -20,7 +20,7 @@ from evals.core.operational import CallRecord, model_mix, node_metrics
 from evals.core.run import MetricValue, RunRecord, SuiteResult, proportion_metric
 from evals.core.sampling import sample_fraction
 from evals.datasets import LoadedDataset, load_dataset
-from evals.suites.live import LIVE_SUITES, LiveContext, LiveSuite
+from evals.suites.live import LIVE_SUITES, ItemReport, LiveContext, LiveSuite
 
 OPERATIONAL_SUITE = "operational"
 
@@ -105,6 +105,10 @@ def estimate_plan(plan: Sequence[PlannedSuite]) -> Estimate:
         grounding_answerable=answerable,
         grounding_unanswerable=len(grounding) - answerable,
     )
+
+
+def _report_fields(report: ItemReport) -> dict[str, Any]:
+    return {"output": report.output, "scores": report.scores}
 
 
 def _dataset_ref(loaded: LoadedDataset) -> DatasetRef:
@@ -199,17 +203,21 @@ async def run_live(
     for planned in plan:
         name = planned.suite.name
         summary = planned.suite.summarize(completed[name], list(unavailable[name]), settings.seed)
+        describe = planned.suite.describe
+        items = (
+            [
+                {"id": planned.suite.item_id(item), **_report_fields(describe(item, outcome))}
+                for item, outcome in completed[name]
+            ]
+            if describe is not None
+            else []
+        )
         suites[name] = SuiteResult(
-            datasets=[
-                DatasetRef(
-                    name=planned.loaded.name,
-                    version=planned.loaded.version,
-                    sha256=planned.loaded.sha256,
-                )
-            ],
+            datasets=[_dataset_ref(planned.loaded)],
             metrics=summary.metrics,
             details={
                 **summary.details,
+                "items": items,
                 "items_selected": len(planned.items),
                 "items_scored": len(completed[name]),
                 "unavailable": unavailable[name],

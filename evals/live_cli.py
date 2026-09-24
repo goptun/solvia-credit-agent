@@ -13,8 +13,10 @@ from apps.agent.llm.settings import get_settings
 from evals.adapters.environment import environment, git_dirty, git_sha
 from evals.adapters.grounding import MissingDatabase, grounding_dependencies
 from evals.adapters.instrumentation import CallRecorder, InstrumentedLLMFactory
+from evals.adapters.langfuse_publisher import build_publisher
 from evals.core.budget import BudgetExceeded, CallBudget
 from evals.core.report import render_run
+from evals.core.run import RunRecord
 from evals.live_config import load_model_sets
 from evals.live_runner import (
     RunMeta,
@@ -24,6 +26,7 @@ from evals.live_runner import (
     refuse_over_budget,
     run_live,
 )
+from evals.publishing import publish_run_safely
 from evals.settings import get_evals_settings
 from evals.suites.live import LiveContext
 
@@ -93,4 +96,12 @@ def run_live_command(args: argparse.Namespace) -> int:
         (REPORT_DIR / f"{args.report}.json").write_text(record.to_json(), encoding="utf-8")
         (REPORT_DIR / f"{args.report}.md").write_text(markdown, encoding="utf-8")
     print(markdown, end="")
+    if not args.no_publish:
+        _publish(record)
     return 1 if record.contaminated else 0
+
+
+def _publish(record: RunRecord) -> None:
+    """After the report is on disk: publication is best effort."""
+    published = publish_run_safely(build_publisher(), record)
+    print(f"Published {published} experiment(s) to LangFuse", file=sys.stderr)
