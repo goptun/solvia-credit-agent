@@ -5,15 +5,27 @@
 # `primary`:  the subset that counts as the normal path; too many calls
 #             outside it (EVALS_MAX_FALLBACK_SHARE) contaminates the run.
 #
-# Both are left empty until the maintainer approves them from the validation
-# run's observed model mix. A run against empty sets still executes, but its
-# report says baselining is blocked until they are approved.
+# Approved by the maintainer at gate 13.3 (option A: record what the free tier
+# actually serves). On the free tier both aliases resolve to the same lite
+# model, so the fast/smart split is nominal in this baseline. Gateway-internal
+# fallbacks are invisible to the harness except through the resolved model.
 # Underlying model names are measured output, allowed in evaluation tooling
 # and reports (never in application code).
 aliases:
   solvia-fast:
-    expected: []
-    primary: []
+    expected:
+      - gemini/gemini-3.5-flash-lite
+      - gemini/gemini-3.1-flash-lite-preview
+      - gemini/gemini-3.6-flash
+      - cf/@cf/openai/gpt-oss-120b
+    primary:
+      - gemini/gemini-3.5-flash-lite
   solvia-smart:
-    expected: []
-    primary: []
+    expected:
+      - gemini/gemini-3.8-flash
+      - gemini/gemini-3.6-flash
+      - gemini/gemini-3-flash-preview
+      - gemini/gemini-3.5-flash-lite
+      - cf/@cf/openai/gpt-oss-120b
+    primary:
+      - gemini/gemini-3.5-flash-lite

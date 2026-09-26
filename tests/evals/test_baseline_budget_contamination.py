@@ -191,3 +191,22 @@ def test_unset_model_sets_do_not_contaminate_but_block_baselining() -> None:
 
     assert verdict.contaminated is False
     assert verdict.model_sets_unset is True
+
+
+def test_provider_prefixes_do_not_matter_when_matching_model_sets() -> None:
+    sets = {
+        "solvia-fast": ModelSets(
+            expected=frozenset({"gemini/gemini-3.5-flash-lite", "cf/@cf/openai/gpt-oss-120b"}),
+            primary=frozenset({"gemini/gemini-3.5-flash-lite"}),
+        )
+    }
+    records = [_call(model="gemini-3.5-flash-lite") for _ in range(19)]
+    records.append(_call(model="gpt-oss-120b"))
+
+    verdict = assess_contamination(records, sets, max_error_share=0.05, max_fallback_share=0.10)
+
+    assert verdict.contaminated is False
+    stray = assess_contamination(
+        [_call(model="gemini-9-unknown")], sets, max_error_share=0.05, max_fallback_share=0.10
+    )
+    assert stray.contaminated is True

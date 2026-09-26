@@ -252,7 +252,8 @@ def test_an_unknown_suite_is_refused() -> None:
 
 
 async def test_a_run_against_unset_model_sets_executes_but_blocks_baselining() -> None:
-    record = await _run([[_OK]] * 5, sets=load_model_sets())
+    unset = {"solvia-fast": ModelSets(), "solvia-smart": ModelSets()}
+    record = await _run([[_OK]] * 5, sets=unset)
 
     assert not record.contaminated
     assert record.model_sets_unset
@@ -261,11 +262,11 @@ async def test_a_run_against_unset_model_sets_executes_but_blocks_baselining() -
     assert "| solvia-fast | primary | 5 |" in report
 
 
-def test_the_committed_live_config_has_no_approved_sets_yet() -> None:
+def test_the_committed_live_config_has_the_approved_sets_for_both_aliases() -> None:
     sets = load_model_sets()
 
     assert set(sets) == {"solvia-fast", "solvia-smart"}
-    assert all(not s.expected and not s.primary for s in sets.values())
+    assert all(s.expected and s.primary <= s.expected for s in sets.values())
 
 
 def test_the_router_suite_is_registered_with_the_router_dataset() -> None:

@@ -30,6 +30,13 @@ class ContaminationVerdict:
     checked; the run may execute but cannot become a baseline."""
 
 
+def canonical_model(name: str) -> str:
+    """The model name without its provider path (`gemini/gemini-3.5-flash-lite`
+    and `gemini-3.5-flash-lite` are the same model): the gateway reports the
+    resolved model bare, while the approved sets keep the gateway's full ids."""
+    return name.rsplit("/", 1)[-1]
+
+
 def is_unavailable(status: str) -> bool:
     lowered = status.lower()
     return any(marker in lowered for marker in _UNAVAILABLE_MARKERS)
@@ -55,7 +62,14 @@ def assess_contamination(
                 f"(429/503/timeout; threshold {max_error_share:.0%})"
             )
 
-    configured = {alias: sets for alias, sets in (model_sets or {}).items() if sets.expected}
+    configured = {
+        alias: ModelSets(
+            frozenset(map(canonical_model, sets.expected)),
+            frozenset(map(canonical_model, sets.primary)),
+        )
+        for alias, sets in (model_sets or {}).items()
+        if sets.expected
+    }
     aliases_used = {r.alias for r in records}
     sets_unset = bool(aliases_used) and not (aliases_used & set(configured))
 
@@ -63,7 +77,11 @@ def assess_contamination(
         sets = configured[alias]
         resolved = [r for r in records if r.alias == alias and r.status == STATUS_OK and r.model]
         unexpected = sorted(
-            {r.model for r in resolved if r.model is not None and r.model not in sets.expected}
+            {
+                r.model
+                for r in resolved
+                if r.model is not None and canonical_model(r.model) not in sets.expected
+            }
         )
         if unexpected:
             reasons.append(
@@ -71,7 +89,7 @@ def assess_contamination(
                 + ", ".join(unexpected)
             )
         if sets.primary and resolved:
-            outside = sum(1 for r in resolved if r.model not in sets.primary)
+            outside = sum(1 for r in resolved if canonical_model(r.model or "") not in sets.primary)
             fallback_share = outside / len(resolved)
             if fallback_share > max_fallback_share:
                 reasons.append(

@@ -183,6 +183,16 @@ def _langfuse(args: argparse.Namespace) -> int:
     if publisher is None:
         print("ERROR: LANGFUSE_PUBLIC_KEY/LANGFUSE_SECRET_KEY are not set", file=sys.stderr)
         return 2
+    if args.action == "publish":
+        from pathlib import Path
+
+        from evals.core.run import RunRecord
+        from evals.publishing import publish_run_safely
+
+        record = RunRecord.model_validate_json(Path(args.run).read_text(encoding="utf-8"))
+        published = publish_run_safely(publisher, record)
+        print(f"published {published} experiment(s) from {args.run} (no gateway calls)")
+        return 0
     names = DATASET_NAMES if args.dataset == "all" else (args.dataset,)
     synced = sync_datasets(publisher, [load_dataset(name) for name in names])
     print(f"synced {synced} items into {len(names)} dataset(s)")
@@ -289,8 +299,9 @@ def build_parser() -> argparse.ArgumentParser:
             command.add_argument("--baselines-dir", default=None)
             command.set_defaults(handler=_report)
         if name == "langfuse":
-            command.add_argument("action", choices=("sync",))
+            command.add_argument("action", choices=("sync", "publish"))
             command.add_argument("--dataset", choices=("all", *DATASET_NAMES), default="all")
+            command.add_argument("--run", default=None, help="publish: a recorded live run JSON")
             command.set_defaults(handler=_langfuse)
         if name == "relevant":
             command.add_argument("--on-main", action="store_true")

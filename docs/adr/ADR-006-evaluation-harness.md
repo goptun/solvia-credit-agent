@@ -69,6 +69,17 @@ One package, one CLI: `python -m evals run|report|baseline|review-sample|fixture
   dataset (retrieval items shown with the top-3 chunks the fixture retrieves). The approved version
   and content hash are committed and a test fails if a dataset changes without a new approval.
 
+## Live model sets: what the free tier serves
+
+The expected and primary model sets (`evals/live_config.yaml`) record **what the free tier actually
+serves** (option A), approved by the maintainer at gate 13.3. On the free tier both aliases resolve to
+the same lite model (`gemini-3.5-flash-lite` accounted for every call of the validation run), so the
+**smart/fast split is nominal in this baseline**: the live numbers describe that model, not two tiers.
+Gateway-internal fallbacks are invisible to the harness except through the resolved model each call
+reports, which is why contamination is judged on that model. Model names are compared without their
+provider path (the gateway reports `gemini-3.5-flash-lite`, the approved ids are
+`gemini/gemini-3.5-flash-lite`). Every live report states the nominal split explicitly.
+
 ## Deliberately not built
 
 - LLM-judged metrics (promptfoo/ragas/deepeval): heavy dependencies, and a judge needs the same
@@ -82,7 +93,7 @@ One package, one CLI: `python -m evals run|report|baseline|review-sample|fixture
 
 The dataset work exposed bugs that this change records instead of fixing:
 
-1. **Four `mask_pii` bugs — priority `fix/` PR right after this change.** They are kept as
+1. **Four `mask_pii` bugs — priority `fix/` PR right after this change (with item 3).** They are kept as
    `known_gap` items, so masking exact match is 15/19 (78.9%) today and the baseline records the
    failures:
 
@@ -97,7 +108,12 @@ The dataset work exposed bugs that this change records instead of fixing:
 2. **Product follow-up.** The catalog descriptions the knowledge base indexes omit values the
    simulator knows — `monthly_interest_rate` 2.5%, IOF (0.38% fixed + 0.0082% per day, capped at 365
    days) and the R$ 50 origination fee — so the corpus cannot answer near-miss questions R-084/R-085.
-3. **Keyword screen weakness.** Recall of the keyword promise screen is 0.29 (n=14) and the strict
+3. **Live-run findings, recorded as follow-ups.** The validation run showed that the slot extractor
+   returns `0` for a missing amount or term instead of leaving it unset, and that the amortization type
+   is not validated (`FIBONACCI` was accepted). They go into the same `fix/` PR as the `mask_pii`
+   fixes (item 1), a single PR after this change. The router also sent continuation T-062 to
+   `product_question`; that misroute is input for `improve-retrieval-quality` / router work.
+4. **Keyword screen weakness.** Recall of the keyword promise screen is 0.29 (n=14) and the strict
    screen's false-positive rate on approval mentions is 0.33 (n=12): both are now measured, and the
    fail-closed path is exactly as strict as those numbers say.
 

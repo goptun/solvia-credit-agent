@@ -31,7 +31,11 @@ def render_metrics(metrics: dict[str, MetricValue]) -> str:
 def _render_live_header(record: RunRecord) -> list[str]:
     """Call counts, the resolved-model mix, and why the run can or cannot
     become a baseline."""
-    lines = []
+    lines = [
+        "_On the free tier both gateway aliases resolve to the same lite model, so the "
+        "fast/smart split is nominal in these numbers. Gateway-internal fallbacks are "
+        "invisible to the harness except through the resolved model._"
+    ]
     if record.budget:
         lines.append(
             f"Gateway calls: **{record.budget['used']}** of a budget of "
