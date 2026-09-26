@@ -16,10 +16,39 @@ from apps.agent.nodes.text_utils import normalize
 
 PII_MASK = "[DADO PROTEGIDO]"
 
+_CARD_MIN_DIGITS = 13
+_CARD_MAX_DIGITS = 19
+
+# Order matters: each pattern below is applied in sequence, most specific
+# (longest, least ambiguous) first, so a general/shorter pattern never gets a
+# chance to consume part of a longer PII value first and leave the rest
+# behind (the CPF-digit-leak and card-masked-in-two-pieces bugs both came
+# from `_PHONE_PATTERN` matching a prefix of a longer digit run before the
+# pattern that should have owned it ran at all).
+_CARD_CANDIDATE_PATTERN = re.compile(r"\b\d(?:[ -]?\d){12,18}\b")
+"""13-19 digits, contiguous or grouped by single spaces/hyphens. Only a Luhn-
+valid candidate (`_mask_card_candidate`) is actually masked, so an arbitrary
+long number (an id, a big amount typed without punctuation, ...) is left
+alone."""
 _CPF_PATTERN = re.compile(r"\d{3}\.\d{3}\.\d{3}-\d{2}")
+_CPF_UNPUNCTUATED_PATTERN = re.compile(r"\b\d{11}\b")
+"""An 11-digit CPF with no punctuation. `\\b` on both sides means this can
+never match part of a longer digit run (there is no `\\b` between two
+digits), so it can't clash with the 13-19 digit card pattern above."""
+_ACCOUNT_CONTEXT_PATTERN = re.compile(
+    r"\b(?:conta|c/c|agência|agencia|ag)\.?\s*(?:n[ºo°]?\.?\s*)?(\d{3,}-\d{1,2})\b",
+    re.IGNORECASE,
+)
+"""A bank account/agency number with its check digit (e.g. "conta 12345-6"),
+masked only when an account/agency context word precedes it — so an
+unrelated hyphenated number (a CEP, a date range, ...) is never masked
+just because it happens to have that shape."""
 _EMAIL_PATTERN = re.compile(r"[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}")
-_PHONE_PATTERN = re.compile(r"\(?\d{2}\)?[\s-]?9?\d{4}-?\d{4}")
-_ACCOUNT_OR_CARD_PATTERN = re.compile(r"\b\d{4,}[-.]?\d{2,}\b")
+_PHONE_PATTERN = re.compile(r"\(?\b\d{2}\)?[\s-]?9?\d{4}-?\d{4}\b")
+"""Bounded on both sides of its digits: without this, a 10-digit window
+with no anchoring would happily match the first 10 digits of any longer
+number (a card number's Luhn check correctly declining to mask it does not
+stop this pattern from mangling the leftovers on its own)."""
 
 DISCLAIMER = (
     "\n\nEste é um ambiente de demonstração com dados sintéticos. As condições de "
@@ -59,12 +88,40 @@ BLOCKED_PROMISE_REPLY = (
 )
 
 
+def _luhn_valid(digits: str) -> bool:
+    """The standard Luhn checksum used by card numbers."""
+    total = 0
+    for index, char in enumerate(reversed(digits)):
+        value = int(char)
+        if index % 2 == 1:
+            value *= 2
+            if value > 9:
+                value -= 9
+        total += value
+    return total % 10 == 0
+
+
+def _mask_card_candidate(match: re.Match[str]) -> str:
+    candidate = match.group(0)
+    digits = re.sub(r"[ -]", "", candidate)
+    if _CARD_MIN_DIGITS <= len(digits) <= _CARD_MAX_DIGITS and _luhn_valid(digits):
+        return PII_MASK
+    return candidate
+
+
+def _mask_account_number(match: re.Match[str]) -> str:
+    return match.string[match.start() : match.start(1)] + PII_MASK
+
+
 def mask_pii(text: str) -> str:
-    """Deterministically mask CPF, email, phone, and account/card numbers."""
-    masked = _CPF_PATTERN.sub(PII_MASK, text)
+    """Deterministically mask card numbers, CPF, bank account numbers, email
+    and phone numbers."""
+    masked = _CARD_CANDIDATE_PATTERN.sub(_mask_card_candidate, text)
+    masked = _CPF_PATTERN.sub(PII_MASK, masked)
+    masked = _CPF_UNPUNCTUATED_PATTERN.sub(PII_MASK, masked)
+    masked = _ACCOUNT_CONTEXT_PATTERN.sub(_mask_account_number, masked)
     masked = _EMAIL_PATTERN.sub(PII_MASK, masked)
     masked = _PHONE_PATTERN.sub(PII_MASK, masked)
-    masked = _ACCOUNT_OR_CARD_PATTERN.sub(PII_MASK, masked)
     return masked
 
 

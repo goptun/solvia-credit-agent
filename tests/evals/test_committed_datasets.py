@@ -133,6 +133,10 @@ def test_retrieval_documents_are_known_manifest_documents() -> None:
 
 @pytest.mark.skipif("compliance" not in _present, reason="compliance dataset not committed yet")
 def test_mask_pii_reproduces_every_expected_masked_output_except_the_known_gaps() -> None:
+    """No item currently carries `known_gap: true` (the four gaps `mask_pii`
+    had were fixed in `fix/pii-masking-and-slot-validation`), so this covers
+    every PII case, but the `not item.known_gap` filter is kept so a future
+    gap the dataset records is not silently expected to pass here too."""
     from apps.agent.nodes.compliance import mask_pii
 
     dataset = load_dataset("compliance").dataset
@@ -145,23 +149,6 @@ def test_mask_pii_reproduces_every_expected_masked_output_except_the_known_gaps(
     ]
 
     assert wrong == []
-
-
-@pytest.mark.skipif("compliance" not in _present, reason="compliance dataset not committed yet")
-def test_known_masking_gaps_still_fail_so_a_fix_forces_updating_the_dataset() -> None:
-    """A `known_gap` item is a masker bug the baseline records as a failure.
-    When the masker is fixed this test fails: remove the flag and re-record
-    the baseline."""
-    from apps.agent.nodes.compliance import mask_pii
-
-    dataset = load_dataset("compliance").dataset
-    assert isinstance(dataset, ComplianceDataset)
-    gaps = [item for item in dataset.pii if item.known_gap]
-
-    fixed = [item.id for item in gaps if mask_pii(item.text) == item.expected_masked]
-
-    assert len(gaps) >= 4
-    assert fixed == [], f"masker now handles {fixed}: drop known_gap and re-record the baseline"
 
 
 @pytest.mark.skipif("compliance" not in _present, reason="compliance dataset not committed yet")
