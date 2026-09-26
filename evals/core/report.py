@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from evals.core.baseline import Baseline, compare, render_table
+from evals.core.operational import OPERATIONAL_SUITE
 from evals.core.run import MetricValue, RunRecord
 from evals.core.tolerances import is_stratum
 
@@ -62,6 +63,15 @@ def _render_live_header(record: RunRecord) -> list[str]:
         for alias, models in record.resolved_model_mix.items():
             rows.extend(f"| {alias} | {model} | {count} |" for model, count in models.items())
         lines.append("\n".join(rows))
+    breakdown = record.suites.get(OPERATIONAL_SUITE, None)
+    status_breakdown = breakdown.details.get("status_breakdown") if breakdown else None
+    if status_breakdown:
+        lines.append(
+            "Raw call status (429s reported separately from 503s; a status a retry "
+            "resolved still counts here): "
+            + ", ".join(f"{status} × {count}" for status, count in status_breakdown.items())
+            + "."
+        )
     return ["\n\n".join(lines)] if lines else []
 
 

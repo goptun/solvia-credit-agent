@@ -13,7 +13,7 @@ from evals.core.budget import (
     estimate_calls,
 )
 from evals.core.contamination import ModelSets, assess_contamination
-from evals.core.operational import CallRecord
+from evals.core.operational import CallRecord, status_breakdown
 
 
 def _metric(value: float, tolerance: float, direction: Direction = "higher") -> MetricBaseline:
@@ -210,3 +210,42 @@ def test_provider_prefixes_do_not_matter_when_matching_model_sets() -> None:
         [_call(model="gemini-9-unknown")], sets, max_error_share=0.05, max_fallback_share=0.10
     )
     assert stray.contaminated is True
+
+
+def test_a_transient_error_a_retry_resolved_is_not_held_against_the_run() -> None:
+    """The app already retries 503/429/timeout (`apps.agent.llm.resilience`);
+    a raw failed attempt followed by a successful retry of the same
+    operation must not count against the error share."""
+    records = [
+        CallRecord("op-1", "router", "solvia-fast", None, "503", "error", 0.1, True),
+        CallRecord("op-1", "router", "solvia-fast", "primary", "ok", "tool_call", 1.0, True),
+    ] + [_call() for _ in range(18)]
+
+    verdict = assess_contamination(records, _SETS, max_error_share=0.05, max_fallback_share=0.10)
+
+    assert verdict.contaminated is False
+
+
+def test_an_operation_whose_retries_are_all_exhausted_still_contaminates() -> None:
+    records = [
+        CallRecord("op-1", "router", "solvia-fast", None, "503", "error", 0.1, True),
+        CallRecord("op-1", "router", "solvia-fast", None, "503", "error", 0.1, True),
+    ] + [_call() for _ in range(18)]
+
+    verdict = assess_contamination(records, _SETS, max_error_share=0.05, max_fallback_share=0.10)
+
+    assert verdict.contaminated is True
+    assert any("even after the app's own retry" in reason for reason in verdict.reasons)
+
+
+def test_status_breakdown_reports_429_separately_from_503() -> None:
+    records = [
+        CallRecord("op-1", "router", "solvia-fast", None, "429", "error", 0.1, True),
+        CallRecord("op-2", "router", "solvia-fast", None, "503", "error", 0.1, True),
+        CallRecord("op-3", "router", "solvia-fast", None, "OpenAITimeoutError", "error", 0.1, True),
+        CallRecord("op-4", "router", "solvia-fast", "primary", "ok", "tool_call", 0.1, True),
+    ]
+
+    breakdown = status_breakdown(records)
+
+    assert breakdown == {"ok": 1, "429": 1, "503": 1, "timeout": 1, "other": 0}

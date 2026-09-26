@@ -6,16 +6,20 @@
 #             outside it (EVALS_MAX_FALLBACK_SHARE) contaminates the run.
 #
 # Approved by the maintainer at gate 13.3 (option A: record what the free tier
-# actually serves). On the free tier both aliases resolve to the same lite
-# model, so the fast/smart split is nominal in this baseline. Gateway-internal
-# fallbacks are invisible to the harness except through the resolved model.
-# Underlying model names are measured output, allowed in evaluation tooling
-# and reports (never in application code).
+# actually serves). On the free tier both `solvia-fast`/`solvia-smart` aliases
+# resolve to the same lite model, so the fast/smart split is nominal for them.
+# Gateway-internal fallbacks are invisible to the harness except through the
+# resolved model. Underlying model names are measured output, allowed in
+# evaluation tooling and reports (never in application code).
 aliases:
   solvia-fast:
     expected:
       - gemini/gemini-3.5-flash-lite
+      # The provider promoted the preview model to general availability
+      # under a new name; both are accepted as the same model until the
+      # combo is confirmed to have dropped the old name entirely.
       - gemini/gemini-3.1-flash-lite-preview
+      - gemini/gemini-3.1-flash-lite
       - gemini/gemini-3.6-flash
       - cf/@cf/openai/gpt-oss-120b
     primary:
@@ -29,3 +33,20 @@ aliases:
       - cf/@cf/openai/gpt-oss-120b
     primary:
       - gemini/gemini-3.5-flash-lite
+
+  # Evaluation-only aliases (docs/adr/ADR-006-evaluation-harness.md — "Live
+  # model sets: what the free tier serves"): single-model, no gateway-side
+  # fallback, so a live run measures one model per tier instead of whichever
+  # combo member answered. Never used by production code; live runs reach
+  # them only through a process-local LLM_MODEL_FAST/LLM_MODEL_SMART override
+  # of the evaluation CLI, not through `.env`.
+  solvia-eval-fast:
+    expected:
+      - gemini/gemini-3.5-flash-lite
+    primary:
+      - gemini/gemini-3.5-flash-lite
+  solvia-eval-smart:
+    expected:
+      - gemini/gemini-3.8-flash
+    primary:
+      - gemini/gemini-3.8-flash

@@ -16,13 +16,17 @@ from evals.adapters.instrumentation import CallRecorder
 from evals.core.baseline import DatasetRef
 from evals.core.budget import CallBudget, Estimate, check_estimate, estimate_calls
 from evals.core.contamination import ModelSets, assess_contamination
-from evals.core.operational import CallRecord, model_mix, node_metrics
+from evals.core.operational import (
+    OPERATIONAL_SUITE,
+    CallRecord,
+    model_mix,
+    node_metrics,
+    status_breakdown,
+)
 from evals.core.run import MetricValue, RunRecord, SuiteResult, proportion_metric
 from evals.core.sampling import sample_fraction
 from evals.datasets import LoadedDataset, load_dataset
 from evals.suites.live import LIVE_SUITES, ItemReport, LiveContext, LiveSuite
-
-OPERATIONAL_SUITE = "operational"
 
 
 class UnknownLiveSuite(ValueError):
@@ -226,7 +230,10 @@ async def run_live(
     suites[OPERATIONAL_SUITE] = SuiteResult(
         datasets=[],
         metrics=_operational_metrics(recorder.records),
-        details={"calls": _call_log(recorder.records)},
+        details={
+            "calls": _call_log(recorder.records),
+            "status_breakdown": status_breakdown(recorder.records),
+        },
     )
 
     verdict = assess_contamination(

@@ -265,7 +265,7 @@ async def test_a_run_against_unset_model_sets_executes_but_blocks_baselining() -
 def test_the_committed_live_config_has_the_approved_sets_for_both_aliases() -> None:
     sets = load_model_sets()
 
-    assert set(sets) == {"solvia-fast", "solvia-smart"}
+    assert {"solvia-fast", "solvia-smart", "solvia-eval-fast", "solvia-eval-smart"} <= set(sets)
     assert all(s.expected and s.primary <= s.expected for s in sets.values())
 
 

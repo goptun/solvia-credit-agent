@@ -37,6 +37,21 @@ def canonical_model(name: str) -> str:
     return name.rsplit("/", 1)[-1]
 
 
+def _final_calls(records: Sequence[CallRecord]) -> list[CallRecord]:
+    """The last raw call of each operation: a transient 429/503/timeout that
+    the app-level retry/backoff (`apps.agent.llm.resilience`) turned into a
+    success is not held against the run, only a failure that survived every
+    retry is."""
+    last: dict[tuple[str, str], CallRecord] = {}
+    order: list[tuple[str, str]] = []
+    for record in records:
+        key = (record.node, record.operation_id)
+        if key not in last:
+            order.append(key)
+        last[key] = record
+    return [last[key] for key in order]
+
+
 def is_unavailable(status: str) -> bool:
     lowered = status.lower()
     return any(marker in lowered for marker in _UNAVAILABLE_MARKERS)
@@ -53,13 +68,16 @@ def assess_contamination(
 ) -> ContaminationVerdict:
     reasons: list[str] = []
 
-    if records:
-        unavailable = sum(1 for r in records if is_unavailable(r.status))
-        share = unavailable / len(records)
+    finals = _final_calls(records)
+    if finals:
+        unavailable = sum(1 for r in finals if is_unavailable(r.status))
+        share = unavailable / len(finals)
         if share > max_error_share:
             reasons.append(
-                f"{share:.1%} of calls got a quota/unavailability response "
-                f"(429/503/timeout; threshold {max_error_share:.0%})"
+                f"{share:.1%} of operations ended in a quota/unavailability response "
+                f"even after the app's own retry/backoff had a chance "
+                f"({unavailable} of {len(finals)} operations; threshold {max_error_share:.0%}; "
+                "see the operational suite's status_breakdown for raw 429/503/timeout counts)"
             )
 
     configured = {

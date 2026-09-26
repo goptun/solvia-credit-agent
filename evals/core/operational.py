@@ -14,6 +14,10 @@ KIND_PLAIN = "plain"
 KIND_ERROR = "error"
 STATUS_OK = "ok"
 UNKNOWN_MODEL = "unknown"
+OPERATIONAL_SUITE = "operational"
+"""The pseudo-suite a live run's per-call log is reported under (no dataset)."""
+
+_STATUS_CATEGORIES = ("429", "503", "timeout")
 
 
 @dataclass(frozen=True)
@@ -84,6 +88,27 @@ def node_metrics(records: Sequence[CallRecord]) -> dict[str, NodeMetrics]:
             json_fallback_rate=proportion(fallback, len(structured)),
         )
     return result
+
+
+def classify_status(status: str) -> str:
+    """`ok`, one of `_STATUS_CATEGORIES`, or `other` — the raw call-level
+    categories a report breaks 429s out from 503s from (design.md, Decision 7)."""
+    if status == STATUS_OK:
+        return STATUS_OK
+    lowered = status.lower()
+    for category in _STATUS_CATEGORIES:
+        if category in lowered:
+            return category
+    return "other"
+
+
+def status_breakdown(records: Sequence[CallRecord]) -> dict[str, int]:
+    """Every raw call, by status category — always reported, contaminated
+    or not, so a 503 that a retry resolved is still visible."""
+    counts = dict.fromkeys((STATUS_OK, *_STATUS_CATEGORIES, "other"), 0)
+    for record in records:
+        counts[classify_status(record.status)] += 1
+    return counts
 
 
 def model_mix(records: Sequence[CallRecord]) -> dict[str, dict[str, int]]:

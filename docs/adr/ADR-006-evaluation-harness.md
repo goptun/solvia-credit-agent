@@ -72,13 +72,45 @@ One package, one CLI: `python -m evals run|report|baseline|review-sample|fixture
 ## Live model sets: what the free tier serves
 
 The expected and primary model sets (`evals/live_config.yaml`) record **what the free tier actually
-serves** (option A), approved by the maintainer at gate 13.3. On the free tier both aliases resolve to
-the same lite model (`gemini-3.5-flash-lite` accounted for every call of the validation run), so the
-**smart/fast split is nominal in this baseline**: the live numbers describe that model, not two tiers.
-Gateway-internal fallbacks are invisible to the harness except through the resolved model each call
-reports, which is why contamination is judged on that model. Model names are compared without their
-provider path (the gateway reports `gemini-3.5-flash-lite`, the approved ids are
-`gemini/gemini-3.5-flash-lite`). Every live report states the nominal split explicitly.
+serves** (option A), approved by the maintainer at gate 13.3. On the production `solvia-fast`/
+`solvia-smart` aliases both resolved almost entirely to the same lite model in the validation run
+(`gemini-3.5-flash-lite` accounted for every call), so the **smart/fast split is nominal for those
+aliases**. The full baseline run resolved to five to six different models per alias — the combo's
+internal fallback chain is real, not a fixed pin, and grew more visible as call volume rose (25%/34%
+of calls landed outside the primary model). Gateway-internal fallbacks are invisible to the harness
+except through the resolved model each call reports, which is why contamination is judged on that
+model. Model names are compared without their provider path (the gateway reports
+`gemini-3.5-flash-lite`, the approved ids are `gemini/gemini-3.5-flash-lite`). The provider promoted
+`gemini-3.1-flash-lite-preview` to `gemini-3.1-flash-lite` mid-change; both names are accepted as the
+same model in `solvia-fast`'s expected set until the old name is confirmed gone from the combo.
+
+### Evaluation-only pinned aliases
+
+`solvia-eval-fast` and `solvia-eval-smart` are single-model gateway aliases that exist only for the
+harness (created by the maintainer, never used by production code): `solvia-eval-fast` always resolves
+to `gemini-3.5-flash-lite`, `solvia-eval-smart` to `gemini-3.8-flash` — chosen because it was the most
+recent, non-lite flash variant observed answering successfully in the baseline run with no error
+attributed to it. **Evaluation pins one model per tier deliberately, production keeps fallback
+combos.** They serve different goals: production's combo spreads load across several models so a
+customer gets an answer even when one model is over quota — resilience, not repeatability. The harness
+instead needs to attribute a metric to one model, so the same code run twice measures the same thing;
+a combo that silently swaps models between calls would confound "did the prompt regress" with "did the
+gateway happen to land on a different model this time." A live run reaches these aliases only through
+a process-local `LLM_MODEL_FAST`/`LLM_MODEL_SMART` override of the evaluation CLI — `.env` and
+production configuration are unchanged. `evals/live_config.yaml` gives each its own `expected =
+primary = {that one model}`, so any resolution outside it is an immediate, unambiguous signal — either
+the pin was misconfigured or the model itself is unavailable — never combo variance.
+
+### Transient errors and the error-share threshold
+
+Contamination's error-share check (design.md, Decision 7) is computed per **operation** (grouping every
+raw call that shares a node and `operation_id`), using only the *last* call of each operation: a
+429/503/timeout that the application's own retry/backoff (`apps.agent.llm.resilience.call_with_retries`,
+which already treats 5xx and 429 as transient) turned into a success is not held against the run — the
+transient failure got its fair chance and the operation still delivered. Only an operation whose every
+attempt failed counts. The raw call log always reports 429s, 503s and timeouts under separate counters
+(`operational.status_breakdown` in the run record, printed in every report) — visible even when nothing
+crossed the contamination threshold, so a rising error rate is caught before it does.
 
 ## Deliberately not built
 

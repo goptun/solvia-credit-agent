@@ -160,8 +160,8 @@ async def test_the_live_command_writes_its_report_even_without_langfuse_credenti
 
     record = await _router_run()
 
-    monkeypatch.delenv("LANGFUSE_PUBLIC_KEY", raising=False)
-    monkeypatch.delenv("LANGFUSE_SECRET_KEY", raising=False)
+    monkeypatch.setenv("LANGFUSE_PUBLIC_KEY", "")
+    monkeypatch.setenv("LANGFUSE_SECRET_KEY", "")
     monkeypatch.setattr(
         "evals.live_cli.get_settings", lambda: Settings(llm_provider="openai_compatible")
     )
