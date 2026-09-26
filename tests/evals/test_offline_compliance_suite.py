@@ -36,10 +36,15 @@ def _synthetic() -> LoadedDataset:
         ],
         pii=[
             PiiItem(id="P-1", text="CPF 000.000.000-00", expected_masked="CPF [DADO PROTEGIDO]"),
+            # a `known_gap` case, decoupled from any real `mask_pii` behavior
+            # (this suite-wiring test would otherwise silently stop
+            # exercising the "known_gap still counts as a failure" path the
+            # moment the masker gets better at some real case): the text has
+            # no PII to mask, and the expected output is deliberately wrong.
             PiiItem(
                 id="P-2",
-                text="Conta 12345-6",
-                expected_masked="Conta [DADO PROTEGIDO]",
+                text="Nada de especial aqui.",
+                expected_masked="Algo completamente diferente.",
                 known_gap=True,
             ),
         ],
@@ -116,7 +121,9 @@ def test_run_command_writes_valid_machine_readable_json(
 
     assert exit_code == 0
     record = RunRecord.model_validate_json(output.read_text(encoding="utf-8"))
-    assert record.suites["compliance"].metrics["masking.exact_match"].value < 1.0
+    # The committed dataset has no known masking gap since
+    # `fix/pii-masking-and-slot-validation`: this is now a full-marks check.
+    assert record.suites["compliance"].metrics["masking.exact_match"].value == pytest.approx(1.0)
 
 
 def test_run_command_rejects_an_unknown_suite(capsys: pytest.CaptureFixture[str]) -> None:

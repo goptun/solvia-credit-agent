@@ -11,13 +11,19 @@ from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
 from decimal import Decimal
+from typing import Self
 
 from langchain_core.messages import HumanMessage
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 from apps.agent.llm.factory import LLMFactory
 from apps.agent.llm.structured import ainvoke_structured
-from apps.agent.state import ConversationState, SimulationSlots, SimulationSummary
+from apps.agent.state import (
+    VALID_AMORTIZATION_TYPES,
+    ConversationState,
+    SimulationSlots,
+    SimulationSummary,
+)
 from apps.agent.tools.simulation import simulate
 
 OfferSimulatorNode = Callable[[ConversationState], Awaitable[ConversationState]]
@@ -34,6 +40,25 @@ class SlotExtraction(BaseModel):
     amount: Decimal | None = None
     term_months: int | None = None
     amortization_type: str | None = None
+
+    @model_validator(mode="after")
+    def _drop_invalid_values(self) -> Self:
+        """A missing slot must stay unset, never a placeholder like `0`: the
+        LLM occasionally extracts `0` or a negative number instead of `null`
+        for a slot the customer never mentioned, and that value would
+        otherwise overwrite a valid slot already collected on an earlier
+        turn (`_merge_slots` only keeps `current` when the extracted value
+        `is None`). An unsupported amortization type is normalized the same
+        way, so it triggers the follow-up question instead of being stored
+        as a bogus slot value."""
+        if self.amount is not None and self.amount <= 0:
+            self.amount = None
+        if self.term_months is not None and self.term_months <= 0:
+            self.term_months = None
+        if self.amortization_type is not None:
+            normalized = self.amortization_type.upper()
+            self.amortization_type = normalized if normalized in VALID_AMORTIZATION_TYPES else None
+        return self
 
 
 def _merge_slots(current: SimulationSlots, extracted: SlotExtraction) -> SimulationSlots:

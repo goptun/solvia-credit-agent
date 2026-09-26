@@ -27,7 +27,11 @@ Intent = Literal[
 ActiveFlow = Literal["none", "consent_confirmation", "slot_filling"]
 ConsentStatusValue = Literal["valid", "missing", "expired", "just_granted"]
 
-_VALID_AMORTIZATION_TYPES = {"PRICE", "SAC"}
+VALID_AMORTIZATION_TYPES = {"PRICE", "SAC"}
+"""The only amortization types the simulation tool supports (see
+`apps.agent.tools.simulation`). Shared with `offer_simulator`'s slot
+extraction, so an unsupported value is never merged into state as if it
+were a real slot value."""
 
 
 class SimulationSlots(BaseModel):
@@ -46,7 +50,7 @@ class SimulationSlots(BaseModel):
             missing.append("amount")
         if self.term_months is None or self.term_months <= 0:
             missing.append("term_months")
-        if self.amortization_type not in _VALID_AMORTIZATION_TYPES:
+        if self.amortization_type not in VALID_AMORTIZATION_TYPES:
             missing.append("amortization_type")
         return missing
 

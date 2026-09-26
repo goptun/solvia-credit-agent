@@ -7,10 +7,9 @@ from pathlib import Path
 import pytest
 import yaml
 
-from apps.agent.nodes.compliance import mask_pii
 from evals.core.approval import Approval, approval_problem
 from evals.core.masking import masking_exact_match
-from evals.core.schemas import ComplianceDataset
+from evals.core.schemas import ComplianceDataset, PiiItem
 from evals.datasets import DATASET_NAMES, current_hashes, load_approvals, load_dataset
 
 _APPROVED = {"retrieval": Approval(version=2, sha256="abc")}
@@ -68,18 +67,29 @@ def test_hashes_can_be_pasted_back_as_a_review_file(tmp_path: Path) -> None:
 
 def test_the_masking_metric_counts_known_gap_items_as_failures() -> None:
     """The dataset measures the masker, not only what it already handles:
-    known masker bugs must lower the exact-match rate, never be filtered out."""
+    a `known_gap` item must lower the exact-match rate, never be filtered
+    out. Exercised against a synthetic item rather than the committed
+    dataset, whose masking gaps were fixed in
+    `fix/pii-masking-and-slot-validation` (it currently has none) — this
+    property must hold whenever a future gap is recorded, not only today."""
+    items = [
+        PiiItem(id="P-X", text="tudo bem", expected_masked="tudo bem"),
+        PiiItem(id="P-Y", text="não bate", expected_masked="isso não bate", known_gap=True),
+    ]
+
+    result = masking_exact_match(items, lambda text: text)
+
+    assert result.exact_match.n == 2  # nothing filtered out
+    assert result.exact_match.successes == 1
+    assert result.exact_match.value == pytest.approx(0.5)
+    assert result.failed_ids == ("P-Y",)
+
+
+def test_the_committed_compliance_dataset_has_no_known_masking_gap_today() -> None:
     dataset = load_dataset("compliance").dataset
     assert isinstance(dataset, ComplianceDataset)
-    gaps = sorted(item.id for item in dataset.pii if item.known_gap)
 
-    result = masking_exact_match(dataset.pii, mask_pii)
-
-    assert result.exact_match.n == len(dataset.pii)  # nothing filtered out
-    assert result.exact_match.value < 1.0
-    assert result.exact_match.successes == len(dataset.pii) - len(gaps)
-    assert sorted(result.failed_ids) == gaps
-    assert len(gaps) == 4
+    assert [item.id for item in dataset.pii if item.known_gap] == []
 
 
 def test_the_masking_metric_reaches_100_percent_when_everything_is_masked_correctly() -> None:

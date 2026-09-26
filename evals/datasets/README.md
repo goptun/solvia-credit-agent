@@ -127,15 +127,24 @@ recall separately, and these items are what make the numbers honest.
 end; the masked placeholder is `[DADO PROTEGIDO]`. `expected_masked` is always the
 **correct** output. Negatives (amounts, percentages) must come out unchanged. The
 dataset measures the masker, not only what it already handles: a case the masker
-gets wrong today is kept with `known_gap: true`, so the baseline records it as a
-failure. A test requires every `known_gap` item to still fail — when the masker
-is fixed the test tells you to drop the flag and re-record the baseline.
+gets wrong is kept with `known_gap: true`, so the baseline records it as a
+failure instead of being filtered out. A test requires every `known_gap` item
+to still fail — when the masker is fixed the test tells you to drop the flag
+and re-record the baseline. No item currently carries the flag (see below).
 
-### Known masking gaps (priority follow-up: fix in a `fix/` PR right after `add-llm-evals`)
+### Masking gaps fixed in `fix/pii-masking-and-slot-validation`
 
-| Input | `mask_pii` returns today | Correct |
+Dataset v3 dropped `known_gap: true` from P-016–P-019 once `mask_pii` started
+handling all four correctly; `masking.exact_match` moved from 15/19 to 19/19
+in the offline compliance baseline.
+
+| Input | Was | Now |
 |---|---|---|
-| `CPF 00000000000 informado no cadastro.` | `CPF [DADO PROTEGIDO]0 informado no cadastro.` (a digit leaks: the phone pattern matches first) | `CPF [DADO PROTEGIDO] informado no cadastro.` |
-| `Cartão 0000000000000000 cadastrado.` | `Cartão [DADO PROTEGIDO][DADO PROTEGIDO] cadastrado.` (masked in two pieces) | `Cartão [DADO PROTEGIDO] cadastrado.` |
-| `Depósito na conta 12345-6.` | unchanged (a one-digit check digit is not matched) | `Depósito na conta [DADO PROTEGIDO].` |
-| `Cartão 0000 0000 0000 0000 cadastrado.` | unchanged (space-separated groups are not matched) | `Cartão [DADO PROTEGIDO] cadastrado.` |
+| `CPF 00000000000 informado no cadastro.` | `CPF [DADO PROTEGIDO]0 informado no cadastro.` (a digit leaked: the unbounded phone pattern matched first) | `CPF [DADO PROTEGIDO] informado no cadastro.` — a dedicated, boundary-anchored 11-digit pattern runs first |
+| `Cartão 0000000000000000 cadastrado.` | `Cartão [DADO PROTEGIDO][DADO PROTEGIDO] cadastrado.` (masked in two pieces) | `Cartão [DADO PROTEGIDO] cadastrado.` — a single 13–19 digit, Luhn-checked card pattern claims the whole number before phone/CPF get a chance |
+| `Depósito na conta 12345-6.` | unchanged (a one-digit check digit was not matched) | `Depósito na conta [DADO PROTEGIDO].` — masked only when an account/agency context word ("conta", "c/c", "agência", "ag") precedes it, so a CEP or a plain hyphenated number is never masked collaterally |
+| `Cartão 0000 0000 0000 0000 cadastrado.` | unchanged (space-separated groups were not matched) | `Cartão [DADO PROTEGIDO] cadastrado.` — the card pattern accepts digits grouped by single spaces or hyphens |
+
+The Luhn check is what keeps the card pattern from masking an arbitrary long
+number (an id, an unformatted amount, ...): only a candidate whose digits pass
+the checksum is treated as a card.

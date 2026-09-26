@@ -84,3 +84,86 @@ async def test_slot_extraction_raises_instead_of_using_none_when_both_paths_fail
 
     with pytest.raises(StructuredOutputError):
         await node(state)
+
+
+# --- fix: a missing amount/term must stay unset, never a placeholder 0 ------
+
+
+def test_slot_extraction_normalizes_a_zero_amount_to_none() -> None:
+    assert SlotExtraction(amount=Decimal("0")).amount is None
+
+
+def test_slot_extraction_normalizes_a_negative_amount_to_none() -> None:
+    assert SlotExtraction(amount=Decimal("-500")).amount is None
+
+
+def test_slot_extraction_normalizes_a_zero_or_negative_term_to_none() -> None:
+    assert SlotExtraction(term_months=0).term_months is None
+    assert SlotExtraction(term_months=-6).term_months is None
+
+
+def test_slot_extraction_normalizes_an_unsupported_amortization_type_to_none() -> None:
+    assert SlotExtraction(amortization_type="FIBONACCI").amortization_type is None
+
+
+def test_slot_extraction_still_accepts_a_valid_amortization_type_case_insensitively() -> None:
+    assert SlotExtraction(amortization_type="price").amortization_type == "PRICE"
+
+
+async def test_a_zero_amount_from_the_llm_does_not_overwrite_an_already_valid_slot() -> None:
+    """Without normalization, `0 is not None` would make `_merge_slots`
+    overwrite a slot already collected on an earlier turn with a bogus `0`."""
+    smart_llm = FakeLLM(responses=[SlotExtraction(amount=Decimal("0"), term_months=24)])
+    node = make_offer_simulator_node(ScriptedLLMFactory(smart=smart_llm))
+    state = initial_state("cust-1")
+    state["simulation_slots"] = SimulationSlots(amount=Decimal("5000"), amortization_type="PRICE")
+    state["messages"] = [HumanMessage(content="24 meses")]
+
+    updates = await node(state)
+
+    assert updates["simulation_slots"].amount == Decimal("5000")
+    assert updates["simulation_result"] is not None
+
+
+async def test_an_invalid_amortization_type_does_not_overwrite_an_already_valid_slot() -> None:
+    smart_llm = FakeLLM(responses=[SlotExtraction(amortization_type="FIBONACCI", term_months=24)])
+    node = make_offer_simulator_node(ScriptedLLMFactory(smart=smart_llm))
+    state = initial_state("cust-1")
+    state["simulation_slots"] = SimulationSlots(amount=Decimal("5000"), amortization_type="PRICE")
+    state["messages"] = [HumanMessage(content="24 meses")]
+
+    updates = await node(state)
+
+    assert updates["simulation_slots"].amortization_type == "PRICE"
+    assert updates["simulation_result"] is not None
+
+
+async def test_a_zero_amount_with_no_prior_slot_asks_the_follow_up_instead_of_inventing() -> None:
+    smart_llm = FakeLLM(responses=[SlotExtraction(amount=Decimal("0"), term_months=6)])
+    node = make_offer_simulator_node(ScriptedLLMFactory(smart=smart_llm))
+    state = initial_state("cust-1")
+    state["messages"] = [HumanMessage(content="quero simular")]
+
+    updates = await node(state)
+
+    assert updates["simulation_slots"].amount is None
+    assert updates["active_flow"] == "slot_filling"
+    assert updates["next_missing_slot"] == "amount"
+
+
+async def test_an_unsupported_amortization_type_triggers_the_follow_up_question() -> None:
+    smart_llm = FakeLLM(
+        responses=[
+            SlotExtraction(amount=Decimal("3000"), term_months=12, amortization_type="FIBONACCI")
+        ]
+    )
+    node = make_offer_simulator_node(ScriptedLLMFactory(smart=smart_llm))
+    state = initial_state("cust-1")
+    state["messages"] = [HumanMessage(content="3000 reais em 12 meses, tipo fibonacci")]
+
+    updates = await node(state)
+
+    assert updates["simulation_slots"].amortization_type is None
+    assert updates["active_flow"] == "slot_filling"
+    assert updates["next_missing_slot"] == "amortization_type"
+    assert "simulation_result" not in updates
