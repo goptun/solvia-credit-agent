@@ -20,6 +20,10 @@ class EvalsSettings(BaseSettings):
     evals_max_fallback_share: float = 0.10
     """Share of calls resolved outside the alias's primary model set above which a
     run is contaminated."""
+    langfuse_public_key: str = ""
+    langfuse_secret_key: str = ""
+    langfuse_host: str = ""
+    """Optional: without keys, publication is skipped (the report is the source of truth)."""
     evals_seed: int = 42
     """Seed for sampling, review samples and bootstrap intervals."""
 

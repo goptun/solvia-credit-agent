@@ -8,13 +8,13 @@ per-item scores."""
 
 from __future__ import annotations
 
-import os
 from collections.abc import Sequence
 from typing import Any
 
 from langfuse import Evaluation, Langfuse
 
 from evals.publishing import DatasetItemPayload, Publisher, RunPayload
+from evals.settings import get_evals_settings
 
 
 class LangfusePublisher:
@@ -64,8 +64,15 @@ class LangfusePublisher:
 
 
 def build_publisher() -> Publisher | None:
-    """The LangFuse publisher when `LANGFUSE_PUBLIC_KEY`/`LANGFUSE_SECRET_KEY`
-    are set; `None` otherwise (publication is then skipped)."""
-    if os.environ.get("LANGFUSE_PUBLIC_KEY") and os.environ.get("LANGFUSE_SECRET_KEY"):
-        return LangfusePublisher(Langfuse())
-    return None
+    """The LangFuse publisher when the public and secret keys are configured
+    (environment or `.env`); `None` otherwise (publication is then skipped)."""
+    settings = get_evals_settings()
+    if not (settings.langfuse_public_key and settings.langfuse_secret_key):
+        return None
+    return LangfusePublisher(
+        Langfuse(
+            public_key=settings.langfuse_public_key,
+            secret_key=settings.langfuse_secret_key,
+            host=settings.langfuse_host or None,
+        )
+    )
