@@ -84,6 +84,26 @@ model. Model names are compared without their provider path (the gateway reports
 `gemini-3.1-flash-lite-preview` to `gemini-3.1-flash-lite` mid-change; both names are accepted as the
 same model in `solvia-fast`'s expected set until the old name is confirmed gone from the combo.
 
+### Live baselines: what is recorded, and what is deferred
+
+`router` and `compliance-llm` are baselined from the run that pinned `solvia-eval-fast`
+(`gemini-3.5-flash-lite`, no gateway-side fallback): router accuracy 1.000 (n=69), the LLM
+approval-promise check precision 1.000 / recall 0.929 (n=14 promises). Both runs were clean,
+complete, unsampled.
+
+**`slots` and `grounding` are deferred to a follow-up PR.** `solvia-eval-smart` pins
+`gemini-3.8-flash`, whose Google free-tier daily quota is 20 requests. Both suites need far more
+than that from the smart tier (slots ~36, grounding's answerable questions alone ~61 typical calls),
+so every live attempt today exhausted the quota after one or two successful calls and spent the rest
+of its budget retrying a `503` that never recovers within the day: `slots` ended contaminated (49.3%
+of operations failed even after the app's own retry/backoff, 215 raw `503`s), `grounding` ended both
+contaminated and incomplete (budget exhausted at 297/300 calls, only 53 of 98 items scored, 50.0% of
+operations failed). Neither is a transient blip the retry-aware error share (below) should have
+absorbed — the quota is exhausted for the calendar day, not for a few seconds. **Follow-up:** repoint
+`solvia-eval-smart` to a model with a materially higher daily quota, distinct from
+`solvia-eval-fast`'s model (the point of the pin is to measure a genuine smart-tier model, not
+`gemini-3.5-flash-lite` twice), then record the `slots`/`grounding` live baselines in that PR.
+
 ### Evaluation-only pinned aliases
 
 `solvia-eval-fast` and `solvia-eval-smart` are single-model gateway aliases that exist only for the
