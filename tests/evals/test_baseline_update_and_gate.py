@@ -146,6 +146,37 @@ def test_a_run_followed_only_by_its_own_report_commit_is_accepted() -> None:
     assert _problems(record, repo=repo) == ""
 
 
+def test_a_run_followed_by_changes_to_the_baseline_tooling_itself_is_accepted() -> None:
+    """The eligibility check and the report renderer decide whether/how a run
+    becomes a baseline; they play no part in producing the suite's own result,
+    so changing them cannot retroactively alter what a run measured."""
+    record = _record("router", sha="b" * 40)
+    repo = _repo(
+        changed=[
+            "evals/core/baseline_update.py",
+            "evals/core/report.py",
+            "tests/evals/test_baseline_update_and_gate.py",
+            "docs/adr/ADR-006-evaluation-harness.md",
+            "README.md",
+        ]
+    )
+
+    assert _problems(record, repo=repo) == ""
+
+
+def test_a_run_followed_by_a_change_to_a_scoring_suite_is_refused() -> None:
+    """Unlike the tooling above, `evals/suites/**` decides *how an item is
+    scored* — a change there between the run and now can change what the
+    reported metric means, so it is never exempt."""
+    record = _record("router", sha="b" * 40)
+    repo = _repo(changed=["evals/reports/live-baseline-router.md", "evals/suites/live.py"])
+
+    problems = _problems(record, repo=repo)
+
+    assert "evals/suites/live.py" in problems
+    assert "evals/reports/live-baseline-router.md" not in problems
+
+
 def test_a_run_from_a_dirty_tree_is_refused() -> None:
     assert "dirty tree" in _problems(_record("compliance", git_dirty=True))
 
