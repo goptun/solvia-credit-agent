@@ -1,0 +1,3015 @@
+{
+  "mode": "live",
+  "git_sha": "24daa0726a2c6eea2e7e9dbff1d3261930996fe3",
+  "git_dirty": false,
+  "seed": 42,
+  "environment": {
+    "ci": "false",
+    "os": "darwin",
+    "arch": "x86_64",
+    "python": "3.12.0"
+  },
+  "suites": {
+    "slots": {
+      "datasets": [
+        {
+          "name": "slots",
+          "version": 2,
+          "sha256": "d8816af9786daaa4660afeaefc0c073c2952dc1fcbe29c34b1da1508df26d911"
+        }
+      ],
+      "metrics": {
+        "slots.exact_match.amount": {
+          "value": 0.944444,
+          "n": 36,
+          "direction": "higher",
+          "ci_low": 0.818553,
+          "ci_high": 0.98463,
+          "deterministic": false
+        },
+        "slots.exact_match.term_months": {
+          "value": 0.944444,
+          "n": 36,
+          "direction": "higher",
+          "ci_low": 0.818553,
+          "ci_high": 0.98463,
+          "deterministic": false
+        },
+        "slots.exact_match.amortization_type": {
+          "value": 0.916667,
+          "n": 36,
+          "direction": "higher",
+          "ci_low": 0.781733,
+          "ci_high": 0.971251,
+          "deterministic": false
+        },
+        "slots.exact_match.all_fields": {
+          "value": 0.805556,
+          "n": 36,
+          "direction": "higher",
+          "ci_low": 0.64972,
+          "ci_high": 0.902469,
+          "deterministic": false
+        },
+        "slots.no_invented_value": {
+          "value": 0.853659,
+          "n": 41,
+          "direction": "higher",
+          "ci_low": 0.715565,
+          "ci_high": 0.931158,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "mismatches": [
+          {
+            "id": "S-008",
+            "expected": {
+              "amount": "3000",
+              "term_months": "12",
+              "amortization_type": "PRICE"
+            },
+            "predicted": {
+              "amount": "3000",
+              "term_months": "12",
+              "amortization_type": null
+            }
+          },
+          {
+            "id": "S-025",
+            "expected": {
+              "amount": null,
+              "term_months": "12",
+              "amortization_type": "PRICE"
+            },
+            "predicted": {
+              "amount": "500",
+              "term_months": "12",
+              "amortization_type": "PRICE"
+            }
+          },
+          {
+            "id": "S-026",
+            "expected": {
+              "amount": "5000",
+              "term_months": null,
+              "amortization_type": "SAC"
+            },
+            "predicted": {
+              "amount": "5000",
+              "term_months": "0",
+              "amortization_type": "SAC"
+            }
+          },
+          {
+            "id": "S-027",
+            "expected": {
+              "amount": "3000",
+              "term_months": "12",
+              "amortization_type": null
+            },
+            "predicted": {
+              "amount": "3000",
+              "term_months": "12",
+              "amortization_type": "FIBONACCI"
+            }
+          },
+          {
+            "id": "S-028",
+            "expected": {
+              "amount": null,
+              "term_months": "12",
+              "amortization_type": "PRICE"
+            },
+            "predicted": {
+              "amount": "0",
+              "term_months": "12",
+              "amortization_type": "PRICE"
+            }
+          },
+          {
+            "id": "S-029",
+            "expected": {
+              "amount": "5000",
+              "term_months": "12",
+              "amortization_type": null
+            },
+            "predicted": {
+              "amount": "5000",
+              "term_months": "12",
+              "amortization_type": "AMERICANO"
+            }
+          },
+          {
+            "id": "S-030",
+            "expected": {
+              "amount": "1000",
+              "term_months": null,
+              "amortization_type": "SAC"
+            },
+            "predicted": {
+              "amount": "1000",
+              "term_months": "-6",
+              "amortization_type": "SAC"
+            }
+          }
+        ],
+        "unavailable_ids": [],
+        "items": [
+          {
+            "id": "S-001",
+            "output": {
+              "predicted": {
+                "amount": "5000",
+                "term_months": "12",
+                "amortization_type": "PRICE"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-002",
+            "output": {
+              "predicted": {
+                "amount": "10000",
+                "term_months": "24",
+                "amortization_type": "PRICE"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-003",
+            "output": {
+              "predicted": {
+                "amount": "2000",
+                "term_months": "6",
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-004",
+            "output": {
+              "predicted": {
+                "amount": "15000",
+                "term_months": "36",
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-005",
+            "output": {
+              "predicted": {
+                "amount": "8000",
+                "term_months": "18",
+                "amortization_type": "PRICE"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-006",
+            "output": {
+              "predicted": {
+                "amount": "3500",
+                "term_months": "10",
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-007",
+            "output": {
+              "predicted": {
+                "amount": "5000",
+                "term_months": "24",
+                "amortization_type": "PRICE"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-008",
+            "output": {
+              "predicted": {
+                "amount": "3000",
+                "term_months": "12",
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 0.0
+            }
+          },
+          {
+            "id": "S-009",
+            "output": {
+              "predicted": {
+                "amount": "10000",
+                "term_months": "24",
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-010",
+            "output": {
+              "predicted": {
+                "amount": "5000",
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-011",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": "12",
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-012",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": null,
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-013",
+            "output": {
+              "predicted": {
+                "amount": "7000",
+                "term_months": "15",
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-014",
+            "output": {
+              "predicted": {
+                "amount": "4000",
+                "term_months": null,
+                "amortization_type": "PRICE"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-015",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": "48",
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-016",
+            "output": {
+              "predicted": {
+                "amount": "6500",
+                "term_months": "12",
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-017",
+            "output": {
+              "predicted": {
+                "amount": "20000",
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-018",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": "24",
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-019",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-020",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-021",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-022",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-023",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-024",
+            "output": {
+              "predicted": {
+                "amount": null,
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-025",
+            "output": {
+              "predicted": {
+                "amount": "500",
+                "term_months": "12",
+                "amortization_type": "PRICE"
+              }
+            },
+            "scores": {
+              "exact_match": 0.0
+            }
+          },
+          {
+            "id": "S-026",
+            "output": {
+              "predicted": {
+                "amount": "5000",
+                "term_months": "0",
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 0.0
+            }
+          },
+          {
+            "id": "S-027",
+            "output": {
+              "predicted": {
+                "amount": "3000",
+                "term_months": "12",
+                "amortization_type": "FIBONACCI"
+              }
+            },
+            "scores": {
+              "exact_match": 0.0
+            }
+          },
+          {
+            "id": "S-028",
+            "output": {
+              "predicted": {
+                "amount": "0",
+                "term_months": "12",
+                "amortization_type": "PRICE"
+              }
+            },
+            "scores": {
+              "exact_match": 0.0
+            }
+          },
+          {
+            "id": "S-029",
+            "output": {
+              "predicted": {
+                "amount": "5000",
+                "term_months": "12",
+                "amortization_type": "AMERICANO"
+              }
+            },
+            "scores": {
+              "exact_match": 0.0
+            }
+          },
+          {
+            "id": "S-030",
+            "output": {
+              "predicted": {
+                "amount": "1000",
+                "term_months": "-6",
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 0.0
+            }
+          },
+          {
+            "id": "S-031",
+            "output": {
+              "predicted": {
+                "amount": "10000",
+                "term_months": "12",
+                "amortization_type": "PRICE"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-032",
+            "output": {
+              "predicted": {
+                "amount": "2500",
+                "term_months": "6",
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-033",
+            "output": {
+              "predicted": {
+                "amount": "10000",
+                "term_months": "24",
+                "amortization_type": "PRICE"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-034",
+            "output": {
+              "predicted": {
+                "amount": "8000",
+                "term_months": "18",
+                "amortization_type": "SAC"
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-035",
+            "output": {
+              "predicted": {
+                "amount": "1500",
+                "term_months": null,
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          },
+          {
+            "id": "S-036",
+            "output": {
+              "predicted": {
+                "amount": "20000",
+                "term_months": "36",
+                "amortization_type": null
+              }
+            },
+            "scores": {
+              "exact_match": 1.0
+            }
+          }
+        ],
+        "items_selected": 36,
+        "items_scored": 36,
+        "unavailable": {}
+      }
+    },
+    "operational": {
+      "datasets": [],
+      "metrics": {
+        "offer_simulator.no_tool_call_rate": {
+          "value": 0.0,
+          "n": 36,
+          "direction": "lower",
+          "ci_low": 0.0,
+          "ci_high": 0.096419,
+          "deterministic": false
+        },
+        "offer_simulator.json_fallback_rate": {
+          "value": 1.0,
+          "n": 36,
+          "direction": "lower",
+          "ci_low": 0.903581,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "offer_simulator.latency_p50_seconds": {
+          "value": 3.096,
+          "n": 216,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "offer_simulator.latency_p95_seconds": {
+          "value": 3.096,
+          "n": 216,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "offer_simulator.attempts_mean": {
+          "value": 6.0,
+          "n": 216,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "offer_simulator_fallback.no_tool_call_rate": {
+          "value": 0.0,
+          "n": 35,
+          "direction": "lower",
+          "ci_low": 0.0,
+          "ci_high": 0.098901,
+          "deterministic": false
+        },
+        "offer_simulator_fallback.json_fallback_rate": {
+          "value": 0.0,
+          "n": 35,
+          "direction": "lower",
+          "ci_low": 0.0,
+          "ci_high": 0.098901,
+          "deterministic": false
+        },
+        "offer_simulator_fallback.latency_p50_seconds": {
+          "value": 0.922,
+          "n": 35,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "offer_simulator_fallback.latency_p95_seconds": {
+          "value": 4.851,
+          "n": 35,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "offer_simulator_fallback.attempts_mean": {
+          "value": 1.0,
+          "n": 35,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "calls": [
+          {
+            "operation": "offer_simulator-1",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.562
+          },
+          {
+            "operation": "offer_simulator-1",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.272
+          },
+          {
+            "operation": "offer_simulator-1",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-1",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-1",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.043
+          },
+          {
+            "operation": "offer_simulator-1",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": "gemini-3.8-flash",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 3.096
+          },
+          {
+            "operation": "offer_simulator-2",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.344
+          },
+          {
+            "operation": "offer_simulator-2",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.265
+          },
+          {
+            "operation": "offer_simulator-2",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "offer_simulator-2",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "offer_simulator-2",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.081
+          },
+          {
+            "operation": "offer_simulator-2",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.367
+          },
+          {
+            "operation": "offer_simulator-2",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.153
+          },
+          {
+            "operation": "offer_simulator-3",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "offer_simulator-3",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-3",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-3",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-3",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.037
+          },
+          {
+            "operation": "offer_simulator-3",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-3",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.071
+          },
+          {
+            "operation": "offer_simulator-4",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.337
+          },
+          {
+            "operation": "offer_simulator-4",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.082
+          },
+          {
+            "operation": "offer_simulator-4",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-4",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "offer_simulator-4",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-4",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "offer_simulator-4",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.922
+          },
+          {
+            "operation": "offer_simulator-5",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "offer_simulator-5",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.082
+          },
+          {
+            "operation": "offer_simulator-5",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-5",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-5",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-5",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-5",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.899
+          },
+          {
+            "operation": "offer_simulator-6",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.047
+          },
+          {
+            "operation": "offer_simulator-6",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.326
+          },
+          {
+            "operation": "offer_simulator-6",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-6",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.042
+          },
+          {
+            "operation": "offer_simulator-6",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.078
+          },
+          {
+            "operation": "offer_simulator-6",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "offer_simulator-6",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 2.453
+          },
+          {
+            "operation": "offer_simulator-7",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "offer_simulator-7",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.045
+          },
+          {
+            "operation": "offer_simulator-7",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-7",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-7",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.051
+          },
+          {
+            "operation": "offer_simulator-7",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.047
+          },
+          {
+            "operation": "offer_simulator-7",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.688
+          },
+          {
+            "operation": "offer_simulator-8",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.08
+          },
+          {
+            "operation": "offer_simulator-8",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-8",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-8",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-8",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.057
+          },
+          {
+            "operation": "offer_simulator-8",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "offer_simulator-8",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.741
+          },
+          {
+            "operation": "offer_simulator-9",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "offer_simulator-9",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.041
+          },
+          {
+            "operation": "offer_simulator-9",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "offer_simulator-9",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-9",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-9",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "offer_simulator-9",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.789
+          },
+          {
+            "operation": "offer_simulator-10",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.078
+          },
+          {
+            "operation": "offer_simulator-10",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.044
+          },
+          {
+            "operation": "offer_simulator-10",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.377
+          },
+          {
+            "operation": "offer_simulator-10",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-10",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.057
+          },
+          {
+            "operation": "offer_simulator-10",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-10",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.556
+          },
+          {
+            "operation": "offer_simulator-11",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.077
+          },
+          {
+            "operation": "offer_simulator-11",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-11",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-11",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-11",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-11",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "offer_simulator-11",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.905
+          },
+          {
+            "operation": "offer_simulator-12",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "offer_simulator-12",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "offer_simulator-12",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.05
+          },
+          {
+            "operation": "offer_simulator-12",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.045
+          },
+          {
+            "operation": "offer_simulator-12",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-12",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "offer_simulator-12",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.818
+          },
+          {
+            "operation": "offer_simulator-13",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.076
+          },
+          {
+            "operation": "offer_simulator-13",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.044
+          },
+          {
+            "operation": "offer_simulator-13",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "offer_simulator-13",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "offer_simulator-13",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.058
+          },
+          {
+            "operation": "offer_simulator-13",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-13",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.798
+          },
+          {
+            "operation": "offer_simulator-14",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "offer_simulator-14",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.058
+          },
+          {
+            "operation": "offer_simulator-14",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.044
+          },
+          {
+            "operation": "offer_simulator-14",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "offer_simulator-14",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "offer_simulator-14",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "offer_simulator-14",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.026
+          },
+          {
+            "operation": "offer_simulator-15",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.077
+          },
+          {
+            "operation": "offer_simulator-15",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "offer_simulator-15",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "offer_simulator-15",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-15",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "offer_simulator-15",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-15",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 6.993
+          },
+          {
+            "operation": "offer_simulator-16",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.114
+          },
+          {
+            "operation": "offer_simulator-16",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "offer_simulator-16",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.06
+          },
+          {
+            "operation": "offer_simulator-16",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.046
+          },
+          {
+            "operation": "offer_simulator-16",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-16",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "offer_simulator-16",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.657
+          },
+          {
+            "operation": "offer_simulator-17",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "offer_simulator-17",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "offer_simulator-17",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-17",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-17",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-17",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-17",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 13.553
+          },
+          {
+            "operation": "offer_simulator-18",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.413
+          },
+          {
+            "operation": "offer_simulator-18",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.267
+          },
+          {
+            "operation": "offer_simulator-18",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.054
+          },
+          {
+            "operation": "offer_simulator-18",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.046
+          },
+          {
+            "operation": "offer_simulator-18",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.105
+          },
+          {
+            "operation": "offer_simulator-18",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.398
+          },
+          {
+            "operation": "offer_simulator-18",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.552
+          },
+          {
+            "operation": "offer_simulator-19",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-19",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-19",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.046
+          },
+          {
+            "operation": "offer_simulator-19",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-19",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-19",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "offer_simulator-19",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.701
+          },
+          {
+            "operation": "offer_simulator-20",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.331
+          },
+          {
+            "operation": "offer_simulator-20",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-20",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-20",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "offer_simulator-20",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "offer_simulator-20",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "offer_simulator-20",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.246
+          },
+          {
+            "operation": "offer_simulator-21",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.081
+          },
+          {
+            "operation": "offer_simulator-21",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.048
+          },
+          {
+            "operation": "offer_simulator-21",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-21",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "offer_simulator-21",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-21",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "offer_simulator-21",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.694
+          },
+          {
+            "operation": "offer_simulator-22",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "offer_simulator-22",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.328
+          },
+          {
+            "operation": "offer_simulator-22",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "offer_simulator-22",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.047
+          },
+          {
+            "operation": "offer_simulator-22",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "offer_simulator-22",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.039
+          },
+          {
+            "operation": "offer_simulator-22",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.734
+          },
+          {
+            "operation": "offer_simulator-23",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.046
+          },
+          {
+            "operation": "offer_simulator-23",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "offer_simulator-23",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "offer_simulator-23",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.083
+          },
+          {
+            "operation": "offer_simulator-23",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "offer_simulator-23",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-23",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.199
+          },
+          {
+            "operation": "offer_simulator-24",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.078
+          },
+          {
+            "operation": "offer_simulator-24",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-24",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "offer_simulator-24",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.042
+          },
+          {
+            "operation": "offer_simulator-24",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "offer_simulator-24",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-24",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 3.934
+          },
+          {
+            "operation": "offer_simulator-25",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "offer_simulator-25",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "offer_simulator-25",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-25",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "offer_simulator-25",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.051
+          },
+          {
+            "operation": "offer_simulator-25",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.078
+          },
+          {
+            "operation": "offer_simulator-25",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.677
+          },
+          {
+            "operation": "offer_simulator-26",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "offer_simulator-26",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-26",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.35
+          },
+          {
+            "operation": "offer_simulator-26",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.048
+          },
+          {
+            "operation": "offer_simulator-26",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "offer_simulator-26",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "offer_simulator-26",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.677
+          },
+          {
+            "operation": "offer_simulator-27",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.045
+          },
+          {
+            "operation": "offer_simulator-27",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.156
+          },
+          {
+            "operation": "offer_simulator-27",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-27",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "offer_simulator-27",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.059
+          },
+          {
+            "operation": "offer_simulator-27",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "offer_simulator-27",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.74
+          },
+          {
+            "operation": "offer_simulator-28",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.074
+          },
+          {
+            "operation": "offer_simulator-28",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-28",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "offer_simulator-28",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-28",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "offer_simulator-28",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.077
+          },
+          {
+            "operation": "offer_simulator-28",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.248
+          },
+          {
+            "operation": "offer_simulator-29",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "offer_simulator-29",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "offer_simulator-29",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-29",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.045
+          },
+          {
+            "operation": "offer_simulator-29",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.045
+          },
+          {
+            "operation": "offer_simulator-29",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "offer_simulator-29",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.015
+          },
+          {
+            "operation": "offer_simulator-30",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "offer_simulator-30",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "offer_simulator-30",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "offer_simulator-30",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.149
+          },
+          {
+            "operation": "offer_simulator-30",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "offer_simulator-30",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "offer_simulator-30",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.027
+          },
+          {
+            "operation": "offer_simulator-31",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "offer_simulator-31",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-31",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-31",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "offer_simulator-31",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.047
+          },
+          {
+            "operation": "offer_simulator-31",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "offer_simulator-31",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.41
+          },
+          {
+            "operation": "offer_simulator-32",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "offer_simulator-32",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "offer_simulator-32",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.045
+          },
+          {
+            "operation": "offer_simulator-32",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-32",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "offer_simulator-32",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.077
+          },
+          {
+            "operation": "offer_simulator-32",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.215
+          },
+          {
+            "operation": "offer_simulator-33",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-33",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-33",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-33",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-33",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-33",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-33",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.384
+          },
+          {
+            "operation": "offer_simulator-34",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-34",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.04
+          },
+          {
+            "operation": "offer_simulator-34",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "offer_simulator-34",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "offer_simulator-34",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.384
+          },
+          {
+            "operation": "offer_simulator-34",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "offer_simulator-34",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.74
+          },
+          {
+            "operation": "offer_simulator-35",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "offer_simulator-35",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.043
+          },
+          {
+            "operation": "offer_simulator-35",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-35",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "offer_simulator-35",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "offer_simulator-35",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "offer_simulator-35",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.668
+          },
+          {
+            "operation": "offer_simulator-36",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "offer_simulator-36",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-36",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "offer_simulator-36",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.039
+          },
+          {
+            "operation": "offer_simulator-36",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "offer_simulator-36",
+            "node": "offer_simulator",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "offer_simulator-36",
+            "node": "offer_simulator_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.945
+          }
+        ],
+        "status_breakdown": {
+          "ok": 36,
+          "429": 0,
+          "503": 215,
+          "timeout": 0,
+          "other": 0
+        }
+      }
+    }
+  },
+  "sample_fraction": null,
+  "incomplete": false,
+  "contaminated": true,
+  "contamination_reasons": [
+    "49.3% of operations ended in a quota/unavailability response even after the app's own retry/backoff had a chance (35 of 71 operations; threshold 5%; see the operational suite's status_breakdown for raw 429/503/timeout counts)"
+  ],
+  "model_sets_unset": false,
+  "aliases": {
+    "fast": "solvia-eval-fast",
+    "smart": "solvia-eval-smart"
+  },
+  "budget": {
+    "max_calls": 300,
+    "used": 251,
+    "estimated_typical": 36,
+    "estimated_pessimistic": 43
+  },
+  "resolved_model_mix": {
+    "solvia-eval-fast": {
+      "gemini-3.5-flash-lite": 35
+    },
+    "solvia-eval-smart": {
+      "gemini-3.8-flash": 1,
+      "unknown": 215
+    }
+  }
+}
