@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import hashlib
 from collections.abc import Callable, Sequence
+from dataclasses import dataclass
+from datetime import date
 from typing import Any
 
 import psycopg
@@ -43,6 +45,24 @@ ON CONFLICT (chunk_id) DO UPDATE SET
 """
 
 
+@dataclass(frozen=True)
+class ChunkRecord:
+    """A chunk with its deterministic id: every `rag_chunks` column except
+    the embedding and the document hash. Also the shape the evaluation
+    harness commits as its corpus fixture."""
+
+    chunk_id: str
+    document_id: str
+    source_type: str
+    norm: str | None
+    article_ref: str | None
+    hierarchy_path: str
+    source_url: str | None
+    version_date: date | None
+    amendment_note: str | None
+    content: str
+
+
 def compute_chunk_id(document_id: str, hierarchy_path: str, chunk_index: int) -> str:
     """Deterministic chunk id: `sha256(document_id || hierarchy_path ||
     chunk_index)` — see `design.md` — "Index schema"."""
@@ -55,6 +75,82 @@ def existing_document_hash(conn: psycopg.Connection[Any], document_id: str) -> s
         "SELECT DISTINCT document_hash FROM rag_chunks WHERE document_id = %s", (document_id,)
     ).fetchone()
     return None if row is None else str(row[0])
+
+
+def effective_document_hash(doc: ManifestDocument, extracted: ExtractedDocument) -> str:
+    """`doc.sha256` when the manifest pins one; otherwise (the locally
+    generated product catalog) a hash of the extracted text itself."""
+    return doc.sha256 or hashlib.sha256(extracted.text.encode("utf-8")).hexdigest()
+
+
+def chunk_records(
+    doc: ManifestDocument, extracted: ExtractedDocument, *, chunk_max_chars: int = 1500
+) -> list[ChunkRecord]:
+    """Chunk `extracted` and give every chunk its deterministic id."""
+    chunks = chunk_extracted_document(
+        doc.id,
+        doc.source_type,
+        extracted,
+        norm=doc.norm,
+        source_url=doc.url,
+        version_date=doc.version_date,
+        chunk_max_chars=chunk_max_chars,
+    )
+    return [
+        ChunkRecord(
+            chunk_id=compute_chunk_id(chunk.document_id, chunk.hierarchy_path, index),
+            document_id=chunk.document_id,
+            source_type=chunk.source_type,
+            norm=chunk.norm,
+            article_ref=chunk.article_ref,
+            hierarchy_path=chunk.hierarchy_path,
+            source_url=chunk.source_url,
+            version_date=chunk.version_date,
+            amendment_note=chunk.amendment_note,
+            content=chunk.content,
+        )
+        for index, chunk in enumerate(chunks)
+    ]
+
+
+def index_chunks(
+    conn: psycopg.Connection[Any],
+    document_id: str,
+    document_hash: str,
+    records: Sequence[ChunkRecord],
+    embed_documents: EmbedDocumentsFn,
+) -> None:
+    """Embed and upsert `records` for one document, then delete the
+    document's chunks that are not in `records`."""
+    vectors = embed_documents([record.content for record in records])
+
+    for record, vector in zip(records, vectors, strict=True):
+        conn.execute(
+            _UPSERT_CHUNK,
+            (
+                record.chunk_id,
+                record.document_id,
+                document_hash,
+                record.source_type,
+                record.norm,
+                record.article_ref,
+                record.hierarchy_path,
+                record.source_url,
+                record.version_date,
+                record.amendment_note,
+                record.content,
+                list(vector),
+            ),
+        )
+
+    chunk_ids = [record.chunk_id for record in records]
+    if chunk_ids:
+        conn.execute(
+            "DELETE FROM rag_chunks WHERE document_id = %s AND chunk_id != ALL(%s)",
+            (document_id, chunk_ids),
+        )
+    else:
+        conn.execute("DELETE FROM rag_chunks WHERE document_id = %s", (document_id,))
 
 
 def index_document(
@@ -78,50 +174,11 @@ def index_document(
     per `specs/regulatory-knowledge-base/spec.md` — "Idempotent,
     incremental indexing", which does not exempt any source type.
     """
-    effective_hash = doc.sha256 or hashlib.sha256(extracted.text.encode("utf-8")).hexdigest()
+    effective_hash = effective_document_hash(doc, extracted)
 
     if existing_document_hash(conn, doc.id) == effective_hash:
         return False
 
-    chunks = chunk_extracted_document(
-        doc.id,
-        doc.source_type,
-        extracted,
-        norm=doc.norm,
-        source_url=doc.url,
-        version_date=doc.version_date,
-        chunk_max_chars=chunk_max_chars,
-    )
-    vectors = embed_documents([chunk.content for chunk in chunks])
-
-    chunk_ids: list[str] = []
-    for index, (chunk, vector) in enumerate(zip(chunks, vectors, strict=True)):
-        chunk_id = compute_chunk_id(chunk.document_id, chunk.hierarchy_path, index)
-        chunk_ids.append(chunk_id)
-        conn.execute(
-            _UPSERT_CHUNK,
-            (
-                chunk_id,
-                chunk.document_id,
-                effective_hash,
-                chunk.source_type,
-                chunk.norm,
-                chunk.article_ref,
-                chunk.hierarchy_path,
-                chunk.source_url,
-                chunk.version_date,
-                chunk.amendment_note,
-                chunk.content,
-                list(vector),
-            ),
-        )
-
-    if chunk_ids:
-        conn.execute(
-            "DELETE FROM rag_chunks WHERE document_id = %s AND chunk_id != ALL(%s)",
-            (doc.id, chunk_ids),
-        )
-    else:
-        conn.execute("DELETE FROM rag_chunks WHERE document_id = %s", (doc.id,))
-
+    records = chunk_records(doc, extracted, chunk_max_chars=chunk_max_chars)
+    index_chunks(conn, doc.id, effective_hash, records, embed_documents)
     return True

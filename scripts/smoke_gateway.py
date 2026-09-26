@@ -110,15 +110,13 @@ _SINGLE_TURNS = [
 # 54-A, over-indebtedness), and a deliberately unanswerable "near
 # miss" that sounds in-domain but isn't covered by the corpus — the
 # fictional Solvia product catalog has no international card, and
-# nothing in the corpus documents one. Both reused verbatim from
-# `rag/eval/questions.yaml` for consistency with the recorded baseline
-# (task 6.4) — a first, more colloquial phrasing ("fico
-# superendividado") scored below `RAG_MIN_RELEVANCE_SCORE` in a real
+# nothing in the corpus documents one. A first, more colloquial phrasing
+# ("fico superendividado") scored below `RAG_MIN_RELEVANCE_SCORE` in a real
 # run against this corpus (best similarity 0.451, correctly refused —
-# expected behavior per the colloquial-recall gap the eval baseline
-# already documents, not a bug), so this script sticks to a question
-# the eval set's own real similarity sweep verified clears the
-# threshold (0.747).
+# expected behavior for colloquial phrasing, not a bug), so this script
+# sticks to a question whose similarity was verified to clear the
+# threshold (0.747). Retrieval and grounding quality are measured by
+# `python -m evals`, not here.
 _REGULATORY_QUESTION = (
     "O que caracteriza uma situação de superendividamento segundo o código de defesa do consumidor?"
 )

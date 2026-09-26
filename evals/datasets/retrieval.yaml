@@ -1,0 +1,868 @@
+version: 2
+items:
+- id: R-001
+  kind: answerable
+  question: O que a lei garante pra proteger quem compra um produto ou contrata um serviço?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 6º
+  evidence: a proteção da vida, saúde e segurança contra os riscos provocados por práticas no
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-002
+  kind: answerable
+  question: O que acontece quando um produto apresenta um vício de qualidade que o torna impróprio para uso?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 18
+  evidence: pode o consumidor exigir, alternativamente e à sua escolha
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-003
+  kind: answerable
+  question: Uma cláusula de contrato que impede o consumidor de pedir indenização é válida?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 51
+  - art. 25
+  evidence: É vedada a estipulação contratual de cláusula que impossibilite, exonere ou atenue a obrigação de indenizar
+  style: lexical
+  accents: true
+  difficulty: medium
+- id: R-004
+  kind: answerable
+  question: O que caracteriza uma situação de superendividamento segundo o código de defesa do consumidor?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 54-A
+  evidence: a impossibilidade manifesta de o consumidor pessoa natural, de boa-fé, pagar a totalidade de suas dívidas
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-005
+  kind: answerable
+  question: O que o banco precisa avisar antes de me dar um emprestimo ou vender fiado?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 54-B
+  evidence: deverá informar o consumidor, prévia e adequadamente
+  style: colloquial
+  accents: false
+  difficulty: hard
+- id: R-006
+  kind: answerable
+  question: Que tipo de afirmação é proibida na publicidade ou oferta de crédito ao consumidor?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 54-C
+  evidence: indicar que a operação de crédito poderá ser concluída sem consulta a serviços de proteção ao crédito
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-007
+  kind: answerable
+  question: O fornecedor de crédito é obrigado a avaliar se o consumidor tem condições de pagar antes de conceder o crédito?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 54-D
+  evidence: avaliar, de forma responsável, as condições de crédito do consumidor
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-008
+  kind: answerable
+  question: Existe um limite para o valor da multa cobrada quando o consumidor atrasa o pagamento de uma prestação?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 52
+  evidence: As multas de mora decorrentes do inadimplemento de obrigações no seu termo não poderão ser superiores a dois por cento
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-009
+  kind: answerable
+  question: O consumidor pode quitar uma dívida antes do prazo com desconto nos juros?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 52
+  evidence: assegurado ao consumidor a liquidação antecipada do débito, total ou parcialmente
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-010
+  kind: answerable
+  question: Em quais situações é permitido fazer o tratamento de dados pessoais de uma pessoa?
+  document: lgpd
+  expected_refs:
+  - art. 7º
+  evidence: mediante o fornecimento de consentimento pelo titular
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-011
+  kind: answerable
+  question: O titular dos dados tem direito de saber facilmente como seus dados são usados?
+  document: lgpd
+  expected_refs:
+  - art. 9º
+  evidence: direito ao acesso facilitado às informações sobre o tratamento de seus dados
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-012
+  kind: answerable
+  question: Quais direitos o titular dos dados pode exigir do controlador a qualquer momento?
+  document: lgpd
+  expected_refs:
+  - art. 18
+  evidence: confirmação da existência de tratamento
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-013
+  kind: answerable
+  question: As empresas são obrigadas a adotar medidas de segurança técnicas para proteger dados pessoais?
+  document: lgpd
+  expected_refs:
+  - art. 46
+  evidence: medidas de segurança, técnicas e administrativas aptas a proteger os dados pessoais
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-014
+  kind: answerable
+  question: Se vazarem meus dados pessoais de uma empresa, ela é obrigada a me avisar?
+  document: lgpd
+  expected_refs:
+  - art. 48
+  evidence: comunicar à autoridade nacional e ao titular a ocorrência de incidente de segurança
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-015
+  kind: answerable
+  question: Qual órgão foi criado para fiscalizar a proteção de dados pessoais no Brasil?
+  document: lgpd
+  expected_refs:
+  - art. 55-A
+  evidence: Fica criada a Agência Nacional de Proteção de Dados (ANPD)
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-016
+  kind: answerable
+  question: Sobre o que trata a norma que regulamenta o Open Finance no Brasil?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 1º
+  evidence: dispõe sobre a implementação do Open Finance
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-017
+  kind: answerable
+  question: Quais etapas fazem parte do processo de solicitação de compartilhamento de dados no Open Finance?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 8º
+  evidence: compreende as etapas do consentimento, autenticação e confirmação
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-018
+  kind: answerable
+  question: Que padrão de autenticação as instituições participantes do Open Finance precisam seguir?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 17
+  evidence: devem ser compatíveis com os aplicáveis ao acesso, pelos clientes
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-019
+  kind: answerable
+  question: O banco pode colocar empecilho pra dificultar o compartilhamento dos meus dados no Open Finance?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 28
+  evidence: vedado às instituições participantes a criação de obstáculos ao compartilhamento
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-020
+  kind: answerable
+  question: No fim das contas, o que e esse tal de Custo Efetivo Total do credito?
+  document: cet-disclosure
+  expected_refs:
+  - art. 2º
+  - document: cdc-consolidada
+    ref: art. 54-B
+  evidence: O CET é uma taxa que representa, na data de seu cálculo, de forma consolidada
+  style: colloquial
+  accents: false
+  difficulty: hard
+- id: R-021
+  kind: answerable
+  question: Quais valores entram no cálculo do Custo Efetivo Total de um empréstimo?
+  document: cet-disclosure
+  expected_refs:
+  - art. 3º
+  - document: cdc-consolidada
+    ref: art. 54-B
+  evidence: deve abranger o valor do crédito a ser concedido
+  style: lexical
+  accents: true
+  difficulty: medium
+- id: R-022
+  kind: answerable
+  question: Em que momento o banco é obrigado a informar o CET ao cliente antes da contratação?
+  document: cet-disclosure
+  expected_refs:
+  - art. 7º
+  - document: cdc-consolidada
+    ref: art. 52
+  - document: cdc-consolidada
+    ref: art. 54-B
+  evidence: previamente à contratação das operações
+  style: lexical
+  accents: true
+  difficulty: medium
+- id: R-023
+  kind: answerable
+  question: Como é calculado o CET de operações de cheque especial ou crédito rotativo?
+  document: cet-disclosure
+  expected_refs:
+  - art. 6º
+  evidence: operações de adiantamento a depositantes, de desconto, de cheque especial
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-024
+  kind: answerable
+  question: Quais formas de amortização estão disponíveis no crédito pessoal da Solvia?
+  document: product-catalog
+  evidence: nas modalidades Price (parcelas fixas) e SAC (parcelas decrescentes)
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-025
+  kind: answerable
+  question: Da pra parcelar o credito da Solvia de um jeito que a parcela vai diminuindo com o tempo?
+  document: product-catalog
+  evidence: amortização constante, com parcelas que diminuem ao longo do tempo
+  style: colloquial
+  accents: false
+  difficulty: hard
+- id: R-026
+  kind: answerable
+  question: Quem responde pelos danos causados por um defeito de fabricação, mesmo sem ter culpa?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 12
+  evidence: respondem, independentemente da existência de culpa, pela reparação dos danos causados aos consumidores
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-027
+  kind: answerable
+  question: Se um serviço deu problema e me causou prejuízo, o fornecedor precisa pagar mesmo sem ter culpa?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 14
+  evidence: responde, independentemente da existência de culpa, pela reparação dos danos
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-028
+  kind: answerable
+  question: Quanto tempo eu tenho pra reclamar de um defeito que dá pra ver logo num produto durável?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 26
+  evidence: noventa dias, tratando-se de fornecimento de serviço e de produtos duráveis
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-029
+  kind: answerable
+  question: O que a loja é obrigada a informar quando anuncia um produto ou serviço?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 31
+  evidence: informações corretas, claras, precisas, ostensivas e em língua portuguesa
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-030
+  kind: answerable
+  question: Se a loja não cumprir o que anunciou, o que eu posso exigir?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 35
+  evidence: exigir o cumprimento forçado da obrigação, nos termos da oferta, apresentação ou publicidade
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-031
+  kind: answerable
+  question: Pra me vender um produto, a loja pode obrigar eu a comprar outro junto?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 39
+  evidence: condicionar o fornecimento de produto ou de serviço ao fornecimento de outro produto ou serviço
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-032
+  kind: answerable
+  question: se eu atrasar uma conta, a empresa pode me ameacar ou me expor a ridiculo na cobranca?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 42
+  evidence: o consumidor inadimplente não será exposto a ridículo
+  style: colloquial
+  accents: false
+  difficulty: hard
+- id: R-033
+  kind: answerable
+  question: Quem é cobrado em valor indevido tem direito a receber de volta quanto do que pagou a mais?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 42
+  evidence: tem direito à repetição do indébito, por valor igual ao dobro do que pagou em excesso
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-034
+  kind: answerable
+  question: Tenho direito de ver o que consta sobre mim nos cadastros de proteção ao crédito?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 43
+  - document: lgpd
+    ref: art. 18
+  evidence: terá acesso às informações existentes em cadastros, fichas, registros e dados pessoais
+  style: colloquial
+  accents: true
+  difficulty: hard
+- id: R-035
+  kind: answerable
+  question: Por quanto tempo uma informação negativa pode ficar no cadastro do consumidor?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 43
+  evidence: não podendo conter informações negativas referentes a período superior a cinco anos
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-036
+  kind: answerable
+  question: Se o contrato é escrito de um jeito que ninguém entende, eu sou obrigado a cumprir?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 46
+  evidence: redigidos de modo a dificultar a compreensão de seu sentido e alcance
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-037
+  kind: answerable
+  question: 'Comprei um produto por telefone com financiamento e me arrependi: posso desistir e o crédito também é cancelado?'
+  document: cdc-consolidada
+  expected_refs:
+  - art. 49
+  - art. 54-F
+  evidence: pode desistir do contrato, no prazo de 7 dias
+  style: colloquial
+  accents: true
+  difficulty: hard
+- id: R-038
+  kind: answerable
+  question: Pode ter uma cláusula dizendo que eu perco tudo que paguei se atrasar as prestações?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 53
+  evidence: consideram-se nulas de pleno direito as cláusulas que estabeleçam a perda total das prestações pagas
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-039
+  kind: answerable
+  question: Se o contrato de crédito estiver ligado a uma compra, o que acontece com ele quando eu me arrependo da compra?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 54-F
+  evidence: implica a resolução de pleno direito do contrato que lhe seja conexo
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-040
+  kind: answerable
+  question: O que o fornecedor de crédito não pode fazer quando o consumidor contesta uma compra no cartão?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 54-G
+  evidence: realizar ou proceder à cobrança ou ao débito em conta de qualquer quantia que houver sido contestada pelo consumidor
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-041
+  kind: answerable
+  question: O consumidor superendividado pode pedir ao juiz para renegociar as dívidas com todos os credores?
+  document: cdc-consolidada
+  expected_refs:
+  - art. 104-A
+  evidence: o juiz poderá instaurar processo de repactuação de dívidas
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-042
+  kind: answerable
+  question: O que a lei chama de dado sensível, no fim das contas?
+  document: lgpd
+  expected_refs:
+  - art. 5º
+  evidence: 'dado pessoal sensível: dado pessoal sobre origem racial ou étnica'
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-043
+  kind: answerable
+  question: Quais princípios as atividades de tratamento de dados pessoais devem observar?
+  document: lgpd
+  expected_refs:
+  - art. 6º
+  evidence: deverão observar a boa-fé e os seguintes princípios
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-044
+  kind: answerable
+  question: A empresa pode usar meus dados de saúde ou de religião sem eu concordar?
+  document: lgpd
+  expected_refs:
+  - art. 5º
+  - art. 11
+  evidence: somente poderá ocorrer nas seguintes hipóteses
+  style: colloquial
+  accents: true
+  difficulty: hard
+- id: R-045
+  kind: answerable
+  question: Meu filho de 10 anos pode ter os dados usados por um aplicativo sem eu autorizar?
+  document: lgpd
+  expected_refs:
+  - art. 14
+  evidence: com o consentimento específico e em destaque dado por pelo menos um dos pais
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-046
+  kind: answerable
+  question: Em que formato e em quanto tempo o titular recebe a confirmação de que seus dados são tratados?
+  document: lgpd
+  expected_refs:
+  - art. 19
+  evidence: em formato simplificado, imediatamente
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-047
+  kind: answerable
+  question: Posso pedir revisão de uma decisão automática que negou meu crédito?
+  document: lgpd
+  expected_refs:
+  - art. 20
+  evidence: solicitar a revisão de decisões tomadas unicamente com base em tratamento automatizado
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-048
+  kind: answerable
+  question: Em quais casos é permitido enviar dados pessoais para outro país?
+  document: lgpd
+  expected_refs:
+  - art. 33
+  evidence: somente é permitida nos seguintes casos
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-049
+  kind: answerable
+  question: O controlador precisa manter registro das operações de tratamento de dados?
+  document: lgpd
+  expected_refs:
+  - art. 37
+  evidence: devem manter registro das operações de tratamento de dados pessoais
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-050
+  kind: answerable
+  question: a empresa precisa ter alguem responsavel por falar com o cliente sobre protecao de dados?
+  document: lgpd
+  expected_refs:
+  - art. 41
+  evidence: deverá indicar encarregado pelo tratamento de dados pessoais
+  style: colloquial
+  accents: false
+  difficulty: hard
+- id: R-051
+  kind: answerable
+  question: Quem causar dano a outra pessoa ao tratar dados pessoais é obrigado a reparar?
+  document: lgpd
+  expected_refs:
+  - art. 42
+  evidence: causar a outrem dano patrimonial, moral, individual ou coletivo
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-052
+  kind: answerable
+  question: Que punições uma empresa pode levar por descumprir a lei de proteção de dados?
+  document: lgpd
+  expected_refs:
+  - art. 52
+  evidence: ficam sujeitos às seguintes sanções administrativas aplicáveis pela autoridade nacional
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-053
+  kind: answerable
+  question: Pra que serve o Open Finance, no fim das contas?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 3º
+  evidence: Constituem objetivos do Open Finance
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-054
+  kind: answerable
+  question: Que dados e serviços o Open Finance abrange no mínimo?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 5º
+  evidence: O Open Finance abrange o compartilhamento de, no mínimo
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-055
+  kind: answerable
+  question: O banco precisa do meu consentimento antes de pegar meus dados no Open Finance?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 10
+  - document: lgpd
+    ref: art. 7º
+  evidence: deve identificar o cliente e obter o seu consentimento
+  style: colloquial
+  accents: true
+  difficulty: hard
+- id: R-056
+  kind: answerable
+  question: Quais requisitos o consentimento do cliente precisa cumprir no Open Finance?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 10
+  - document: lgpd
+    ref: art. 8º
+  evidence: referir-se a finalidades determinadas
+  style: lexical
+  accents: true
+  difficulty: medium
+- id: R-057
+  kind: answerable
+  question: Posso cancelar a autorização que dei para compartilhar meus dados quando eu quiser?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 15
+  - document: lgpd
+    ref: art. 8º
+  - document: lgpd
+    ref: art. 18
+  evidence: a possibilidade da revogação do respectivo consentimento, a qualquer tempo
+  style: colloquial
+  accents: true
+  difficulty: hard
+- id: R-058
+  kind: answerable
+  question: O que as instituições precisam me mostrar sobre os consentimentos que estão valendo?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 14
+  evidence: prestar ao cliente, no mínimo, as seguintes informações sobre os consentimentos
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-059
+  kind: answerable
+  question: Quem precisa autenticar o cliente e a instituição receptora antes do compartilhamento?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 16
+  evidence: deve adotar procedimentos e controles para autenticação
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-060
+  kind: answerable
+  question: O banco vai me pedir uma confirmação antes de compartilhar meus dados com outra instituição?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 20
+  evidence: deve solicitar confirmação de compartilhamento ao cliente
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-061
+  kind: answerable
+  question: As instituições precisam explicar de forma clara ao cliente as etapas do compartilhamento?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 9º
+  evidence: assegurar a prestação de informações aos clientes de forma clara, objetiva e adequada
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-062
+  kind: answerable
+  question: A instituição transmissora deve informar à receptora os motivos de um compartilhamento que não pôde ser efetivado?
+  document: open-finance-regulamento
+  expected_refs:
+  - art. 26
+  evidence: os motivos que impossibilitarem o compartilhamento
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-063
+  kind: answerable
+  question: A quem se aplicam as regras de cálculo e de informação do CET?
+  document: cet-disclosure
+  expected_refs:
+  - art. 1º
+  evidence: sobre o cálculo e a informação do Custo Efetivo Total (CET)
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-064
+  kind: answerable
+  question: Qual fórmula é usada para calcular o Custo Efetivo Total?
+  document: cet-disclosure
+  expected_refs:
+  - art. 4º
+  evidence: O CET deve ser calculado de acordo com a seguinte fórmula
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-065
+  kind: answerable
+  question: Se o empréstimo tem juros que variam com um índice, isso entra no cálculo do CET?
+  document: cet-disclosure
+  expected_refs:
+  - art. 5º
+  evidence: não devem ser considerados no cálculo do CET
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-066
+  kind: answerable
+  question: A propaganda de crédito que mostra a taxa de juros precisa informar o CET também?
+  document: cet-disclosure
+  expected_refs:
+  - art. 8º
+  - document: cdc-consolidada
+    ref: art. 54-B
+  evidence: devem informar o CET nos informes publicitários
+  style: lexical
+  accents: true
+  difficulty: medium
+- id: R-067
+  kind: answerable
+  question: Crédito rural também precisa seguir essas regras do CET?
+  document: cet-disclosure
+  expected_refs:
+  - art. 9º
+  evidence: não se aplica a operações de repasses de recursos externos e a operações de crédito rural
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-068
+  kind: answerable
+  question: Antes de eu assinar, o que o banco tem que me mostrar sobre o custo total do empréstimo?
+  document: cet-disclosure
+  expected_refs:
+  - art. 7º
+  - document: cdc-consolidada
+    ref: art. 54-B
+  evidence: O demonstrativo de que trata o caput deve informar o valor em reais de cada componente do fluxo de recebimentos e de pagamentos
+  style: colloquial
+  accents: true
+  difficulty: hard
+- id: R-069
+  kind: answerable
+  question: Qual é a diferença entre a modalidade Price e a SAC no crédito da Solvia?
+  document: product-catalog
+  evidence: 'Crédito Pessoal Solvia (Tabela Price): parcelas fixas do início ao fim'
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-070
+  kind: answerable
+  question: Pra quem gosta de saber exatamente quanto vai pagar todo mês, qual modalidade serve melhor?
+  document: product-catalog
+  evidence: Ideal para quem prefere previsibilidade no valor da parcela
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-071
+  kind: answerable
+  question: Qual modalidade é melhor pra quem pode pagar mais no começo e quer economizar nos juros?
+  document: product-catalog
+  evidence: Ideal para quem pode pagar mais no início e busca economizar no total de juros
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-072
+  kind: answerable
+  question: O que é considerado nas simulações de crédito da Solvia?
+  document: product-catalog
+  evidence: Todas as simulações consideram taxa de juros, IOF e tarifas vigentes do nosso catálogo
+  style: lexical
+  accents: true
+  difficulty: easy
+- id: R-073
+  kind: answerable
+  question: Esse crédito da Solvia é de verdade ou é só demonstração?
+  document: product-catalog
+  evidence: crédito pessoal sintético para fins de demonstração
+  style: colloquial
+  accents: true
+  difficulty: medium
+- id: R-074
+  kind: unanswerable
+  question: Qual é a alíquota atual do Imposto de Renda para pessoa física?
+  distance: far
+  difficulty: easy
+- id: R-075
+  kind: unanswerable
+  question: Quais são as regras de partilha de herança digital segundo o Código Civil?
+  distance: far
+  difficulty: easy
+- id: R-076
+  kind: unanswerable
+  question: A Solvia oferece cartão de crédito internacional sem anuidade?
+  distance: near_miss
+  difficulty: hard
+- id: R-077
+  kind: unanswerable
+  question: Existe algum limite para a taxa de juros cobrada no cheque especial?
+  distance: near_miss
+  difficulty: hard
+- id: R-078
+  kind: unanswerable
+  question: Qual é o prazo para conclusão da portabilidade de crédito dentro do Open Finance?
+  distance: near_miss
+  difficulty: hard
+- id: R-079
+  kind: unanswerable
+  question: Qual é a versão atual do Manual de Segurança do Open Finance?
+  distance: near_miss
+  difficulty: hard
+- id: R-080
+  kind: unanswerable
+  question: Qual é o teto de juros permitido para o cartão de crédito rotativo?
+  distance: near_miss
+  difficulty: hard
+- id: R-081
+  kind: unanswerable
+  question: Quantas instituições participam hoje do Open Finance no Brasil?
+  distance: near_miss
+  difficulty: hard
+- id: R-082
+  kind: unanswerable
+  question: Em quanto tempo o banco devolve o dinheiro de um Pix feito por golpe?
+  distance: near_miss
+  difficulty: hard
+- id: R-083
+  kind: unanswerable
+  question: Como funciona a portabilidade de salário entre bancos?
+  distance: near_miss
+  difficulty: hard
+- id: R-084
+  kind: unanswerable
+  question: Qual é a taxa de juros mensal do crédito pessoal da Solvia?
+  distance: near_miss
+  difficulty: hard
+- id: R-085
+  kind: unanswerable
+  question: Qual é a alíquota de IOF cobrada em um empréstimo pessoal?
+  distance: near_miss
+  difficulty: hard
+- id: R-086
+  kind: unanswerable
+  question: O crédito da Solvia exige seguro prestamista?
+  distance: near_miss
+  difficulty: hard
+- id: R-087
+  kind: unanswerable
+  question: Em quantos dias o Banco Central responde a uma reclamação contra um banco?
+  distance: near_miss
+  difficulty: hard
+- id: R-088
+  kind: unanswerable
+  question: Qual é o limite da margem consignável para aposentados do INSS?
+  distance: near_miss
+  difficulty: hard
+- id: R-089
+  kind: unanswerable
+  question: Quanto o banco pode cobrar de tarifa por uma transferência TED?
+  distance: near_miss
+  difficulty: hard
+- id: R-090
+  kind: unanswerable
+  question: Quais as regras do Cadastro Positivo para quem paga as contas em dia?
+  distance: near_miss
+  difficulty: hard
+- id: R-091
+  kind: unanswerable
+  question: Qual é a idade mínima para contratar um crédito pessoal na Solvia?
+  distance: near_miss
+  difficulty: hard
+- id: R-092
+  kind: unanswerable
+  question: Como declarar o aluguel que recebo no Imposto de Renda?
+  distance: far
+  difficulty: easy
+- id: R-093
+  kind: unanswerable
+  question: Quais são as regras de ultrapassagem no Código de Trânsito?
+  distance: far
+  difficulty: easy
+- id: R-094
+  kind: unanswerable
+  question: Quais são os direitos de um trabalhador demitido sem justa causa?
+  distance: far
+  difficulty: easy
+- id: R-095
+  kind: unanswerable
+  question: Como registro uma empresa na Junta Comercial?
+  distance: far
+  difficulty: easy
+- id: R-096
+  kind: unanswerable
+  question: Como funciona o processo de falência de uma empresa?
+  distance: far
+  difficulty: easy
+- id: R-097
+  kind: unanswerable
+  question: Quais vacinas o SUS oferece para crianças?
+  distance: far
+  difficulty: easy
+- id: R-098
+  kind: unanswerable
+  question: Qual será a previsão do tempo para o fim de semana?
+  distance: far
+  difficulty: easy

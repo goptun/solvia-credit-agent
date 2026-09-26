@@ -1,0 +1,1055 @@
+{
+  "mode": "live",
+  "git_sha": "dfe89f5408eb510a438b4a0ffe98081ea78e3035",
+  "git_dirty": false,
+  "seed": 42,
+  "environment": {
+    "ci": "false",
+    "os": "darwin",
+    "arch": "x86_64",
+    "python": "3.12.0"
+  },
+  "suites": {
+    "compliance-llm": {
+      "datasets": [
+        {
+          "name": "compliance",
+          "version": 2,
+          "sha256": "126940c4e2dded3741cabe3414dfda6085d8c360e38abb930d8979b612a8de46"
+        }
+      ],
+      "metrics": {
+        "llm.precision": {
+          "value": 1.0,
+          "n": 13,
+          "direction": "higher",
+          "ci_low": 0.771905,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "llm.recall": {
+          "value": 0.928571,
+          "n": 14,
+          "direction": "higher",
+          "ci_low": 0.685313,
+          "ci_high": 0.987278,
+          "deterministic": false
+        },
+        "llm.false_positive_rate": {
+          "value": 0.0,
+          "n": 27,
+          "direction": "lower",
+          "ci_low": 0.0,
+          "ci_high": 0.124555,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "missed_promises": [
+          "C-002"
+        ],
+        "false_positives": [],
+        "unavailable_ids": [],
+        "items": [
+          {
+            "id": "C-001",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-002",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 0.0
+            }
+          },
+          {
+            "id": "C-003",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-004",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-005",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-006",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-007",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-008",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-009",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-010",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-011",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-012",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-013",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-014",
+            "output": {
+              "flags_promise": true
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-015",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-016",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-017",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-018",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-019",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-020",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-021",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-022",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-023",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-024",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-025",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-026",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-027",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-028",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-029",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-030",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-031",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-032",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-033",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-034",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-035",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-036",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-037",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-038",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-039",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-040",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "C-041",
+            "output": {
+              "flags_promise": false
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          }
+        ],
+        "items_selected": 41,
+        "items_scored": 41,
+        "unavailable": {}
+      }
+    },
+    "operational": {
+      "datasets": [],
+      "metrics": {
+        "compliance_guard.no_tool_call_rate": {
+          "value": 0.487805,
+          "n": 41,
+          "direction": "lower",
+          "ci_low": 0.342544,
+          "ci_high": 0.635155,
+          "deterministic": false
+        },
+        "compliance_guard.json_fallback_rate": {
+          "value": 0.487805,
+          "n": 41,
+          "direction": "lower",
+          "ci_low": 0.342544,
+          "ci_high": 0.635155,
+          "deterministic": false
+        },
+        "compliance_guard.latency_p50_seconds": {
+          "value": 0.857,
+          "n": 61,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "compliance_guard.latency_p95_seconds": {
+          "value": 6.531,
+          "n": 61,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "compliance_guard.attempts_mean": {
+          "value": 1.488,
+          "n": 61,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "calls": [
+          {
+            "operation": "compliance_guard-1",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.007
+          },
+          {
+            "operation": "compliance_guard-2",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.764
+          },
+          {
+            "operation": "compliance_guard-3",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.849
+          },
+          {
+            "operation": "compliance_guard-4",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.753
+          },
+          {
+            "operation": "compliance_guard-4",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.654
+          },
+          {
+            "operation": "compliance_guard-5",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.735
+          },
+          {
+            "operation": "compliance_guard-5",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 4.066
+          },
+          {
+            "operation": "compliance_guard-6",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.653
+          },
+          {
+            "operation": "compliance_guard-7",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.787
+          },
+          {
+            "operation": "compliance_guard-8",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.776
+          },
+          {
+            "operation": "compliance_guard-8",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.535
+          },
+          {
+            "operation": "compliance_guard-9",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.829
+          },
+          {
+            "operation": "compliance_guard-10",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.835
+          },
+          {
+            "operation": "compliance_guard-11",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.738
+          },
+          {
+            "operation": "compliance_guard-12",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 9.615
+          },
+          {
+            "operation": "compliance_guard-13",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.733
+          },
+          {
+            "operation": "compliance_guard-14",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.695
+          },
+          {
+            "operation": "compliance_guard-15",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.013
+          },
+          {
+            "operation": "compliance_guard-15",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.61
+          },
+          {
+            "operation": "compliance_guard-16",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.857
+          },
+          {
+            "operation": "compliance_guard-16",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.027
+          },
+          {
+            "operation": "compliance_guard-17",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.883
+          },
+          {
+            "operation": "compliance_guard-17",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 12.555
+          },
+          {
+            "operation": "compliance_guard-18",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.673
+          },
+          {
+            "operation": "compliance_guard-19",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.834
+          },
+          {
+            "operation": "compliance_guard-19",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.018
+          },
+          {
+            "operation": "compliance_guard-20",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.232
+          },
+          {
+            "operation": "compliance_guard-20",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 7.877
+          },
+          {
+            "operation": "compliance_guard-21",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.913
+          },
+          {
+            "operation": "compliance_guard-21",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.61
+          },
+          {
+            "operation": "compliance_guard-22",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 6.531
+          },
+          {
+            "operation": "compliance_guard-22",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.713
+          },
+          {
+            "operation": "compliance_guard-23",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.712
+          },
+          {
+            "operation": "compliance_guard-23",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.988
+          },
+          {
+            "operation": "compliance_guard-24",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.043
+          },
+          {
+            "operation": "compliance_guard-24",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.364
+          },
+          {
+            "operation": "compliance_guard-25",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 4.137
+          },
+          {
+            "operation": "compliance_guard-25",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.844
+          },
+          {
+            "operation": "compliance_guard-26",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.151
+          },
+          {
+            "operation": "compliance_guard-26",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 4.462
+          },
+          {
+            "operation": "compliance_guard-27",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.819
+          },
+          {
+            "operation": "compliance_guard-28",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.714
+          },
+          {
+            "operation": "compliance_guard-29",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.004
+          },
+          {
+            "operation": "compliance_guard-29",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.794
+          },
+          {
+            "operation": "compliance_guard-30",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.686
+          },
+          {
+            "operation": "compliance_guard-31",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.883
+          },
+          {
+            "operation": "compliance_guard-31",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.018
+          },
+          {
+            "operation": "compliance_guard-32",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.915
+          },
+          {
+            "operation": "compliance_guard-33",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.951
+          },
+          {
+            "operation": "compliance_guard-34",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.249
+          },
+          {
+            "operation": "compliance_guard-35",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.781
+          },
+          {
+            "operation": "compliance_guard-35",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.686
+          },
+          {
+            "operation": "compliance_guard-36",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.814
+          },
+          {
+            "operation": "compliance_guard-37",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.312
+          },
+          {
+            "operation": "compliance_guard-38",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 5.597
+          },
+          {
+            "operation": "compliance_guard-38",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.226
+          },
+          {
+            "operation": "compliance_guard-39",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.079
+          },
+          {
+            "operation": "compliance_guard-39",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.711
+          },
+          {
+            "operation": "compliance_guard-40",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.639
+          },
+          {
+            "operation": "compliance_guard-41",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.048
+          },
+          {
+            "operation": "compliance_guard-41",
+            "node": "compliance_guard",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 0.662
+          }
+        ],
+        "status_breakdown": {
+          "ok": 61,
+          "429": 0,
+          "503": 0,
+          "timeout": 0,
+          "other": 0
+        }
+      }
+    }
+  },
+  "sample_fraction": null,
+  "incomplete": false,
+  "contaminated": false,
+  "contamination_reasons": [],
+  "model_sets_unset": false,
+  "aliases": {
+    "fast": "solvia-eval-fast",
+    "smart": "solvia-eval-smart"
+  },
+  "budget": {
+    "max_calls": 300,
+    "used": 61,
+    "estimated_typical": 41,
+    "estimated_pessimistic": 82
+  },
+  "resolved_model_mix": {
+    "solvia-eval-fast": {
+      "gemini-3.5-flash-lite": 61
+    }
+  }
+}

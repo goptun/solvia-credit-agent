@@ -76,6 +76,105 @@ jobs:
       - name: Run tests
         run: uv run pytest --cov --cov-report=term-missing
 
+  evals-offline:
+    name: Evals (offline)
+    runs-on: ubuntu-latest
+    # No secrets and no gateway: the deterministic compliance suite always
+    # runs; the retrieval suite (embedding model from the public hub, cached)
+    # only when the diff can affect it. See docs/adr/ADR-006-evals-harness.md.
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: solvia
+          POSTGRES_PASSWORD: solvia
+          POSTGRES_DB: solvia_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U solvia"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://solvia:solvia@localhost:5432/solvia_test
+      LLM_PROVIDER: fake
+      FASTEMBED_CACHE_PATH: ${{ github.workspace }}/.cache/fastembed
+      # The PR head commit, not the merge commit the checkout builds: the run
+      # artifact must name the commit whose code it measured.
+      EVALS_GIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Compliance suite (deterministic, gated)
+        run: uv run python -m evals run --suite compliance --mode offline --compare-baseline --output compliance-run.json
+
+      - name: Is the retrieval evaluation relevant to this change?
+        id: relevance
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT" = "push" ]; then
+            echo "relevant=$(echo | uv run python -m evals relevant --on-main)" >> "$GITHUB_OUTPUT"
+          else
+            echo "relevant=$(git diff --name-only "$BASE_SHA...$HEAD_SHA" | uv run python -m evals relevant)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Retrieval evaluation skipped
+        if: steps.relevance.outputs.relevant != 'true'
+        run: echo "retrieval eval skipped (no relevant changes)"
+
+      - name: Resolve the embedding model
+        id: model
+        if: steps.relevance.outputs.relevant == 'true'
+        run: echo "name=$(uv run python -c 'from rag.settings import get_rag_settings; print(get_rag_settings().rag_embedding_model.replace("/", "_"))')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache the embedding model
+        if: steps.relevance.outputs.relevant == 'true'
+        uses: actions/cache@v4
+        with:
+          path: .cache/fastembed
+          key: fastembed-${{ steps.model.outputs.name }}-${{ hashFiles('uv.lock') }}
+          restore-keys: fastembed-${{ steps.model.outputs.name }}-
+
+      - name: Download the embedding model (public hub, up to 3 attempts)
+        if: steps.relevance.outputs.relevant == 'true'
+        run: |
+          for attempt in 1 2 3; do
+            uv run python -c "from rag.embeddings.fastembed_adapter import FastEmbedAdapter; from rag.settings import get_rag_settings; FastEmbedAdapter(get_rag_settings().rag_embedding_model).embed_query('warm-up')" && exit 0
+            echo "attempt $attempt failed"; sleep 5
+          done
+          exit 1
+
+      - name: Retrieval suite (gated against the committed baseline)
+        if: steps.relevance.outputs.relevant == 'true'
+        run: uv run python -m evals run --suite retrieval --mode offline --compare-baseline --output evals-retrieval-run.json
+
+      - name: Upload the retrieval run
+        if: always() && steps.relevance.outputs.relevant == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: evals-retrieval-run
+          path: evals-retrieval-run.json
+          if-no-files-found: warn
+
   gitleaks:
     name: Secret scanning (gitleaks)
     runs-on: ubuntu-latest

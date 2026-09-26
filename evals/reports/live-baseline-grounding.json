@@ -1,0 +1,3531 @@
+{
+  "mode": "live",
+  "git_sha": "5be9ed904b9f2b7c222e41ab22a4118ebaa7d2b5",
+  "git_dirty": false,
+  "seed": 42,
+  "environment": {
+    "ci": "false",
+    "os": "darwin",
+    "arch": "x86_64",
+    "python": "3.12.0"
+  },
+  "suites": {
+    "grounding": {
+      "datasets": [
+        {
+          "name": "retrieval",
+          "version": 2,
+          "sha256": "cf34185e30b2ec65181061c2b30d0add76a8c378cd312d9aea9131b54599c817"
+        }
+      ],
+      "metrics": {
+        "grounding.false_refusal_rate": {
+          "value": 0.377358,
+          "n": 53,
+          "direction": "lower",
+          "ci_low": 0.259363,
+          "ci_high": 0.511931,
+          "deterministic": false
+        },
+        "grounding.refusal_accuracy": {
+          "value": 0.0,
+          "n": 0,
+          "direction": "higher",
+          "ci_low": 0.0,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "grounding.refusal_accuracy.far": {
+          "value": 0.0,
+          "n": 0,
+          "direction": "higher",
+          "ci_low": 0.0,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "grounding.refusal_accuracy.near_miss": {
+          "value": 0.0,
+          "n": 0,
+          "direction": "higher",
+          "ci_low": 0.0,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "grounding.citation_validity": {
+          "value": 1.0,
+          "n": 33,
+          "direction": "higher",
+          "ci_low": 0.89573,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "grounding.expected_ref_hit": {
+          "value": 0.909091,
+          "n": 33,
+          "direction": "higher",
+          "ci_low": 0.764274,
+          "ci_high": 0.968596,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "false_refusal_causes": {
+          "threshold": 11,
+          "gold_not_retrieved": 8,
+          "llm_refused_gold_in_context": 1
+        },
+        "unavailable_ids": [],
+        "items": [
+          {
+            "id": "R-001",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 6º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-002",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 18"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-003",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 51"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-004",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 54-A"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-005",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-006",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 54-C"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-007",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 54-D"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-008",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-009",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-010",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 7º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-011",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 9º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-012",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 18"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-013",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 46"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-014",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-015",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 55-J"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-016",
+            "output": {
+              "refused": false,
+              "cited": [
+                "open-finance-regulamento:art. 1º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-017",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-018",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-019",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-020",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 54-B"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-021",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-022",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-023",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cet-disclosure:art. 6º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-024",
+            "output": {
+              "refused": false,
+              "cited": [
+                "product-catalog:None"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-025",
+            "output": {
+              "refused": false,
+              "cited": [
+                "product-catalog:None"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-026",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 12"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-027",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 14"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-028",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 26"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-029",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 8°"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-030",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-031",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-032",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-033",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 42"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-034",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-035",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 43"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-036",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-037",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-038",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 53"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-039",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-040",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 54-G"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-041",
+            "output": {
+              "refused": false,
+              "cited": [
+                "cdc-consolidada:art. 104-A"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-042",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 5º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-043",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 6º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-044",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-045",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-046",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 19"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-047",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-048",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 33"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-049",
+            "output": {
+              "refused": true,
+              "cited": []
+            },
+            "scores": {
+              "answered": 0.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-050",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 5º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 0.0
+            }
+          },
+          {
+            "id": "R-051",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 42"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-052",
+            "output": {
+              "refused": false,
+              "cited": [
+                "lgpd:art. 52"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          },
+          {
+            "id": "R-053",
+            "output": {
+              "refused": false,
+              "cited": [
+                "open-finance-regulamento:art. 3º",
+                "open-finance-regulamento:art. 2º"
+              ]
+            },
+            "scores": {
+              "answered": 1.0,
+              "cites_expected": 1.0
+            }
+          }
+        ],
+        "items_selected": 98,
+        "items_scored": 53,
+        "unavailable": {}
+      }
+    },
+    "operational": {
+      "datasets": [],
+      "metrics": {
+        "knowledge_agent.no_tool_call_rate": {
+          "value": 0.0,
+          "n": 42,
+          "direction": "lower",
+          "ci_low": 0.0,
+          "ci_high": 0.083799,
+          "deterministic": false
+        },
+        "knowledge_agent.json_fallback_rate": {
+          "value": 1.0,
+          "n": 42,
+          "direction": "lower",
+          "ci_low": 0.916201,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "knowledge_agent.latency_p50_seconds": {
+          "value": 0.0,
+          "n": 252,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "knowledge_agent.latency_p95_seconds": {
+          "value": 0.0,
+          "n": 252,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "knowledge_agent.attempts_mean": {
+          "value": 6.0,
+          "n": 252,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "knowledge_agent_fallback.no_tool_call_rate": {
+          "value": 0.071429,
+          "n": 42,
+          "direction": "lower",
+          "ci_low": 0.02459,
+          "ci_high": 0.190094,
+          "deterministic": false
+        },
+        "knowledge_agent_fallback.json_fallback_rate": {
+          "value": 0.071429,
+          "n": 42,
+          "direction": "lower",
+          "ci_low": 0.02459,
+          "ci_high": 0.190094,
+          "deterministic": false
+        },
+        "knowledge_agent_fallback.latency_p50_seconds": {
+          "value": 1.267,
+          "n": 45,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "knowledge_agent_fallback.latency_p95_seconds": {
+          "value": 3.907,
+          "n": 45,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "knowledge_agent_fallback.attempts_mean": {
+          "value": 1.071,
+          "n": 45,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "calls": [
+          {
+            "operation": "knowledge_agent-1",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.303
+          },
+          {
+            "operation": "knowledge_agent-1",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.051
+          },
+          {
+            "operation": "knowledge_agent-1",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.074
+          },
+          {
+            "operation": "knowledge_agent-1",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-1",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.051
+          },
+          {
+            "operation": "knowledge_agent-1",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-1",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 6.069
+          },
+          {
+            "operation": "knowledge_agent-1",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 2.593
+          },
+          {
+            "operation": "knowledge_agent-2",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.119
+          },
+          {
+            "operation": "knowledge_agent-2",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-2",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-2",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-2",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "knowledge_agent-2",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-2",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.918
+          },
+          {
+            "operation": "knowledge_agent-3",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.095
+          },
+          {
+            "operation": "knowledge_agent-3",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "knowledge_agent-3",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "knowledge_agent-3",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-3",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-3",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-3",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.464
+          },
+          {
+            "operation": "knowledge_agent-4",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-4",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.076
+          },
+          {
+            "operation": "knowledge_agent-4",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-4",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-4",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-4",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "knowledge_agent-4",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.065
+          },
+          {
+            "operation": "knowledge_agent-6",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.46
+          },
+          {
+            "operation": "knowledge_agent-6",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-6",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-6",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.057
+          },
+          {
+            "operation": "knowledge_agent-6",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "knowledge_agent-6",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-6",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 2.048
+          },
+          {
+            "operation": "knowledge_agent-7",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.076
+          },
+          {
+            "operation": "knowledge_agent-7",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-7",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.077
+          },
+          {
+            "operation": "knowledge_agent-7",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-7",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-7",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.051
+          },
+          {
+            "operation": "knowledge_agent-7",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.023
+          },
+          {
+            "operation": "knowledge_agent-8",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-8",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.059
+          },
+          {
+            "operation": "knowledge_agent-8",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "knowledge_agent-8",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-8",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "knowledge_agent-8",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.057
+          },
+          {
+            "operation": "knowledge_agent-8",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.793
+          },
+          {
+            "operation": "knowledge_agent-9",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-9",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "knowledge_agent-9",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-9",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-9",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.076
+          },
+          {
+            "operation": "knowledge_agent-9",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-9",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.746
+          },
+          {
+            "operation": "knowledge_agent-10",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.05
+          },
+          {
+            "operation": "knowledge_agent-10",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "knowledge_agent-10",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "knowledge_agent-10",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-10",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.077
+          },
+          {
+            "operation": "knowledge_agent-10",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.077
+          },
+          {
+            "operation": "knowledge_agent-10",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.576
+          },
+          {
+            "operation": "knowledge_agent-11",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "knowledge_agent-11",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "knowledge_agent-11",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.076
+          },
+          {
+            "operation": "knowledge_agent-11",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.079
+          },
+          {
+            "operation": "knowledge_agent-11",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-11",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-11",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.964
+          },
+          {
+            "operation": "knowledge_agent-12",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.074
+          },
+          {
+            "operation": "knowledge_agent-12",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-12",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.048
+          },
+          {
+            "operation": "knowledge_agent-12",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.06
+          },
+          {
+            "operation": "knowledge_agent-12",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-12",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-12",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 2.724
+          },
+          {
+            "operation": "knowledge_agent-13",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.079
+          },
+          {
+            "operation": "knowledge_agent-13",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.047
+          },
+          {
+            "operation": "knowledge_agent-13",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.051
+          },
+          {
+            "operation": "knowledge_agent-13",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "knowledge_agent-13",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-13",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-13",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.992
+          },
+          {
+            "operation": "knowledge_agent-15",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.096
+          },
+          {
+            "operation": "knowledge_agent-15",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-15",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-15",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.045
+          },
+          {
+            "operation": "knowledge_agent-15",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "knowledge_agent-15",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "knowledge_agent-15",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 2.038
+          },
+          {
+            "operation": "knowledge_agent-16",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.078
+          },
+          {
+            "operation": "knowledge_agent-16",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "knowledge_agent-16",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.053
+          },
+          {
+            "operation": "knowledge_agent-16",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "knowledge_agent-16",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.076
+          },
+          {
+            "operation": "knowledge_agent-16",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.077
+          },
+          {
+            "operation": "knowledge_agent-16",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.286
+          },
+          {
+            "operation": "knowledge_agent-17",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "knowledge_agent-17",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "knowledge_agent-17",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-17",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.074
+          },
+          {
+            "operation": "knowledge_agent-17",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.099
+          },
+          {
+            "operation": "knowledge_agent-17",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "knowledge_agent-17",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.844
+          },
+          {
+            "operation": "knowledge_agent-18",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.08
+          },
+          {
+            "operation": "knowledge_agent-18",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "knowledge_agent-18",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "knowledge_agent-18",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.074
+          },
+          {
+            "operation": "knowledge_agent-18",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.044
+          },
+          {
+            "operation": "knowledge_agent-18",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.048
+          },
+          {
+            "operation": "knowledge_agent-18",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.909
+          },
+          {
+            "operation": "knowledge_agent-19",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-19",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-19",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-19",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-19",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.076
+          },
+          {
+            "operation": "knowledge_agent-19",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.043
+          },
+          {
+            "operation": "knowledge_agent-19",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.973
+          },
+          {
+            "operation": "knowledge_agent-20",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-20",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-20",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-20",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "knowledge_agent-20",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-20",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-20",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.267
+          },
+          {
+            "operation": "knowledge_agent-23",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.096
+          },
+          {
+            "operation": "knowledge_agent-23",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "knowledge_agent-23",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "knowledge_agent-23",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.091
+          },
+          {
+            "operation": "knowledge_agent-23",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-23",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "knowledge_agent-23",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.987
+          },
+          {
+            "operation": "knowledge_agent-24",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.077
+          },
+          {
+            "operation": "knowledge_agent-24",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "knowledge_agent-24",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.051
+          },
+          {
+            "operation": "knowledge_agent-24",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.077
+          },
+          {
+            "operation": "knowledge_agent-24",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "knowledge_agent-24",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "knowledge_agent-24",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.239
+          },
+          {
+            "operation": "knowledge_agent-25",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-25",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.057
+          },
+          {
+            "operation": "knowledge_agent-25",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.06
+          },
+          {
+            "operation": "knowledge_agent-25",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "knowledge_agent-25",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-25",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "knowledge_agent-25",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.426
+          },
+          {
+            "operation": "knowledge_agent-26",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-26",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-26",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "knowledge_agent-26",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "knowledge_agent-26",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "knowledge_agent-26",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-26",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.931
+          },
+          {
+            "operation": "knowledge_agent-27",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "knowledge_agent-27",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.049
+          },
+          {
+            "operation": "knowledge_agent-27",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-27",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.111
+          },
+          {
+            "operation": "knowledge_agent-27",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-27",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-27",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.432
+          },
+          {
+            "operation": "knowledge_agent-28",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-28",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "knowledge_agent-28",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-28",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "knowledge_agent-28",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "knowledge_agent-28",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-28",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.346
+          },
+          {
+            "operation": "knowledge_agent-29",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.08
+          },
+          {
+            "operation": "knowledge_agent-29",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "knowledge_agent-29",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-29",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.06
+          },
+          {
+            "operation": "knowledge_agent-29",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "knowledge_agent-29",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "knowledge_agent-29",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 2.074
+          },
+          {
+            "operation": "knowledge_agent-33",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-33",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "knowledge_agent-33",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-33",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "knowledge_agent-33",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "knowledge_agent-33",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "knowledge_agent-33",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.15
+          },
+          {
+            "operation": "knowledge_agent-35",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.122
+          },
+          {
+            "operation": "knowledge_agent-35",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "knowledge_agent-35",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-35",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-35",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-35",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.077
+          },
+          {
+            "operation": "knowledge_agent-35",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.513
+          },
+          {
+            "operation": "knowledge_agent-36",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.081
+          },
+          {
+            "operation": "knowledge_agent-36",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "knowledge_agent-36",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.055
+          },
+          {
+            "operation": "knowledge_agent-36",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "knowledge_agent-36",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-36",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.074
+          },
+          {
+            "operation": "knowledge_agent-36",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 6.655
+          },
+          {
+            "operation": "knowledge_agent-38",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 2.394
+          },
+          {
+            "operation": "knowledge_agent-38",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.049
+          },
+          {
+            "operation": "knowledge_agent-38",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-38",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-38",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.043
+          },
+          {
+            "operation": "knowledge_agent-38",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "knowledge_agent-38",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.089
+          },
+          {
+            "operation": "knowledge_agent-39",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-39",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.075
+          },
+          {
+            "operation": "knowledge_agent-39",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-39",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-39",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-39",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.074
+          },
+          {
+            "operation": "knowledge_agent-39",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.876
+          },
+          {
+            "operation": "knowledge_agent-40",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.074
+          },
+          {
+            "operation": "knowledge_agent-40",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "knowledge_agent-40",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.057
+          },
+          {
+            "operation": "knowledge_agent-40",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-40",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-40",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-40",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 3.748
+          },
+          {
+            "operation": "knowledge_agent-40",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.879
+          },
+          {
+            "operation": "knowledge_agent-41",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.102
+          },
+          {
+            "operation": "knowledge_agent-41",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-41",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.079
+          },
+          {
+            "operation": "knowledge_agent-41",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.043
+          },
+          {
+            "operation": "knowledge_agent-41",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-41",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-41",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.102
+          },
+          {
+            "operation": "knowledge_agent-42",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-42",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.046
+          },
+          {
+            "operation": "knowledge_agent-42",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-42",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-42",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.078
+          },
+          {
+            "operation": "knowledge_agent-42",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "knowledge_agent-42",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.714
+          },
+          {
+            "operation": "knowledge_agent-43",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "knowledge_agent-43",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-43",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.044
+          },
+          {
+            "operation": "knowledge_agent-43",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-43",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-43",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-43",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.999
+          },
+          {
+            "operation": "knowledge_agent-46",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.097
+          },
+          {
+            "operation": "knowledge_agent-46",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-46",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.041
+          },
+          {
+            "operation": "knowledge_agent-46",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.043
+          },
+          {
+            "operation": "knowledge_agent-46",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-46",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.056
+          },
+          {
+            "operation": "knowledge_agent-46",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.796
+          },
+          {
+            "operation": "knowledge_agent-47",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "knowledge_agent-47",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.063
+          },
+          {
+            "operation": "knowledge_agent-47",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.058
+          },
+          {
+            "operation": "knowledge_agent-47",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "knowledge_agent-47",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-47",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-47",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.91
+          },
+          {
+            "operation": "knowledge_agent-48",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-48",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.059
+          },
+          {
+            "operation": "knowledge_agent-48",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.047
+          },
+          {
+            "operation": "knowledge_agent-48",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-48",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.058
+          },
+          {
+            "operation": "knowledge_agent-48",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.073
+          },
+          {
+            "operation": "knowledge_agent-48",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 2.809
+          },
+          {
+            "operation": "knowledge_agent-49",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.076
+          },
+          {
+            "operation": "knowledge_agent-49",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "knowledge_agent-49",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.048
+          },
+          {
+            "operation": "knowledge_agent-49",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.067
+          },
+          {
+            "operation": "knowledge_agent-49",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.042
+          },
+          {
+            "operation": "knowledge_agent-49",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.055
+          },
+          {
+            "operation": "knowledge_agent-49",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.924
+          },
+          {
+            "operation": "knowledge_agent-50",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.072
+          },
+          {
+            "operation": "knowledge_agent-50",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "knowledge_agent-50",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-50",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.074
+          },
+          {
+            "operation": "knowledge_agent-50",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.064
+          },
+          {
+            "operation": "knowledge_agent-50",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.044
+          },
+          {
+            "operation": "knowledge_agent-50",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.51
+          },
+          {
+            "operation": "knowledge_agent-50",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "no_tool_call",
+            "latency_seconds": 1.161
+          },
+          {
+            "operation": "knowledge_agent-51",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-51",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.061
+          },
+          {
+            "operation": "knowledge_agent-51",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.069
+          },
+          {
+            "operation": "knowledge_agent-51",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-51",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.06
+          },
+          {
+            "operation": "knowledge_agent-51",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.066
+          },
+          {
+            "operation": "knowledge_agent-51",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.187
+          },
+          {
+            "operation": "knowledge_agent-52",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.054
+          },
+          {
+            "operation": "knowledge_agent-52",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.068
+          },
+          {
+            "operation": "knowledge_agent-52",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "knowledge_agent-52",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.074
+          },
+          {
+            "operation": "knowledge_agent-52",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.062
+          },
+          {
+            "operation": "knowledge_agent-52",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-52",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 3.947
+          },
+          {
+            "operation": "knowledge_agent-53",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-53",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.059
+          },
+          {
+            "operation": "knowledge_agent-53",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.07
+          },
+          {
+            "operation": "knowledge_agent-53",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.074
+          },
+          {
+            "operation": "knowledge_agent-53",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.071
+          },
+          {
+            "operation": "knowledge_agent-53",
+            "node": "knowledge_agent",
+            "alias": "solvia-eval-smart",
+            "model": null,
+            "status": "503",
+            "kind": "error",
+            "latency_seconds": 0.065
+          },
+          {
+            "operation": "knowledge_agent-53",
+            "node": "knowledge_agent_fallback",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.882
+          }
+        ],
+        "status_breakdown": {
+          "ok": 45,
+          "429": 0,
+          "503": 252,
+          "timeout": 0,
+          "other": 0
+        }
+      }
+    }
+  },
+  "sample_fraction": null,
+  "incomplete": true,
+  "contaminated": true,
+  "contamination_reasons": [
+    "50.0% of operations ended in a quota/unavailability response even after the app's own retry/backoff had a chance (42 of 84 operations; threshold 5%; see the operational suite's status_breakdown for raw 429/503/timeout counts)",
+    "run incomplete (call budget exhausted)"
+  ],
+  "model_sets_unset": false,
+  "aliases": {
+    "fast": "solvia-eval-fast",
+    "smart": "solvia-eval-smart"
+  },
+  "budget": {
+    "max_calls": 300,
+    "used": 297,
+    "estimated_typical": 70,
+    "estimated_pessimistic": 83
+  },
+  "resolved_model_mix": {
+    "solvia-eval-fast": {
+      "gemini-3.5-flash-lite": 45
+    },
+    "solvia-eval-smart": {
+      "unknown": 252
+    }
+  }
+}

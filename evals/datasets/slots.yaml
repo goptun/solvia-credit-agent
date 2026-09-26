@@ -1,0 +1,271 @@
+version: 2
+items:
+- id: S-001
+  message: Quero simular um empréstimo de R$5000 em 12 meses, no sistema Price.
+  expected:
+    amount: '5000'
+    term_months: 12
+    amortization_type: PRICE
+  tags:
+  - complete
+- id: S-002
+  message: 10 mil reais em 24 meses pela tabela Price
+  expected:
+    amount: '10000'
+    term_months: 24
+    amortization_type: PRICE
+  tags:
+  - complete
+- id: S-003
+  message: Preciso de 2000 reais em 6 meses, SAC
+  expected:
+    amount: '2000'
+    term_months: 6
+    amortization_type: SAC
+  tags:
+  - complete
+- id: S-004
+  message: Simula 15.000 em 36x com parcelas decrescentes
+  expected:
+    amount: '15000'
+    term_months: 36
+    amortization_type: SAC
+  tags:
+  - complete
+- id: S-005
+  message: Quero pegar 8 mil em 18 meses com parcela fixa
+  expected:
+    amount: '8000'
+    term_months: 18
+    amortization_type: PRICE
+  tags:
+  - complete
+- id: S-006
+  message: R$ 3.500,00 em 10 meses, SAC
+  expected:
+    amount: '3500'
+    term_months: 10
+    amortization_type: SAC
+  tags:
+  - complete
+- id: S-007
+  message: 24 meses
+  known:
+    amount: '5000'
+    amortization_type: PRICE
+  expected:
+    amount: '5000'
+    term_months: 24
+    amortization_type: PRICE
+  tags:
+  - complete
+- id: S-008
+  message: Price
+  known:
+    amount: '3000'
+    term_months: 12
+  expected:
+    amount: '3000'
+    term_months: 12
+    amortization_type: PRICE
+  tags:
+  - complete
+- id: S-009
+  message: 10 mil reais
+  known:
+    term_months: 24
+    amortization_type: SAC
+  expected:
+    amount: '10000'
+    term_months: 24
+    amortization_type: SAC
+  tags:
+  - complete
+- id: S-010
+  message: Quero simular um empréstimo de 5000 reais
+  expected:
+    amount: '5000'
+  tags:
+  - partial
+- id: S-011
+  message: Preciso de um crédito de 12 meses
+  expected:
+    term_months: 12
+  tags:
+  - partial
+- id: S-012
+  message: Quero pelo SAC
+  expected:
+    amortization_type: SAC
+  tags:
+  - partial
+- id: S-013
+  message: Quero simular 7 mil reais em 15 meses
+  expected:
+    amount: '7000'
+    term_months: 15
+  tags:
+  - partial
+- id: S-014
+  message: Uns 4 mil reais, pela tabela Price
+  expected:
+    amount: '4000'
+    amortization_type: PRICE
+  tags:
+  - partial
+- id: S-015
+  message: em 48 vezes no SAC
+  expected:
+    term_months: 48
+    amortization_type: SAC
+  tags:
+  - partial
+- id: S-016
+  message: O valor é 6500
+  known:
+    term_months: 12
+  expected:
+    amount: '6500'
+    term_months: 12
+  tags:
+  - partial
+- id: S-017
+  message: vinte mil reais
+  expected:
+    amount: '20000'
+  tags:
+  - partial
+- id: S-018
+  message: dois anos
+  expected:
+    term_months: 24
+  tags:
+  - partial
+- id: S-019
+  message: Quero fazer uma simulação de empréstimo
+  expected: {}
+  tags:
+  - missing
+- id: S-020
+  message: Quero pegar um emprestimo
+  expected: {}
+  tags:
+  - missing
+- id: S-021
+  message: Quanto vai ficar a parcela?
+  expected: {}
+  tags:
+  - missing
+- id: S-022
+  message: Pode simular pra mim?
+  expected: {}
+  tags:
+  - missing
+- id: S-023
+  message: Não sei ainda quanto quero
+  expected: {}
+  tags:
+  - missing
+- id: S-024
+  message: Me ajuda com um crédito
+  expected: {}
+  tags:
+  - missing
+- id: S-025
+  message: Quero simular -500 reais em 12 meses, Price
+  expected:
+    term_months: 12
+    amortization_type: PRICE
+  tags:
+  - partial
+  - invalid
+- id: S-026
+  message: Preciso de 5000 reais em 0 meses, SAC
+  expected:
+    amount: '5000'
+    amortization_type: SAC
+  tags:
+  - partial
+  - invalid
+- id: S-027
+  message: Quero 3000 reais em 12 meses pela tabela Fibonacci
+  expected:
+    amount: '3000'
+    term_months: 12
+  tags:
+  - partial
+  - invalid
+- id: S-028
+  message: Zero reais em 12 meses Price
+  expected:
+    term_months: 12
+    amortization_type: PRICE
+  tags:
+  - partial
+  - invalid
+- id: S-029
+  message: Quero 5000 reais em doze meses no sistema americano
+  expected:
+    amount: '5000'
+    term_months: 12
+  tags:
+  - partial
+  - invalid
+- id: S-030
+  message: quero 1000 reais em -6 meses SAC
+  expected:
+    amount: '1000'
+    amortization_type: SAC
+  tags:
+  - partial
+  - invalid
+- id: S-031
+  message: Preciso de dez mil reais em um ano, tabela Price
+  expected:
+    amount: '10000'
+    term_months: 12
+    amortization_type: PRICE
+  tags:
+  - complete
+- id: S-032
+  message: Quero 2,5 mil em 6 meses pelo SAC
+  expected:
+    amount: '2500'
+    term_months: 6
+    amortization_type: SAC
+  tags:
+  - complete
+- id: S-033
+  message: R$ 10k em 24x Price
+  expected:
+    amount: '10000'
+    term_months: 24
+    amortization_type: PRICE
+  tags:
+  - complete
+- id: S-034
+  message: um ano e meio
+  known:
+    amount: '8000'
+    amortization_type: SAC
+  expected:
+    amount: '8000'
+    term_months: 18
+    amortization_type: SAC
+  tags:
+  - complete
+- id: S-035
+  message: uns 1,5 mil
+  expected:
+    amount: '1500'
+  tags:
+  - partial
+- id: S-036
+  message: três anos
+  known:
+    amount: '20000'
+  expected:
+    amount: '20000'
+    term_months: 36
+  tags:
+  - partial

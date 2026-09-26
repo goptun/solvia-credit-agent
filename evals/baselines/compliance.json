@@ -1,0 +1,95 @@
+{
+  "suite": "compliance",
+  "mode": "offline",
+  "git_sha": "8060f368589016e1c1ae0c278f2ba58a28c1a935",
+  "datasets": [
+    {
+      "name": "compliance",
+      "version": 2,
+      "sha256": "126940c4e2dded3741cabe3414dfda6085d8c360e38abb930d8979b612a8de46"
+    }
+  ],
+  "created_at": "2026-09-24T00:20:26Z",
+  "environment": {
+    "ci": "false",
+    "os": "darwin",
+    "arch": "x86_64",
+    "python": "3.12.0"
+  },
+  "aliases": {},
+  "resolved_model_mix": {},
+  "metrics": {
+    "keyword.precision": {
+      "value": 0.571429,
+      "n": 7,
+      "direction": "higher",
+      "tolerance": 0.0,
+      "ci_low": 0.250458,
+      "ci_high": 0.84178
+    },
+    "keyword.recall": {
+      "value": 0.285714,
+      "n": 14,
+      "direction": "higher",
+      "tolerance": 0.0,
+      "ci_low": 0.117214,
+      "ci_high": 0.546491
+    },
+    "keyword.false_positive_rate": {
+      "value": 0.111111,
+      "n": 27,
+      "direction": "lower",
+      "tolerance": 0.0,
+      "ci_low": 0.03852,
+      "ci_high": 0.280578
+    },
+    "keyword.false_positive_rate_on_approval_mentions": {
+      "value": 0.25,
+      "n": 12,
+      "direction": "lower",
+      "tolerance": 0.0,
+      "ci_low": 0.088942,
+      "ci_high": 0.532305
+    },
+    "strict.precision": {
+      "value": 0.692308,
+      "n": 13,
+      "direction": "higher",
+      "tolerance": 0.0,
+      "ci_low": 0.423693,
+      "ci_high": 0.873193
+    },
+    "strict.recall": {
+      "value": 0.642857,
+      "n": 14,
+      "direction": "higher",
+      "tolerance": 0.0,
+      "ci_low": 0.387644,
+      "ci_high": 0.836553
+    },
+    "strict.false_positive_rate": {
+      "value": 0.148148,
+      "n": 27,
+      "direction": "lower",
+      "tolerance": 0.0,
+      "ci_low": 0.059159,
+      "ci_high": 0.324787
+    },
+    "strict.false_positive_rate_on_approval_mentions": {
+      "value": 0.333333,
+      "n": 12,
+      "direction": "lower",
+      "tolerance": 0.0,
+      "ci_low": 0.13812,
+      "ci_high": 0.609378
+    },
+    "masking.exact_match": {
+      "value": 0.789474,
+      "n": 19,
+      "direction": "higher",
+      "tolerance": 0.0,
+      "ci_low": 0.566657,
+      "ci_high": 0.914923
+    }
+  }
+}

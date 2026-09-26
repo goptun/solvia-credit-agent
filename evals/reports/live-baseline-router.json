@@ -1,0 +1,1522 @@
+{
+  "mode": "live",
+  "git_sha": "5519fceba0427afa0bf0a1a87b62243c69816876",
+  "git_dirty": false,
+  "seed": 42,
+  "environment": {
+    "ci": "false",
+    "os": "darwin",
+    "arch": "x86_64",
+    "python": "3.12.0"
+  },
+  "suites": {
+    "router": {
+      "datasets": [
+        {
+          "name": "router",
+          "version": 2,
+          "sha256": "55d380faf90cf55ea3d32a7f4da1e6f74db5bdada6ea3f03be2d189b8b7b6dd0"
+        }
+      ],
+      "metrics": {
+        "router.accuracy": {
+          "value": 1.0,
+          "n": 69,
+          "direction": "higher",
+          "ci_low": 0.947263,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "router.accuracy.category.ambiguous": {
+          "value": 1.0,
+          "n": 7,
+          "direction": "higher",
+          "ci_low": 0.64567,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "router.accuracy.category.clear": {
+          "value": 1.0,
+          "n": 55,
+          "direction": "higher",
+          "ci_low": 0.934715,
+          "ci_high": 1.0,
+          "deterministic": false
+        },
+        "router.accuracy.category.continuation": {
+          "value": 1.0,
+          "n": 7,
+          "direction": "higher",
+          "ci_low": 0.64567,
+          "ci_high": 1.0,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "confusion_matrix": {
+          "product_question": {
+            "product_question": 11,
+            "regulatory_question": 0,
+            "loan_simulation": 0,
+            "profile_analysis": 0,
+            "complaint": 0,
+            "out_of_scope": 0,
+            "continue": 0
+          },
+          "regulatory_question": {
+            "product_question": 0,
+            "regulatory_question": 11,
+            "loan_simulation": 0,
+            "profile_analysis": 0,
+            "complaint": 0,
+            "out_of_scope": 0,
+            "continue": 0
+          },
+          "loan_simulation": {
+            "product_question": 0,
+            "regulatory_question": 0,
+            "loan_simulation": 9,
+            "profile_analysis": 0,
+            "complaint": 0,
+            "out_of_scope": 0,
+            "continue": 0
+          },
+          "profile_analysis": {
+            "product_question": 0,
+            "regulatory_question": 0,
+            "loan_simulation": 0,
+            "profile_analysis": 9,
+            "complaint": 1,
+            "out_of_scope": 0,
+            "continue": 0
+          },
+          "complaint": {
+            "product_question": 0,
+            "regulatory_question": 0,
+            "loan_simulation": 0,
+            "profile_analysis": 0,
+            "complaint": 10,
+            "out_of_scope": 0,
+            "continue": 0
+          },
+          "out_of_scope": {
+            "product_question": 0,
+            "regulatory_question": 0,
+            "loan_simulation": 0,
+            "profile_analysis": 0,
+            "complaint": 0,
+            "out_of_scope": 11,
+            "continue": 0
+          },
+          "continue": {
+            "product_question": 0,
+            "regulatory_question": 0,
+            "loan_simulation": 0,
+            "profile_analysis": 0,
+            "complaint": 0,
+            "out_of_scope": 0,
+            "continue": 7
+          }
+        },
+        "misclassified": [],
+        "unavailable_ids": [],
+        "items": [
+          {
+            "id": "T-001",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-002",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-003",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-004",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-005",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-006",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-007",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-008",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-009",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-010",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-011",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-012",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-013",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-014",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-015",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-016",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-017",
+            "output": {
+              "predicted": "loan_simulation"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-018",
+            "output": {
+              "predicted": "loan_simulation"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-019",
+            "output": {
+              "predicted": "loan_simulation"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-020",
+            "output": {
+              "predicted": "loan_simulation"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-021",
+            "output": {
+              "predicted": "loan_simulation"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-022",
+            "output": {
+              "predicted": "loan_simulation"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-023",
+            "output": {
+              "predicted": "loan_simulation"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-024",
+            "output": {
+              "predicted": "loan_simulation"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-025",
+            "output": {
+              "predicted": "profile_analysis"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-026",
+            "output": {
+              "predicted": "profile_analysis"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-027",
+            "output": {
+              "predicted": "profile_analysis"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-028",
+            "output": {
+              "predicted": "profile_analysis"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-029",
+            "output": {
+              "predicted": "profile_analysis"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-030",
+            "output": {
+              "predicted": "profile_analysis"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-031",
+            "output": {
+              "predicted": "profile_analysis"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-032",
+            "output": {
+              "predicted": "profile_analysis"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-033",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-034",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-035",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-036",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-037",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-038",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-039",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-040",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-041",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-042",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-043",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-044",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-045",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-046",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-047",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-048",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-049",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-050",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-051",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-052",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-053",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-054",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-055",
+            "output": {
+              "predicted": "loan_simulation"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-056",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-057",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-058",
+            "output": {
+              "predicted": "continue"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-059",
+            "output": {
+              "predicted": "continue"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-060",
+            "output": {
+              "predicted": "continue"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-061",
+            "output": {
+              "predicted": "continue"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-062",
+            "output": {
+              "predicted": "continue"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-063",
+            "output": {
+              "predicted": "continue"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-064",
+            "output": {
+              "predicted": "continue"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-065",
+            "output": {
+              "predicted": "profile_analysis"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-066",
+            "output": {
+              "predicted": "product_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-067",
+            "output": {
+              "predicted": "complaint"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-068",
+            "output": {
+              "predicted": "regulatory_question"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          },
+          {
+            "id": "T-069",
+            "output": {
+              "predicted": "out_of_scope"
+            },
+            "scores": {
+              "correct": 1.0
+            }
+          }
+        ],
+        "items_selected": 69,
+        "items_scored": 69,
+        "unavailable": {}
+      }
+    },
+    "operational": {
+      "datasets": [],
+      "metrics": {
+        "router.no_tool_call_rate": {
+          "value": 0.0,
+          "n": 69,
+          "direction": "lower",
+          "ci_low": 0.0,
+          "ci_high": 0.052737,
+          "deterministic": false
+        },
+        "router.json_fallback_rate": {
+          "value": 0.086957,
+          "n": 69,
+          "direction": "lower",
+          "ci_low": 0.040464,
+          "ci_high": 0.177015,
+          "deterministic": false
+        },
+        "router.latency_p50_seconds": {
+          "value": 0.925,
+          "n": 77,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "router.latency_p95_seconds": {
+          "value": 15.936,
+          "n": 77,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        },
+        "router.attempts_mean": {
+          "value": 1.116,
+          "n": 77,
+          "direction": "lower",
+          "ci_low": null,
+          "ci_high": null,
+          "deterministic": false
+        }
+      },
+      "details": {
+        "calls": [
+          {
+            "operation": "router-1",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 25.944
+          },
+          {
+            "operation": "router-2",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.943
+          },
+          {
+            "operation": "router-3",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.794
+          },
+          {
+            "operation": "router-4",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": null,
+            "status": "OpenAITimeoutError",
+            "kind": "error",
+            "latency_seconds": 30.011
+          },
+          {
+            "operation": "router-4",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.885
+          },
+          {
+            "operation": "router-5",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 3.487
+          },
+          {
+            "operation": "router-6",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": null,
+            "status": "OpenAITimeoutError",
+            "kind": "error",
+            "latency_seconds": 30.007
+          },
+          {
+            "operation": "router-6",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 19.241
+          },
+          {
+            "operation": "router-7",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.683
+          },
+          {
+            "operation": "router-8",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 12.435
+          },
+          {
+            "operation": "router-9",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.797
+          },
+          {
+            "operation": "router-10",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.787
+          },
+          {
+            "operation": "router-11",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.836
+          },
+          {
+            "operation": "router-12",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.942
+          },
+          {
+            "operation": "router-13",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.953
+          },
+          {
+            "operation": "router-14",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.703
+          },
+          {
+            "operation": "router-15",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.93
+          },
+          {
+            "operation": "router-16",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.229
+          },
+          {
+            "operation": "router-17",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.794
+          },
+          {
+            "operation": "router-18",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.68
+          },
+          {
+            "operation": "router-19",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.064
+          },
+          {
+            "operation": "router-20",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.969
+          },
+          {
+            "operation": "router-21",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.995
+          },
+          {
+            "operation": "router-22",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.755
+          },
+          {
+            "operation": "router-23",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.385
+          },
+          {
+            "operation": "router-24",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.092
+          },
+          {
+            "operation": "router-25",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.842
+          },
+          {
+            "operation": "router-26",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.876
+          },
+          {
+            "operation": "router-27",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.858
+          },
+          {
+            "operation": "router-28",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.723
+          },
+          {
+            "operation": "router-29",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.968
+          },
+          {
+            "operation": "router-30",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 3.113
+          },
+          {
+            "operation": "router-31",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.914
+          },
+          {
+            "operation": "router-32",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.895
+          },
+          {
+            "operation": "router-33",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.779
+          },
+          {
+            "operation": "router-34",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.942
+          },
+          {
+            "operation": "router-35",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.179
+          },
+          {
+            "operation": "router-36",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.04
+          },
+          {
+            "operation": "router-37",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 12.096
+          },
+          {
+            "operation": "router-38",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.531
+          },
+          {
+            "operation": "router-39",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 9.347
+          },
+          {
+            "operation": "router-40",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.116
+          },
+          {
+            "operation": "router-41",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.051
+          },
+          {
+            "operation": "router-42",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.725
+          },
+          {
+            "operation": "router-43",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 10.812
+          },
+          {
+            "operation": "router-44",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 18.27
+          },
+          {
+            "operation": "router-45",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.999
+          },
+          {
+            "operation": "router-46",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 10.13
+          },
+          {
+            "operation": "router-47",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.691
+          },
+          {
+            "operation": "router-48",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 9.159
+          },
+          {
+            "operation": "router-49",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.812
+          },
+          {
+            "operation": "router-50",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.792
+          },
+          {
+            "operation": "router-51",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": null,
+            "status": "OpenAITimeoutError",
+            "kind": "error",
+            "latency_seconds": 30.007
+          },
+          {
+            "operation": "router-51",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": null,
+            "status": "OpenAITimeoutError",
+            "kind": "error",
+            "latency_seconds": 30.006
+          },
+          {
+            "operation": "router-51",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.767
+          },
+          {
+            "operation": "router-52",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": null,
+            "status": "OpenAITimeoutError",
+            "kind": "error",
+            "latency_seconds": 30.009
+          },
+          {
+            "operation": "router-52",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 8.401
+          },
+          {
+            "operation": "router-53",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.644
+          },
+          {
+            "operation": "router-54",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.817
+          },
+          {
+            "operation": "router-55",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": null,
+            "status": "OpenAITimeoutError",
+            "kind": "error",
+            "latency_seconds": 30.011
+          },
+          {
+            "operation": "router-55",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": null,
+            "status": "OpenAITimeoutError",
+            "kind": "error",
+            "latency_seconds": 30.008
+          },
+          {
+            "operation": "router-55",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.925
+          },
+          {
+            "operation": "router-56",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 11.552
+          },
+          {
+            "operation": "router-57",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.651
+          },
+          {
+            "operation": "router-58",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 26.243
+          },
+          {
+            "operation": "router-59",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.847
+          },
+          {
+            "operation": "router-60",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.963
+          },
+          {
+            "operation": "router-61",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 1.27
+          },
+          {
+            "operation": "router-62",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.719
+          },
+          {
+            "operation": "router-63",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.791
+          },
+          {
+            "operation": "router-64",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.684
+          },
+          {
+            "operation": "router-65",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.787
+          },
+          {
+            "operation": "router-66",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.735
+          },
+          {
+            "operation": "router-67",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": null,
+            "status": "OpenAITimeoutError",
+            "kind": "error",
+            "latency_seconds": 30.012
+          },
+          {
+            "operation": "router-67",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.678
+          },
+          {
+            "operation": "router-68",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.681
+          },
+          {
+            "operation": "router-69",
+            "node": "router",
+            "alias": "solvia-eval-fast",
+            "model": "gemini-3.5-flash-lite",
+            "status": "ok",
+            "kind": "tool_call",
+            "latency_seconds": 0.768
+          }
+        ],
+        "status_breakdown": {
+          "ok": 69,
+          "429": 0,
+          "503": 0,
+          "timeout": 8,
+          "other": 0
+        }
+      }
+    }
+  },
+  "sample_fraction": null,
+  "incomplete": false,
+  "contaminated": false,
+  "contamination_reasons": [],
+  "model_sets_unset": false,
+  "aliases": {
+    "fast": "solvia-eval-fast",
+    "smart": "solvia-eval-smart"
+  },
+  "budget": {
+    "max_calls": 300,
+    "used": 77,
+    "estimated_typical": 69,
+    "estimated_pessimistic": 76
+  },
+  "resolved_model_mix": {
+    "solvia-eval-fast": {
+      "gemini-3.5-flash-lite": 69,
+      "unknown": 8
+    }
+  }
+}

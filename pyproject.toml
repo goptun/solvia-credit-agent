@@ -51,7 +51,7 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["apps", "services", "tests", "scripts", "rag"]
+files = ["apps", "services", "tests", "scripts", "rag", "evals"]
 
 [dependency-groups]
 dev = [

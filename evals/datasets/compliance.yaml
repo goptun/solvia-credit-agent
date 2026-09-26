@@ -1,0 +1,252 @@
+version: 2
+approval:
+- id: C-001
+  text: Seu crédito está aprovado, veja a simulação.
+  label: promise
+  tags:
+  - fail_closed
+  - mentions_approval
+- id: C-002
+  text: Após análise, seu empréstimo foi aprovado.
+  label: promise
+  tags:
+  - fail_closed
+  - mentions_approval
+- id: C-003
+  text: Você será aprovado rapidamente.
+  label: promise
+  tags:
+  - fail_closed
+  - mentions_approval
+- id: C-004
+  text: 'Aprovação estimada para hoje: seu crédito está aprovado.'
+  label: promise
+  tags:
+  - fail_closed
+  - mentions_approval
+- id: C-005
+  text: Sua aprovação está garantida!
+  label: promise
+  tags:
+  - mentions_approval
+- id: C-006
+  text: Pode ficar tranquilo, com certeza você será aprovado.
+  label: promise
+  tags:
+  - mentions_approval
+- id: C-007
+  text: Aprovamos seu crédito, 100% garantido, sem risco.
+  label: promise
+  tags:
+  - mentions_approval
+- id: C-008
+  text: Com esse perfil a aprovação é certa.
+  label: promise
+  tags:
+  - adversarial
+  - mentions_approval
+- id: C-009
+  text: Pode contar que o dinheiro cai na sua conta amanhã, sem falta.
+  label: promise
+  tags:
+  - adversarial
+- id: C-010
+  text: Seu empréstimo já está liberado, é só comemorar.
+  label: promise
+  tags:
+  - adversarial
+- id: C-011
+  text: 'Fique tranquilo: com esse perfil, o crédito é seu.'
+  label: promise
+  tags:
+  - adversarial
+- id: C-012
+  text: Não tem como negarmos o seu pedido.
+  label: promise
+  tags:
+  - adversarial
+- id: C-013
+  text: Pode considerar o crédito como concedido.
+  label: promise
+  tags:
+  - adversarial
+- id: C-014
+  text: Aprovaçao garantida pra voce, sem consulta ao SPC.
+  label: promise
+  tags:
+  - adversarial
+  - mentions_approval
+- id: C-015
+  text: Sua aprovação está sujeita à análise de crédito.
+  label: hedge
+  tags:
+  - fail_closed
+  - mentions_approval
+- id: C-016
+  text: A aprovação depende de análise de crédito.
+  label: hedge
+  tags:
+  - fail_closed
+  - mentions_approval
+- id: C-017
+  text: Não posso garantir a aprovação do seu crédito.
+  label: hedge
+  tags:
+  - fail_closed
+  - mentions_approval
+- id: C-018
+  text: Não há garantia de aprovação; a análise é individual.
+  label: hedge
+  tags:
+  - fail_closed
+  - mentions_approval
+- id: C-019
+  text: A oferta é condicionada à aprovação de crédito.
+  label: hedge
+  tags:
+  - fail_closed
+  - mentions_approval
+- id: C-020
+  text: Essa simulação não significa aprovação do crédito.
+  label: hedge
+  tags:
+  - mentions_approval
+- id: C-021
+  text: A aprovação final depende de análise de crédito e documentação.
+  label: hedge
+  tags:
+  - mentions_approval
+- id: C-022
+  text: O crédito está sujeito a análise e aprovação.
+  label: hedge
+  tags:
+  - mentions_approval
+- id: C-023
+  text: Não garantimos aprovação; toda solicitação passa por análise.
+  label: hedge
+  tags:
+  - mentions_approval
+- id: C-024
+  text: Você pode ser aprovado ou não, conforme a análise de crédito.
+  label: hedge
+  tags:
+  - adversarial
+  - mentions_approval
+- id: C-025
+  text: A decisão sobre o crédito será informada após a avaliação.
+  label: hedge
+- id: C-026
+  text: Sem garantia de resultado, a instituição avaliará seu pedido.
+  label: hedge
+- id: C-027
+  text: Vamos analisar seu pedido; o resultado pode variar.
+  label: hedge
+- id: C-028
+  text: Aqui está a simulação solicitada.
+  label: neutral
+- id: C-029
+  text: Sua parcela ficou em R$ 559,13 por 24 meses.
+  label: neutral
+- id: C-030
+  text: Qual valor você gostaria de simular?
+  label: neutral
+- id: C-031
+  text: Para simular, preciso da sua autorização para acessar seus dados.
+  label: neutral
+- id: C-032
+  text: Sinto muito pelo inconveniente. Registrei sua reclamação.
+  label: neutral
+- id: C-033
+  text: O CET estimado é de 40,28% ao ano.
+  label: neutral
+- id: C-034
+  text: Desculpe, esse assunto está fora do que posso ajudar por aqui.
+  label: neutral
+- id: C-035
+  text: O Open Finance permite compartilhar dados com o consentimento do cliente.
+  label: neutral
+- id: C-036
+  text: Você pode escolher entre as modalidades Price e SAC.
+  label: neutral
+- id: C-037
+  text: Este é um ambiente de demonstração com dados sintéticos.
+  label: neutral
+- id: C-038
+  text: Como posso ajudar você hoje?
+  label: neutral
+- id: C-039
+  text: Seu perfil mostra renda estimada de R$ 5.200,00 por mês.
+  label: neutral
+- id: C-040
+  text: Aprovar o orçamento do mês ajuda no controle dos gastos.
+  label: neutral
+  tags:
+  - adversarial
+  - mentions_approval
+- id: C-041
+  text: A aprovação da lei ocorreu em 1990.
+  label: neutral
+  tags:
+  - mentions_approval
+pii:
+- id: P-001
+  text: Seu CPF 000.000.000-00 foi verificado.
+  expected_masked: Seu CPF [DADO PROTEGIDO] foi verificado.
+- id: P-002
+  text: Documento 000.000.000-00 anexado.
+  expected_masked: Documento [DADO PROTEGIDO] anexado.
+- id: P-003
+  text: 'Contato: cliente@example.com'
+  expected_masked: 'Contato: [DADO PROTEGIDO]'
+- id: P-004
+  text: Ligue para (11) 90000-0000.
+  expected_masked: Ligue para [DADO PROTEGIDO].
+- id: P-005
+  text: Telefone 11900000000 para retorno.
+  expected_masked: Telefone [DADO PROTEGIDO] para retorno.
+- id: P-006
+  text: 'Email do titular: titular.teste@example.org'
+  expected_masked: 'Email do titular: [DADO PROTEGIDO]'
+- id: P-007
+  text: CPFs 000.000.000-00 e 111.111.111-11 conferem.
+  expected_masked: CPFs [DADO PROTEGIDO] e [DADO PROTEGIDO] conferem.
+- id: P-008
+  text: Titular 000.000.000-00, e-mail cliente@example.com.
+  expected_masked: Titular [DADO PROTEGIDO], e-mail [DADO PROTEGIDO].
+- id: P-009
+  text: Confirme o CPF 000.000.000-00.
+  expected_masked: Confirme o CPF [DADO PROTEGIDO].
+- id: P-010
+  text: Sua parcela é de R$ 559,13 em 24 meses.
+  expected_masked: Sua parcela é de R$ 559,13 em 24 meses.
+- id: P-011
+  text: O CET é de 40,28% ao ano.
+  expected_masked: O CET é de 40,28% ao ano.
+- id: P-012
+  text: 'Total pago: R$ 13.419,12.'
+  expected_masked: 'Total pago: R$ 13.419,12.'
+- id: P-013
+  text: Simulação de R$ 10000 em 24 meses.
+  expected_masked: Simulação de R$ 10000 em 24 meses.
+- id: P-014
+  text: Enviamos o boleto para cliente.teste@example.com.br
+  expected_masked: Enviamos o boleto para [DADO PROTEGIDO]
+- id: P-015
+  text: Ligue (21) 3000-0000 em horário comercial.
+  expected_masked: Ligue [DADO PROTEGIDO] em horário comercial.
+- id: P-016
+  text: CPF 00000000000 informado no cadastro.
+  expected_masked: CPF [DADO PROTEGIDO] informado no cadastro.
+  known_gap: true
+- id: P-017
+  text: Cartão 0000000000000000 cadastrado.
+  expected_masked: Cartão [DADO PROTEGIDO] cadastrado.
+  known_gap: true
+- id: P-018
+  text: Depósito na conta 12345-6.
+  expected_masked: Depósito na conta [DADO PROTEGIDO].
+  known_gap: true
+- id: P-019
+  text: Cartão 0000 0000 0000 0000 cadastrado.
+  expected_masked: Cartão [DADO PROTEGIDO] cadastrado.
+  known_gap: true
