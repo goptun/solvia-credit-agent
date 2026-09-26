@@ -25,11 +25,19 @@ _CARD_MAX_DIGITS = 19
 # behind (the CPF-digit-leak and card-masked-in-two-pieces bugs both came
 # from `_PHONE_PATTERN` matching a prefix of a longer digit run before the
 # pattern that should have owned it ran at all).
-_CARD_CANDIDATE_PATTERN = re.compile(r"\b\d(?:[ -]?\d){12,18}\b")
-"""13-19 digits, contiguous or grouped by single spaces/hyphens. Only a Luhn-
-valid candidate (`_mask_card_candidate`) is actually masked, so an arbitrary
-long number (an id, a big amount typed without punctuation, ...) is left
-alone."""
+_CARD_GROUPED_PATTERN = re.compile(
+    r"\b\d{4}[ -]\d{4}[ -]\d{4}[ -]\d{4}\b|\b\d{4}[ -]\d{6}[ -]\d{5}\b"
+)
+"""A card-shaped grouping — 4-4-4-4 (Visa/Mastercard/...) or 4-6-5 (Amex) with
+spaces or hyphens between groups — is masked unconditionally, Luhn check or
+not: someone who typed a card number with one wrong digit still typed a card
+number, and this shape is specific enough that failing open on a typo would
+be the worse mistake."""
+_CARD_CONTIGUOUS_PATTERN = re.compile(r"\b\d{13,19}\b")
+"""13-19 digits with **no** separator: masked only when Luhn-valid
+(`_mask_card_candidate`), so a boleto line (47-48 digits — already excluded
+by length alone) or an unrelated long number typed without punctuation is
+never masked just because of its length."""
 _CPF_PATTERN = re.compile(r"\d{3}\.\d{3}\.\d{3}-\d{2}")
 _CPF_UNPUNCTUATED_PATTERN = re.compile(r"\b\d{11}\b")
 """An 11-digit CPF with no punctuation. `\\b` on both sides means this can
@@ -102,11 +110,10 @@ def _luhn_valid(digits: str) -> bool:
 
 
 def _mask_card_candidate(match: re.Match[str]) -> str:
-    candidate = match.group(0)
-    digits = re.sub(r"[ -]", "", candidate)
+    digits = match.group(0)
     if _CARD_MIN_DIGITS <= len(digits) <= _CARD_MAX_DIGITS and _luhn_valid(digits):
         return PII_MASK
-    return candidate
+    return digits
 
 
 def _mask_account_number(match: re.Match[str]) -> str:
@@ -116,7 +123,8 @@ def _mask_account_number(match: re.Match[str]) -> str:
 def mask_pii(text: str) -> str:
     """Deterministically mask card numbers, CPF, bank account numbers, email
     and phone numbers."""
-    masked = _CARD_CANDIDATE_PATTERN.sub(_mask_card_candidate, text)
+    masked = _CARD_GROUPED_PATTERN.sub(PII_MASK, text)
+    masked = _CARD_CONTIGUOUS_PATTERN.sub(_mask_card_candidate, masked)
     masked = _CPF_PATTERN.sub(PII_MASK, masked)
     masked = _CPF_UNPUNCTUATED_PATTERN.sub(PII_MASK, masked)
     masked = _ACCOUNT_CONTEXT_PATTERN.sub(_mask_account_number, masked)

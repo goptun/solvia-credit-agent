@@ -27,7 +27,13 @@ def test_punctuated_cpf_is_still_masked() -> None:
     assert reply == f"Seu CPF {PII_MASK} foi verificado."
 
 
-# --- fix 2: card numbers, 13-19 digits, contiguous or grouped, Luhn-checked --
+# --- fix 2: card numbers -----------------------------------------------------
+#
+# Two different rules by shape:
+# - a card-shaped *grouping* (4-4-4-4, or 4-6-5 for Amex) is masked
+#   unconditionally, Luhn check or not — fail closed on a typo;
+# - a *contiguous* 13-19 digit run (no separator) is masked only when
+#   Luhn-valid, so a boleto line or an unrelated long number is left alone.
 
 
 def test_a_16_digit_contiguous_card_number_is_masked_as_a_single_placeholder() -> None:
@@ -37,8 +43,17 @@ def test_a_16_digit_contiguous_card_number_is_masked_as_a_single_placeholder() -
     assert reply.count(PII_MASK) == 1
 
 
-def test_a_space_grouped_card_number_is_masked_as_a_single_placeholder() -> None:
-    reply = mask_pii("Cartão 0000 0000 0000 0000 cadastrado.")
+@pytest.mark.parametrize(
+    "card",
+    [
+        "4111 1111 1111 1111",  # 4-4-4-4, space-grouped
+        "4111-1111-1111-1111",  # 4-4-4-4, hyphen-grouped
+        "3782 822463 10005",  # 4-6-5 (Amex), space-grouped
+        "3782-822463-10005",  # 4-6-5 (Amex), hyphen-grouped
+    ],
+)
+def test_a_card_shaped_grouping_is_masked_as_a_single_placeholder(card: str) -> None:
+    reply = mask_pii(f"Cartão {card} cadastrado.")
 
     assert reply == f"Cartão {PII_MASK} cadastrado."
     assert reply.count(PII_MASK) == 1
@@ -47,20 +62,32 @@ def test_a_space_grouped_card_number_is_masked_as_a_single_placeholder() -> None
 @pytest.mark.parametrize(
     "card",
     [
+        "4111 1111 1111 1112",  # 4-4-4-4, last digit changed: Luhn-invalid
+        "3782-822463-10006",  # 4-6-5, last digit changed: Luhn-invalid
+    ],
+)
+def test_a_luhn_invalid_grouped_number_is_still_masked(card: str) -> None:
+    """Fail closed on a typo: whoever typed a card-shaped number typed a
+    card number, one wrong digit or not."""
+    assert mask_pii(f"Cartão {card} cadastrado.") == f"Cartão {PII_MASK} cadastrado."
+
+
+@pytest.mark.parametrize(
+    "card",
+    [
         "4111111111111111",  # 16 digits, well-known Luhn-valid test number
-        "4111-1111-1111-1111",  # same number, hyphen-grouped
-        "4111 1111 1111 1111",  # same number, space-grouped
         "371449635398431",  # 15 digits, Luhn-valid
         "4222222222222",  # 13 digits, Luhn-valid
     ],
 )
-def test_luhn_valid_numbers_of_13_to_19_digits_are_masked(card: str) -> None:
+def test_a_luhn_valid_contiguous_number_is_masked(card: str) -> None:
     assert mask_pii(f"Cartão {card} cadastrado.") == f"Cartão {PII_MASK} cadastrado."
 
 
-def test_a_luhn_invalid_16_digit_number_is_left_alone() -> None:
-    """The Luhn check is what stops the masker from treating an arbitrary
-    long number (an id, an unformatted big amount, ...) as a card."""
+def test_a_luhn_invalid_contiguous_16_digit_run_is_left_alone() -> None:
+    """No grouping and a failing checksum: the masker has no reason to treat
+    this as a card, so it leaves an arbitrary long number (an id, an
+    unformatted big amount, ...) alone."""
     number = "1234567890123456"
 
     assert mask_pii(f"Número aleatório {number} sem contexto de cartão.") == (
@@ -68,8 +95,23 @@ def test_a_luhn_invalid_16_digit_number_is_left_alone() -> None:
     )
 
 
-def test_changing_the_last_digit_of_a_valid_card_makes_it_luhn_invalid_and_unmasked() -> None:
+def test_changing_the_last_digit_of_a_contiguous_valid_card_unmasks_it() -> None:
     assert mask_pii("Cartão 4111111111111112 cadastrado.") == "Cartão 4111111111111112 cadastrado."
+
+
+def test_a_47_digit_boleto_line_grouped_by_dots_and_spaces_is_not_masked() -> None:
+    line = "34191.09008 61207.727307 71249.640008 5 84660000020000"
+    assert sum(char.isdigit() for char in line) == 47
+
+    assert mask_pii(f"Linha digitável: {line}") == f"Linha digitável: {line}"
+
+
+def test_a_48_digit_boleto_barcode_with_no_separators_is_not_masked() -> None:
+    """Longer than a card's 19-digit maximum, so length alone excludes it —
+    length, not Luhn, is what protects a boleto line here."""
+    barcode = "".join(str((i * 7 + 3) % 10) for i in range(48))
+
+    assert mask_pii(f"Código de barras: {barcode}") == f"Código de barras: {barcode}"
 
 
 # --- fix 3: bank account + check digit, gated by an account/agency context --
