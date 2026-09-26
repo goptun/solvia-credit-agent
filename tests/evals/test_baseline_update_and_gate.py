@@ -115,8 +115,35 @@ def test_a_dirty_tree_is_refused() -> None:
     assert "working tree is dirty" in _problems(_record("compliance"), repo=_repo(dirty=True))
 
 
-def test_a_run_from_another_commit_is_refused() -> None:
-    assert "is not HEAD" in _problems(_record("compliance", sha="b" * 40))
+def test_a_run_whose_commit_is_not_an_ancestor_of_head_is_refused() -> None:
+    record = _record("compliance", sha="b" * 40)
+
+    assert "not an ancestor of HEAD" in _problems(record, repo=_repo(changed=None))
+
+
+def test_a_run_followed_by_a_code_change_is_refused() -> None:
+    record = _record("router", sha="b" * 40)
+    repo = _repo(changed=["evals/reports/live-baseline-router.md", "apps/agent/nodes/router.py"])
+
+    problems = _problems(record, repo=repo)
+
+    assert "apps/agent/nodes/router.py" in problems
+    assert "evals/reports/live-baseline-router.md" not in problems
+
+
+def test_a_run_followed_only_by_its_own_report_commit_is_accepted() -> None:
+    """A live run necessarily predates the commit of its own report — requiring
+    the run's commit to equal HEAD exactly would make it un-baselineable the
+    moment that report is committed."""
+    record = _record("router", sha="b" * 40)
+    repo = _repo(
+        changed=[
+            "evals/reports/live-baseline-router.json",
+            "evals/reports/live-baseline-router.md",
+        ]
+    )
+
+    assert _problems(record, repo=repo) == ""
 
 
 def test_a_run_from_a_dirty_tree_is_refused() -> None:
